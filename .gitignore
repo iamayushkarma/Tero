@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.log
+
+# Temp files
+*.tmp
+*.cache
+.cache/
+*.swp
+
+# TypeScript build info
+*.tsbuildinfo
+
+# npm logs
+npm-debug.log*
+pnpm-debug.log*
+
+# Prettier cache
+.prettiercache

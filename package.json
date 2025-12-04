@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "prettier": "3.7.4"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}

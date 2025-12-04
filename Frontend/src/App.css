@@ -1,1 +1,99 @@
 @import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-size: 16px; 
+}
+
+body {
+@apply font-inter text-body;
+
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Removes default padding from all elements */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+:root {
+    
+  /*- Brand Colors*/
+  --primary: oklch(59.27% 0.223 258.45);
+  --primary-hover: oklch(54% 0.223 258.45);  /* slightly darker */
+
+  --secondary: oklch(70% 0.05 250);      /* slate blue-gray */
+  --secondary-hover: oklch(65% 0.05 250);
+
+  /* Background */
+  --bg-blue-1: oklch(99.3% 0.0037 258.5);  /* #FBFDFF */
+  --bg-blue-2: oklch(98.2% 0.0113 258.5);  /* #F4F9FF */
+  --bg-gray-1: oklch(99.1% 0.0015 277.7);  /* #FCFCFD */
+  --bg-gray-2: oklch(98.2% 0.003 277.7);   /* #F9F9FB */
+
+
+  /*- Interactive Colors — Blue (Steps 3–5)  */
+  /* Blue 3 — subtle hover */
+  --blue-3: oklch(96% 0.0235 258.5);       /* #E8F3FF */
+  /* Blue 4 — interactive surfaces */
+  --blue-4: oklch(93.7% 0.0441 258.5);     /* #D9ECFF */
+  /* Blue 5 — stronger active/selected surface */
+  --blue-5: oklch(90.6% 0.064 258.5);      /* #C6E2FF */
+
+  /* Interactive Colors — Gray (Steps 3–5)  */
+  /* Gray 3 — subtle hover / neutral tint */
+  --gray-3: oklch(95.6% 0.0045 277.7);     /* #EFF0F3 */
+  /* Gray 4 — interactive surfaces (neutral) */
+  --gray-4: oklch(93.1% 0.0061 277.7);     /* #E7E8EC */
+  /* Gray 5 — strong neutral for selected */
+  --gray-5: oklch(91% 0.0077 277.7);       /* #E0E1E6 */
+
+
+  /*- Borders & Separators — Blue */
+  /* Blue 6 — light border on blue surfaces */
+  --blue-6: oklch(86.4% 0.0827 258.5);    /* #B1D4FF */
+  /* Blue 7 — stronger border */
+  --blue-7: oklch(80.9% 0.106 258.5);     /* #96C2FF */
+  /* Blue 8 — focus rings, strong separators */
+  --blue-8: oklch(73.4% 0.1447 258.5);    /* #6EA9FF */
+
+  /* Borders & Separators — Gray (Steps 6–8) */
+  /* Gray 6 — light neutral border */
+  --gray-6: oklch(88.8% 0.0093 277.7);    /* #D8D9E0 */
+  /* Gray 7 — medium border */
+  --gray-7: oklch(85.3% 0.0117 277.7);    /* #CDCED7 */
+  /* Gray 8 — strong border, disabled text */
+  --gray-8: oklch(79.4% 0.016 277.7);     /* #B9BBC6 */
+
+
+  /*- Solid Colors — Blue (Steps 9–10)       */
+  /* Blue 9 — Main primary button color */
+  --blue-9: oklch(59.3% 0.2234 258.5);    /* #0175FF */
+  /* Blue 10 — Hover/pressed solid button */
+  --blue-10: oklch(54.9% 0.2268 258.5);   /* #0066F2 */
+
+  /* Solid Colors — Gray (Steps 9–10)       */
+  /* Gray 9 — disabled text / subdued icons */
+  --gray-9: oklch(64.6% 0.0165 277.7);    /* #8B8D98 */
+  /* Gray 10 — disabled button backgrounds */
+  --gray-10: oklch(61% 0.0161 277.7);     /* #80828D */
+
+
+  /*- Text Colors — Blue (Steps 11–12)        */
+  /* Blue 11 — secondary text, links */
+  --blue-11: oklch(55.3% 0.2234 258.5);    /* #0068F1 */
+  /* Blue 12 — high-contrast text */
+  --blue-12: oklch(32.3% 0.1157 258.5);    /* #04306D */
+
+  /* Text Colors — Gray (Steps 11–12)        */
+  /* Gray 11 — secondary text / labels / icons */
+  --gray-11: oklch(50.3% 0.0139 277.7);    /* #62636C */
+  /* Gray 12 — primary text / headings */
+  --gray-12: oklch(24.1% 0.0099 277.7);    /* #1E1F24 */
+
+}
