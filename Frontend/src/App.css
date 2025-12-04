@@ -21,8 +21,9 @@ body {
 *, *::before, *::after {
   box-sizing: inherit;
 }
+
 :root {
-    
+
   /*- Brand Colors*/
   --primary: oklch(59.27% 0.223 258.45);
   --primary-hover: oklch(54% 0.223 258.45);  /* slightly darker */
