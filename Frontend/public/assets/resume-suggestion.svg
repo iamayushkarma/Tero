@@ -1,0 +1,109 @@
+<svg viewBox="0 0 420 650" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="420" height="650" fill="#f8fafc" rx="16"/>
+  
+  <!-- Card Container -->
+  <rect x="20" y="20" width="380" height="610" fill="#ffffff" rx="12" stroke="#e2e8f0" stroke-width="1"/>
+  
+  <!-- Header -->
+  <text x="35" y="55" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#1e293b">
+    Full Stack Developer
+  </text>
+  <text x="35" y="78" font-family="Arial, sans-serif" font-size="14" fill="#64748b">
+    Mr. Stark
+  </text>
+  
+  <!-- Three dots menu -->
+  <circle cx="365" cy="58" r="2.5" fill="#94a3b8"/>
+  <circle cx="375" cy="58" r="2.5" fill="#94a3b8"/>
+  <circle cx="385" cy="58" r="2.5" fill="#94a3b8"/>
+  
+  <!-- Divider -->
+  <line x1="35" y1="95" x2="385" y2="95" stroke="#e2e8f0" stroke-width="1"/>
+  
+  <!-- Error Item 1 -->
+  <circle cx="48" cy="125" r="12" fill="#fecaca"/>
+  <line x1="44" y1="121" x2="52" y2="129" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="52" y1="121" x2="44" y2="129" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  
+  <text x="70" y="131" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#1e293b">
+    Generic Objective Statement
+  </text>
+  
+  <!-- Error Item 2 -->
+  <circle cx="48" cy="175" r="12" fill="#fecaca"/>
+  <line x1="44" y1="171" x2="52" y2="179" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="52" y1="171" x2="44" y2="179" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  
+  <text x="70" y="181" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#1e293b">
+    Missing Quantifiable Results
+  </text>
+  
+  <!-- PRO Badge -->
+  <rect x="285" y="167" width="45" height="20" fill="#e0e7ff" rx="4"/>
+  <text x="307.5" y="181" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4f46e5" text-anchor="middle">
+    PRO
+  </text>
+  
+  <rect x="70" y="192" width="310" height="80" fill="#f1f5f9" rx="8"/>
+  <text x="80" y="212" font-family="Arial, sans-serif" font-size="12" fill="#475569">
+    <tspan x="80" dy="0">Use metrics and numbers to showcase</tspan>
+    <tspan x="80" dy="16">impact. Instead of "Built APIs", say "Built</tspan>
+    <tspan x="80" dy="16">RESTful APIs handling 50K+ requests with</tspan>
+    <tspan x="80" dy="16">99.9% uptime".</tspan>
+  </text>
+  
+  <!-- Best Practices Applied -->
+  <text x="35" y="305" font-family="Arial, sans-serif" font-size="13" font-weight="600" fill="#10b981">
+    ▼ {3} best practices applied
+  </text>
+  
+  <!-- Success Item 1 -->
+  <circle cx="48" cy="340" r="12" fill="#bbf7d0"/>
+  <path d="M 44 340 L 47 343 L 52 336" stroke="#16a34a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <text x="70" y="346" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#1e293b">
+    Action Verbs Used
+  </text>
+  
+  <!-- PRO Badge -->
+  <rect x="235" y="332" width="45" height="20" fill="#e0e7ff" rx="4"/>
+  <text x="257.5" y="346" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#4f46e5" text-anchor="middle">
+    PRO
+  </text>
+  
+  <rect x="70" y="357" width="310" height="65" fill="#f1f5f9" rx="8"/>
+  <text x="80" y="377" font-family="Arial, sans-serif" font-size="12" fill="#475569">
+    <tspan x="80" dy="0">Strong verbs like "Led", "Built",</tspan>
+    <tspan x="80" dy="16">"Developed", "Optimized" effectively</tspan>
+    <tspan x="80" dy="16">showcase your contributions.</tspan>
+  </text>
+  
+  <!-- Success Item 2 -->
+  <circle cx="48" cy="460" r="12" fill="#bbf7d0"/>
+  <path d="M 44 460 L 47 463 L 52 456" stroke="#16a34a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <text x="70" y="466" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#1e293b">
+    Relevant Technical Skills
+  </text>
+  
+  <rect x="70" y="477" width="310" height="65" fill="#f1f5f9" rx="8"/>
+  <text x="80" y="497" font-family="Arial, sans-serif" font-size="12" fill="#475569">
+    <tspan x="80" dy="0">Well-organized skills section with</tspan>
+    <tspan x="80" dy="16">Frontend, Backend, Database, and</tspan>
+    <tspan x="80" dy="16">DevOps categories.</tspan>
+  </text>
+  
+  <!-- Success Item 3 -->
+  <circle cx="48" cy="575" r="12" fill="#bbf7d0"/>
+  <path d="M 44 575 L 47 578 L 52 571" stroke="#16a34a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <text x="70" y="581" font-family="Arial, sans-serif" font-size="15" font-weight="600" fill="#1e293b">
+    Clear Project Descriptions
+  </text>
+  
+  <rect x="70" y="592" width="310" height="30" fill="#f1f5f9" rx="8"/>
+  <text x="80" y="612" font-family="Arial, sans-serif" font-size="12" fill="#475569">
+    <tspan x="80" dy="0">Projects include tech stack and outcomes.</tspan>
+  </text>
+</svg>

@@ -5,11 +5,9 @@ import { Outlet } from 'react-router-dom'
 
 const MainLayout: React.FC = () => {
     return (
-        <div className="Mainlayout flex h-svh">
+        <div className="Mainlayout flex flex-col min-h-screen bg-bg-gray-1 dark:bg-dark-bg-gray-1 cursor-default">
             <Navbar />
-            <div>
                 <Outlet />
-            </div>
             <Footer />
         </div>
     )
