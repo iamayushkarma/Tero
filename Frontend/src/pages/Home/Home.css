@@ -5,20 +5,24 @@
 }
 
 .bg-checker-blue::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -100%;
   left: -100%;
   width: 300%;
   height: 300%;
   pointer-events: none;
-  background-image: 
+  background-image:
     linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
     linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
     linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
     linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
-background-size: 130px 130px;
-background-position: 0 0, 0 65px, 65px -65px, -65px 0px;
+  background-size: 130px 130px;
+  background-position:
+    0 0,
+    0 65px,
+    65px -65px,
+    -65px 0px;
   transform: rotate(-20deg);
   transform-origin: center;
 }
@@ -27,6 +31,10 @@ background-position: 0 0, 0 65px, 65px -65px, -65px 0px;
   .bg-checker-blue::before {
     background-size: 90px 90px;
     pointer-events: none;
-    background-position: 0 0, 0 45px, 45px -45px, -45px 0px;
+    background-position:
+      0 0,
+      0 45px,
+      45px -45px,
+      -45px 0px;
   }
 }

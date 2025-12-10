@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -9,7 +8,7 @@ html {
 
   height: 100%;
   font-size: 16px;
-  background-color: #FCFCFD; /* bg-gray-1 */
+  background-color: #fcfcfd; /* bg-gray-1 */
 }
 
 html.dark {
@@ -20,7 +19,7 @@ html.dark {
 }
 
 body {
- font-family: "Inter", sans-serif;
+  font-family: "Inter", sans-serif;
 
   height: 100%;
   margin: 0;
@@ -30,130 +29,122 @@ body {
 }
 
 /* Removes default padding from all elements */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
 @theme {
-
   /*> Brand Colors*/
   --color-primary: oklch(59.27% 0.223 258.45);
-  --color-primary-hover: oklch(54% 0.223 258.45);  /* slightly darker */
+  --color-primary-hover: oklch(54% 0.223 258.45); /* slightly darker */
 
-  --color-secondary: oklch(70% 0.05 250);      /* slate blue-gray */
+  --color-secondary: oklch(70% 0.05 250); /* slate blue-gray */
   --color-secondary-hover: oklch(65% 0.05 250);
 
   /* Background */
-  --color-bg-blue-1: oklch(99.3% 0.0037 258.5);  /* #FBFDFF */
-  --color-bg-blue-2: oklch(98.2% 0.0113 258.5);  /* #F4F9FF */
-  --color-bg-gray-1: oklch(99.1% 0.0015 277.7);  /* #FCFCFD */
-  --color-bg-gray-2: oklch(98.2% 0.003 277.7);   /* #F9F9FB */
-
+  --color-bg-blue-1: oklch(99.3% 0.0037 258.5); /* #FBFDFF */
+  --color-bg-blue-2: oklch(98.2% 0.0113 258.5); /* #F4F9FF */
+  --color-bg-gray-1: oklch(99.1% 0.0015 277.7); /* #FCFCFD */
+  --color-bg-gray-2: oklch(98.2% 0.003 277.7); /* #F9F9FB */
 
   /*> Accent colors */
-  --color-accent-gold: oklch(85.58% 0.122 84.38);  /* #F5C96C*/
+  --color-accent-gold: oklch(85.58% 0.122 84.38); /* #F5C96C*/
 
   /*> Interactive Colors — Blue (Steps 3–5)  */
   /* Blue 3 — subtle hover */
-  --color-blue-3: oklch(96% 0.0235 258.5);       /* #E8F3FF */
+  --color-blue-3: oklch(96% 0.0235 258.5); /* #E8F3FF */
   /* Blue 4 — interactive surfaces */
-  --color-blue-4: oklch(93.7% 0.0441 258.5);     /* #D9ECFF */
+  --color-blue-4: oklch(93.7% 0.0441 258.5); /* #D9ECFF */
   /* Blue 5 — stronger active/selected surface */
-  --color-blue-5: oklch(90.6% 0.064 258.5);      /* #C6E2FF */
+  --color-blue-5: oklch(90.6% 0.064 258.5); /* #C6E2FF */
 
   /* Interactive Colors — Gray (Steps 3–5)  */
   /* Gray 3 — subtle hover / neutral tint */
-  --color-gray-3: oklch(95.6% 0.0045 277.7);     /* #EFF0F3 */
+  --color-gray-3: oklch(95.6% 0.0045 277.7); /* #EFF0F3 */
   /* Gray 4 — interactive surfaces (neutral) */
-  --color-gray-4: oklch(93.1% 0.0061 277.7);     /* #E7E8EC */
+  --color-gray-4: oklch(93.1% 0.0061 277.7); /* #E7E8EC */
   /* Gray 5 — strong neutral for selected */
-  --color-gray-5: oklch(91% 0.0077 277.7);       /* #E0E1E6 */
-
+  --color-gray-5: oklch(91% 0.0077 277.7); /* #E0E1E6 */
 
   /*> Borders & Separators — Blue */
   /* Blue 6 — light border on blue surfaces */
-  --color-blue-6: oklch(86.4% 0.0827 258.5);    /* #B1D4FF */
+  --color-blue-6: oklch(86.4% 0.0827 258.5); /* #B1D4FF */
   /* Blue 7 — stronger border */
-  --color-blue-7: oklch(80.9% 0.106 258.5);     /* #96C2FF */
+  --color-blue-7: oklch(80.9% 0.106 258.5); /* #96C2FF */
   /* Blue 8 — focus rings, strong separators */
-  --color-blue-8: oklch(73.4% 0.1447 258.5);    /* #6EA9FF */
+  --color-blue-8: oklch(73.4% 0.1447 258.5); /* #6EA9FF */
 
   /* Borders & Separators — Gray (Steps 6–8) */
   /* Gray 6 — light neutral border */
-  --color-gray-6: oklch(88.8% 0.0093 277.7);    /* #D8D9E0 */
+  --color-gray-6: oklch(88.8% 0.0093 277.7); /* #D8D9E0 */
   /* Gray 7 — medium border */
-  --color-gray-7: oklch(85.3% 0.0117 277.7);    /* #CDCED7 */
+  --color-gray-7: oklch(85.3% 0.0117 277.7); /* #CDCED7 */
   /* Gray 8 — strong border, disabled text */
-  --color-gray-8: oklch(79.4% 0.016 277.7);     /* #B9BBC6 */
-
+  --color-gray-8: oklch(79.4% 0.016 277.7); /* #B9BBC6 */
 
   /*> Solid Colors — Blue (Steps 9–10)       */
   /* Blue 9 — Main primary button color */
-  --color-blue-9: oklch(59.3% 0.2234 258.5);    /* #0175FF */
+  --color-blue-9: oklch(59.3% 0.2234 258.5); /* #0175FF */
   /* Blue 10 — Hover/pressed solid button */
-  --color-blue-10: oklch(54.9% 0.2268 258.5);   /* #0066F2 */
+  --color-blue-10: oklch(54.9% 0.2268 258.5); /* #0066F2 */
 
   /* Solid Colors — Gray (Steps 9–10)       */
   /* Gray 9 — disabled text / subdued icons */
-  --color-gray-9: oklch(64.6% 0.0165 277.7);    /* #8B8D98 */
+  --color-gray-9: oklch(64.6% 0.0165 277.7); /* #8B8D98 */
   /* Gray 10 — disabled button backgrounds */
-  --color-gray-10: oklch(61% 0.0161 277.7);     /* #80828D */
-
+  --color-gray-10: oklch(61% 0.0161 277.7); /* #80828D */
 
   /*> Text Colors — Blue (Steps 11–12)        */
   /* Blue 11 — secondary text, links */
-  --color-blue-11: oklch(55.3% 0.2234 258.5);    /* #0068F1 */
+  --color-blue-11: oklch(55.3% 0.2234 258.5); /* #0068F1 */
   /* Blue 12 — high-contrast text */
-  --color-blue-12: oklch(32.3% 0.1157 258.5);    /* #04306D */
+  --color-blue-12: oklch(32.3% 0.1157 258.5); /* #04306D */
 
   /* Text Colors — Gray (Steps 11–12)        */
   /* Gray 11 — secondary text / labels / icons */
-  --color-gray-11: oklch(50.3% 0.0139 277.7);    /* #62636C */
+  --color-gray-11: oklch(50.3% 0.0139 277.7); /* #62636C */
   /* Gray 12 — primary text / headings */
-  --color-gray-12: oklch(24.1% 0.0099 277.7);    /* #1E1F24 */
+  --color-gray-12: oklch(24.1% 0.0099 277.7); /* #1E1F24 */
 
-  
   /*-  Dark mode colors  */
   /*> Background Colors (Blue & Gray 1–2)     */
-  --color-dark-bg-blue-1: oklch(17.8% 0.0247 266.8);   /* #0C111C */
-  --color-dark-bg-blue-2: oklch(20.7% 0.0302 266.8);   /* #111725 */
+  --color-dark-bg-blue-1: oklch(17.8% 0.0247 266.8); /* #0C111C */
+  --color-dark-bg-blue-2: oklch(20.7% 0.0302 266.8); /* #111725 */
 
-  --color-dark-bg-gray-1: oklch(17.8% 0.0042 277.7);   /* #111113 */
-  --color-dark-bg-gray-2: oklch(21.5% 0.004 277.7);    /* #19191B */
+  --color-dark-bg-gray-1: oklch(17.8% 0.0042 277.7); /* #111113 */
+  --color-dark-bg-gray-2: oklch(21.5% 0.004 277.7); /* #19191B */
 
-  
   /*> Interactive Colors (Blue 3–5)           */
-  --color-dark-blue-3: oklch(27.1% 0.0694 266.8);      /* #172448 */
-  --color-dark-blue-4: oklch(31.8% 0.0933 266.8);      /* #1D2E61 */
-  --color-dark-blue-5: oklch(36.1% 0.1046 266.8);      /* #243974 */
+  --color-dark-blue-3: oklch(27.1% 0.0694 266.8); /* #172448 */
+  --color-dark-blue-4: oklch(31.8% 0.0933 266.8); /* #1D2E61 */
+  --color-dark-blue-5: oklch(36.1% 0.1046 266.8); /* #243974 */
   /* Interactive Colors (Gray 3–5)           */
-  --color-dark-gray-3: oklch(25.5% 0.0055 277.7);      /* #222325 */
-  --color-dark-gray-4: oklch(28.4% 0.0075 277.7);      /* #292A2E */
-  --color-dark-gray-5: oklch(31.4% 0.0089 277.7);      /* #303136 */
-
+  --color-dark-gray-3: oklch(25.5% 0.0055 277.7); /* #222325 */
+  --color-dark-gray-4: oklch(28.4% 0.0075 277.7); /* #292A2E */
+  --color-dark-gray-5: oklch(31.4% 0.0089 277.7); /* #303136 */
 
   /*> Borders & Separators (Blue 6–8)         */
-  --color-dark-blue-6: oklch(40.4% 0.1106 266.8);      /* #2D4484 */
-  --color-dark-blue-7: oklch(45% 0.1203 266.8);        /* #375098 */
-  --color-dark-blue-8: oklch(50.3% 0.1373 266.8);      /* #405EB2 */
+  --color-dark-blue-6: oklch(40.4% 0.1106 266.8); /* #2D4484 */
+  --color-dark-blue-7: oklch(45% 0.1203 266.8); /* #375098 */
+  --color-dark-blue-8: oklch(50.3% 0.1373 266.8); /* #405EB2 */
   /* Borders & Separators (Gray 6–8)         */
-  --color-dark-gray-6: oklch(35% 0.01 277.7);          /* #393A40 */
-  --color-dark-gray-7: oklch(40.2% 0.0121 277.7);      /* #46484F */
-  --color-dark-gray-8: oklch(49.2% 0.0157 277.7);      /* #5F606A */
-
+  --color-dark-gray-6: oklch(35% 0.01 277.7); /* #393A40 */
+  --color-dark-gray-7: oklch(40.2% 0.0121 277.7); /* #46484F */
+  --color-dark-gray-8: oklch(49.2% 0.0157 277.7); /* #5F606A */
 
   /*> Solid Colors (Blue 9–10)                */
-  --color-dark-blue-9: oklch(54.3% 0.1913 266.8);      /* #3D63DD */
-  --color-dark-blue-10: oklch(49.7% 0.1373 266.8);     /* #3F5CB0 */
+  --color-dark-blue-9: oklch(54.3% 0.1913 266.8); /* #3D63DD */
+  --color-dark-blue-10: oklch(49.7% 0.1373 266.8); /* #3F5CB0 */
   /* Solid Colors (Gray 9–10)                */
-  --color-dark-gray-9: oklch(54% 0.0167 277.7);        /* #6C6E79 */
-  --color-dark-gray-10: oklch(58.6% 0.0165 277.7);     /* #797B86 */
-
+  --color-dark-gray-9: oklch(54% 0.0167 277.7); /* #6C6E79 */
+  --color-dark-gray-10: oklch(58.6% 0.0165 277.7); /* #797B86 */
 
   /*> Text Colors (Blue 11–12)                */
-  --color-dark-blue-11: oklch(77.7% 0.1234 266.8);     /* #93B4FF */
-  --color-dark-blue-12: oklch(91.1% 0.0428 266.8);     /* #D5E2FF */
+  --color-dark-blue-11: oklch(77.7% 0.1234 266.8); /* #93B4FF */
+  --color-dark-blue-12: oklch(91.1% 0.0428 266.8); /* #D5E2FF */
   /* Text Colors (Gray 11–12)                */
-  --color-dark-gray-11: oklch(77% 0.0138 277.7);       /* #B2B3BD */
-  --color-dark-gray-12: oklch(94.9% 0.0026 277.7);     /* #EEEEF0 */
+  --color-dark-gray-11: oklch(77% 0.0138 277.7); /* #B2B3BD */
+  --color-dark-gray-12: oklch(94.9% 0.0026 277.7); /* #EEEEF0 */
 }
