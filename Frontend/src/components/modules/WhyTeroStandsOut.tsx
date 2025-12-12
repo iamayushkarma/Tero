@@ -31,7 +31,7 @@ function WhyTeroStandsOut() {
     <section className="mt-30 p-4 md:p-10">
       {/* Heading */}
       <div className="flex items-center justify-center p-2 text-center font-semibold">
-        <h2 className="text-gray-12 dark:text-bg-gray-1 w-3/4 text-xl sm:text-2xl md:text-3xl lg:text-4xl">
+        <h2 className="text-gray-12 dark:text-bg-gray-1 text-2xl md:text-3xl lg:text-4xl">
           A Practical Tool for Better Resume Analysis
         </h2>
       </div>
