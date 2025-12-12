@@ -1,7 +1,7 @@
-import "./Home.css";
+import "./Modules.css";
 import { TrendingUp, Sparkles } from "lucide-react";
-import HeroBadge from "../../components/ui/HeroBadge";
-import FileUploder from "../../components/ui/FileUploder";
+import HeroBadge from "../ui/HeroBadge";
+import FileUploder from "../ui/FileUploder";
 
 function HeroSection() {
   return (
