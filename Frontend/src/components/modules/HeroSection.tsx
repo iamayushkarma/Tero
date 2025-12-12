@@ -5,7 +5,7 @@ import FileUploder from "../ui/FileUploder";
 
 function HeroSection() {
   return (
-    <div className="mt-4 flex w-full items-center justify-center sm:mt-8">
+    <section className="mt-4 flex w-full items-center justify-center sm:mt-8">
       {/* Main section with blue bg */}
       <div className="bg-checker-blue box-border flex w-[97%] items-center rounded-2xl p-5 max-sm:h-150 md:p-10">
         {/* Heading portion */}
@@ -13,10 +13,10 @@ function HeroSection() {
           {/* Heading badge */}
           <HeroBadge />
           {/* Heading Section */}
-          <h2 className="text-bg-gray-1 mt-4 text-left text-[1.68rem] font-medium md:text-center md:text-4xl lg:text-left lg:text-5xl">
+          <h1 className="text-bg-gray-1 mt-4 text-left text-[1.68rem] font-medium md:text-center md:text-4xl lg:text-left lg:text-6xl">
             Better Understanding. Better Decisions. Better Resume
-          </h2>
-          <p className="text-gray-3 mt-5 mb-8 text-[.9rem] sm:text-[1rem] md:w-3/4 md:text-[1.1rem]">
+          </h1>
+          <p className="text-gray-3 mt-5 mb-8 text-[.9rem] sm:text-[1rem] md:w-3/4 md:text-[1.1rem] lg:text-[1.3rem]">
             Tero highlights what’s working in your resume and what could be stronger, offering
             simple suggestions to help you refine it with confidence.
           </p>
@@ -39,7 +39,7 @@ function HeroSection() {
         </div>
         {/* Resume image section */}
         <div className="hidden w-[60%] items-center justify-center lg:flex">
-          <div className="resume-image relative max-w-120 max-[1200px]:max-w-96">
+          <figure className="resume-image relative max-w-120 max-[1200px]:max-w-96">
             <img
               src="/assets/mr-stark-resume.svg"
               alt="Resume Preview"
@@ -55,10 +55,10 @@ function HeroSection() {
                 className="mx-auto w-full"
               />
             </div>
-          </div>
+          </figure>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 export default HeroSection;

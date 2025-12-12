@@ -40,7 +40,7 @@ function FileUploder() {
     console.log("File Size (bytes):", droppedFile.size);
   };
   return (
-    <div className="bg-gray-3 mt-6 flex h-30 w-86 items-center justify-center rounded-lg p-2">
+    <section className="bg-gray-3 mt-6 flex h-30 w-86 items-center justify-center rounded-lg p-2 md:h-36 md:w-102">
       <div
         onClick={handleClick}
         onDragOver={handleDrag}
@@ -64,7 +64,7 @@ function FileUploder() {
           onChange={handleFileChange}
         />
       </div>
-    </div>
+    </section>
   );
 }
 
