@@ -1,10 +1,12 @@
 import HowItWorks from "../../components/modules/HowItWorks";
 import HeroSection from "../../components/modules/HeroSection";
+import WhyTeroStandsOut from "../../components/modules/WhyTeroStandsOut";
 
 function Home() {
   return (
     <div className="mt-16">
       <HeroSection />
+      <WhyTeroStandsOut />
       <HowItWorks />
       {/* Problem Section 
       How It Works 

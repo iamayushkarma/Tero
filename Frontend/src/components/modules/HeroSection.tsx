@@ -16,7 +16,7 @@ function HeroSection() {
           <h2 className="text-bg-gray-1 mt-4 text-left text-[1.68rem] font-medium md:text-center md:text-4xl lg:text-left lg:text-5xl">
             Better Understanding. Better Decisions. Better Resume
           </h2>
-          <p className="text-gray-3 mt-5 mb-8 text-[.8rem] sm:text-[1rem] md:w-3/4 md:text-[1.1rem]">
+          <p className="text-gray-3 mt-5 mb-8 text-[.9rem] sm:text-[1rem] md:w-3/4 md:text-[1.1rem]">
             Tero highlights what’s working in your resume and what could be stronger, offering
             simple suggestions to help you refine it with confidence.
           </p>
@@ -43,7 +43,7 @@ function HeroSection() {
             <img
               src="/assets/mr-stark-resume.svg"
               alt="Resume Preview"
-              className="mx-auto w-[480px] max-w-full"
+              className="mx-auto w-120 max-w-full"
             />
             <div className="absolute top-[8%] right-[-27%] w-[43%] max-w-[220px] rounded-md bg-white shadow-lg max-[1200px]:max-w-[180px]">
               <img src="/assets/resume-score.svg" alt="Resume Preview" className="mx-auto w-full" />

@@ -1,0 +1,169 @@
+<svg viewBox="0 0 800 1100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1100" fill="#ffffff"/>
+  
+  <!-- Header -->
+  <text x="400" y="60" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="#1f2937">
+    Mr. Stark
+  </text>
+  
+  <!-- Contact Info -->
+  <text x="400" y="90" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#6b7280">
+    📍 San Francisco, CA | ✉ tony.stark@tech.com | 📞 (415) 555-0199 | 🔗 linkedin.com/in/mrstark
+  </text>
+  
+  <!-- Divider Line -->
+  <line x1="50" y1="110" x2="750" y2="110" stroke="#e5e7eb" stroke-width="1"/>
+  
+  <!-- SUMMARY Section -->
+  <text x="50" y="145" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1f2937">
+    SUMMARY
+  </text>
+  <line x1="50" y1="150" x2="750" y2="150" stroke="#1f2937" stroke-width="2"/>
+  
+  <text x="50" y="175" font-family="Arial, sans-serif" font-size="11" fill="#374151">
+    <tspan x="50" dy="0">Full Stack Developer with 5+ years of experience building scalable web applications using modern</tspan>
+    <tspan x="50" dy="16">frameworks. Expert in React, Node.js, and cloud technologies with a proven track record of delivering</tspan>
+    <tspan x="50" dy="16">high-performance solutions and leading cross-functional teams in agile environments.</tspan>
+  </text>
+  
+  <!-- EXPERIENCE Section -->
+  <text x="50" y="240" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1f2937">
+    EXPERIENCE
+  </text>
+  <line x1="50" y1="245" x2="750" y2="245" stroke="#1f2937" stroke-width="2"/>
+  
+  <!-- Job 1 -->
+  <text x="50" y="270" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2937">
+    Senior Full Stack Developer | Stark Industries | San Francisco, CA | March 2021 - Present
+  </text>
+  
+  <!-- Highlighted bullet points -->
+
+  <text x="60" y="293" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Led development of microservices architecture serving 2M+ users, reducing API response time by 60%
+  </text>
+  
+  <text x="60" y="311" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Built and deployed React-based dashboard with real-time data visualization using WebSockets and D3.js
+  </text>
+  
+  <text x="60" y="329" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Implemented CI/CD pipelines using Jenkins and Docker, cutting deployment time by 40%
+  </text>
+  <text x="60" y="345" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Mentored 5 junior developers and conducted code reviews to maintain high code quality standards
+  </text>
+  
+  <!-- Job 2 -->
+  <text x="50" y="375" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2937">
+    Full Stack Developer | Tech Corp | San Francisco, CA | June 2019 - March 2021
+  </text>
+  
+  <text x="60" y="398" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Developed RESTful APIs using Node.js and Express, handling 50K+ daily requests with 99.9% uptime
+  </text>
+  
+  <text x="60" y="416" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Created responsive web applications using React, Redux, and TypeScript for optimal user experience
+  </text>
+  <text x="60" y="432" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Optimized database queries in PostgreSQL and MongoDB, improving data retrieval speed by 35%
+  </text>
+  
+  <!-- Job 3 -->
+  <text x="50" y="462" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2937">
+    Junior Developer | StartUp Labs | San Francisco, CA | January 2018 - June 2019
+  </text>
+  
+  <text x="60" y="483" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Collaborated with design team to implement pixel-perfect UI components using Vue.js and Tailwind CSS
+  </text>
+  <text x="60" y="499" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Integrated third-party APIs (Stripe, AWS S3, SendGrid) for payment processing and email services
+  </text>
+  <text x="60" y="515" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Participated in agile sprints and daily standups, contributing to successful product launches
+  </text>
+  
+  <!-- PROJECTS Section -->
+  <text x="50" y="555" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1f2937">
+    PROJECTS
+  </text>
+  <line x1="50" y1="560" x2="750" y2="560" stroke="#1f2937" stroke-width="2"/>
+  
+  <text x="50" y="585" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2937">
+    E-Commerce Platform | React, Node.js, MongoDB, Stripe | 2022
+  </text>
+  <text x="60" y="606" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Built full-featured online store with shopping cart, payment integration, and admin dashboard
+  </text>
+  <text x="60" y="622" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Implemented JWT authentication and role-based access control for security
+  </text>
+  
+  <text x="50" y="652" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2937">
+    Real-Time Chat Application | Socket.io, Express, React | 2021
+  </text>
+  <text x="60" y="673" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Developed instant messaging app with file sharing, typing indicators, and message history
+  </text>
+  <text x="60" y="689" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    • Deployed on AWS EC2 with Redis for session management and horizontal scaling
+  </text>
+  
+  <!-- EDUCATION Section -->
+  <text x="50" y="729" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1f2937">
+    EDUCATION
+  </text>
+  <line x1="50" y1="734" x2="750" y2="734" stroke="#1f2937" stroke-width="2"/>
+  
+  <text x="50" y="759" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1f2937">
+    Bachelor of Science in Computer Science | MIT | Cambridge, MA | 2017
+  </text>
+  
+  <!-- CERTIFICATIONS Section -->
+  <text x="50" y="799" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1f2937">
+    CERTIFICATIONS
+  </text>
+  <line x1="50" y1="804" x2="750" y2="804" stroke="#1f2937" stroke-width="2"/>
+  
+  <text x="50" y="829" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    AWS Certified Solutions Architect - Associate | Amazon Web Services | 2022
+  </text>
+  <text x="50" y="847" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    MongoDB Certified Developer | MongoDB University | 2021
+  </text>
+  
+  <!-- SKILLS Section -->
+  <text x="50" y="887" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1f2937">
+    TECHNICAL SKILLS
+  </text>
+  <line x1="50" y1="892" x2="750" y2="892" stroke="#1f2937" stroke-width="2"/>
+  
+  <text x="50" y="917" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    <tspan font-weight="bold">Frontend:</tspan> React, Vue.js, Angular, TypeScript, JavaScript (ES6+), HTML5, CSS3, Tailwind CSS, Bootstrap
+  </text>
+  <text x="50" y="935" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    <tspan font-weight="bold">Backend:</tspan> Node.js, Express, Python, Django, RESTful APIs, GraphQL, WebSockets, Microservices
+  </text>
+  <text x="50" y="953" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    <tspan font-weight="bold">Database:</tspan> PostgreSQL, MongoDB, MySQL, Redis, Elasticsearch
+  </text>
+  <text x="50" y="971" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    <tspan font-weight="bold">DevOps:</tspan> Docker, Kubernetes, Jenkins, GitHub Actions, AWS (EC2, S3, Lambda), Azure, CI/CD
+  </text>
+  <text x="50" y="989" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    <tspan font-weight="bold">Tools:</tspan> Git, Webpack, npm, Jest, Mocha, Postman, Jira, Agile/Scrum
+  </text>
+  
+  <!-- SOFT SKILLS Section -->
+  <text x="50" y="1029" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1f2937">
+    SOFT SKILLS
+  </text>
+  <line x1="50" y1="1034" x2="750" y2="1034" stroke="#1f2937" stroke-width="2"/>
+  
+  <text x="50" y="1059" font-family="Arial, sans-serif" font-size="11" fill="#1f2937">
+    Problem Solving, Team Leadership, Agile Methodologies, Technical Communication, Code Review, Mentoring
+  </text>
+</svg>
