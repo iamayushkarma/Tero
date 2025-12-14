@@ -60,7 +60,7 @@ function FileUploder() {
           type="file"
           ref={fileUploadRef}
           className="hidden"
-          accept=".pdf,.doc,.docx"
+          accept=".pdf,.docx"
           onChange={handleFileChange}
         />
       </div>
