@@ -64,7 +64,7 @@ const featureCardContent = [
     iconColor: "#F472B6",
     bgClass: "bg-pink-100 dark:bg-[#4A2436]",
     heading: "Language & Style Checks",
-    info: "Identify passive voice, clichés, and weak phrasing that reduce resume impact.",
+    info: "Spots weak wording, overused phrases, and passive sentences that make your resume less effective.",
   },
   {
     icon: ListChecks,
@@ -98,10 +98,10 @@ function HowItWorks() {
           <p>Our Features</p>
         </span>
 
-        <h2 className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.1rem] font-medium md:w-1/2 lg:text-4xl">
+        <h2 className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.19rem] font-medium md:w-1/2 lg:text-4xl">
           Smart resume analysis focused on issues recruiters and ATS notice first
         </h2>
-        <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center md:w-[40%] lg:text-lg">
+        <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-lg">
           Evaluate content, formatting, and relevance to improve how your resume performs during
           initial screening.
         </p>
@@ -122,10 +122,10 @@ export default HowItWorks;
 
 const FeatureCard = ({ icon: Icon, iconColor, bgClass, heading, info }: FeatureCardProps) => {
   return (
-    <div className="border-gray-5 dark:border-gray-11 rounded-lg border-2 p-3 md:p-6">
+    <div className="border-gray-5 dark:border-gray-11 rounded-lg border-2 p-4 md:p-6">
       <div>
-        <div className={`w-fit rounded-lg p-3 transition-colors ${bgClass}`}>
-          <Icon className={`h-6 w-6`} style={{ color: iconColor }} />
+        <div className={`w-fit rounded-lg p-2.5 transition-colors md:p-3 ${bgClass}`}>
+          <Icon className="h-4 w-4 md:h-6 md:w-6" style={{ color: iconColor }} />
         </div>
       </div>
       <div className="mt-6">
