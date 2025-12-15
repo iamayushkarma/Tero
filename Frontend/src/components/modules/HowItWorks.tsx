@@ -12,64 +12,64 @@ import {
 interface FeatureCardProps {
   icon: React.ElementType;
   iconColor: string;
-  iconBgColor: string;
+  bgClass: string;
   heading: string;
   info: string;
 }
 const featureCardContent = [
   {
     icon: Gauge,
-    iconColor: "#c62a30",
-    iconBgColor: "#fde2e0",
+    iconColor: "#EF4444",
+    bgClass: "bg-red-100 dark:bg-[#3A1F22]",
     heading: "ATS Resume Score",
     info: "Measure how well your resume aligns with modern ATS parsing and screening standards.",
   },
   {
     icon: Puzzle,
-    iconColor: "#305dbd",
-    iconBgColor: "#ddeaff",
+    iconColor: "#3B82F6",
+    bgClass: "bg-blue-100 dark:bg-[#1C2F45]",
     heading: "Skill Match Analysis",
     info: "Compare your skills with job requirements to identify matches, gaps, and weak areas.",
   },
   {
     icon: SearchCheck,
-    iconColor: "#227a45",
-    iconBgColor: "#ddfce6",
+    iconColor: "#22C55E",
+    bgClass: "bg-green-100 dark:bg-[#1F4D3A]",
     heading: "Keyword Coverage",
     info: "Analyze job-specific keywords and see what’s missing or overused in your resume.",
   },
   {
     icon: Layers,
-    iconColor: "#996203",
-    iconBgColor: "#fdfac2",
+    iconColor: "#F59E0B",
+    bgClass: "bg-yellow-100 dark:bg-[#4A3A1E]",
     heading: "Section-Wise Resume Review",
     info: "Evaluate each resume section separately, including experience, skills, projects, and education.",
   },
   {
     icon: TextAlignCenter,
-    iconColor: "#813dc1",
-    iconBgColor: "#f5e8ff",
+    iconColor: "#A855F7",
+    bgClass: "bg-purple-100 dark:bg-[#3A2A4A]",
     heading: "Formatting & Readability",
     info: "Check layout, spacing, and structure to ensure your resume is easy to scan.",
   },
   {
     icon: Briefcase,
-    iconColor: "#b35112",
-    iconBgColor: "#ffeed9",
+    iconColor: "#FB923C",
+    bgClass: "bg-orange-100 dark:bg-[#4A2F1E]",
     heading: "Experience Relevance",
     info: "Assess how relevant your experience and projects are to the target role.",
   },
   {
     icon: SpellCheck,
-    iconColor: "#b42965",
-    iconBgColor: "#fbe8f1",
+    iconColor: "#F472B6",
+    bgClass: "bg-pink-100 dark:bg-[#4A2436]",
     heading: "Language & Style Checks",
     info: "Identify passive voice, clichés, and weak phrasing that reduce resume impact.",
   },
   {
     icon: ListChecks,
-    iconColor: "#4d5058",
-    iconBgColor: "#f1f6f7",
+    iconColor: "#9CA3AF",
+    bgClass: "bg-gray-100 dark:bg-[#2A2E35]",
     heading: "Resume Consistency",
     info: "Verify contact details, dates, section order, and overall resume completeness.",
   },
@@ -120,12 +120,12 @@ function HowItWorks() {
 
 export default HowItWorks;
 
-const FeatureCard = ({ icon: Icon, iconColor, iconBgColor, heading, info }: FeatureCardProps) => {
+const FeatureCard = ({ icon: Icon, iconColor, bgClass, heading, info }: FeatureCardProps) => {
   return (
     <div className="border-gray-5 dark:border-gray-11 rounded-lg border-2 p-3 md:p-6">
       <div>
-        <div className="w-fit rounded-lg p-3" style={{ backgroundColor: iconBgColor }}>
-          <Icon className="h-6 w-6" style={{ color: iconColor }} />
+        <div className={`w-fit rounded-lg p-3 transition-colors ${bgClass}`}>
+          <Icon className={`h-6 w-6`} style={{ color: iconColor }} />
         </div>
       </div>
       <div className="mt-6">
