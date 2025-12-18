@@ -38,7 +38,7 @@ function Footer() {
   ];
 
   return (
-    <div className="bg-gray-3 dark:bg-gray-12 text-gray-11 dark:text-gray-7 w-full p-8 pb-0 md:p-16">
+    <div className="bg-gray-3 dark:bg-gray-12 text-gray-11 dark:text-gray-7 z-10 w-full p-8 pb-0 md:p-16">
       <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
         {/* left section */}
         <div className="">
