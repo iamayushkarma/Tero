@@ -77,7 +77,7 @@ const featureCardContent = [
 
 function Features() {
   return (
-    <div className="mx-auto mt-20 mb-30 w-[95%] p-4">
+    <div className="mx-auto mb-30 w-[95%] p-4 pt-20">
       {/* Heading */}
       <div>
         <span className="text-primary border-gray-7 dark:border-gray-10 mx-auto flex w-fit items-center justify-center gap-2 rounded-lg border px-2 py-0.5 text-[.8rem] font-medium select-none md:text-[.9rem]">
@@ -98,7 +98,7 @@ function Features() {
           <p>Our Features</p>
         </span>
 
-        <h2 className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.19rem] font-medium md:w-1/2 lg:text-4xl">
+        <h2 className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.2rem] font-semibold md:w-1/2 lg:text-4xl">
           Smart resume analysis focused on issues recruiters and ATS notice first
         </h2>
         <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-lg">
@@ -132,7 +132,9 @@ const FeatureCard = ({ icon: Icon, iconColor, bgClass, heading, info }: FeatureC
         <h4 className="text-gray-12 dark:text-gray-3 text-[1rem] font-semibold sm:text-[1.1rem] md:text-[1.2rem] lg:text-[1.3rem]">
           {heading}
         </h4>
-        <p className="text-gray-11 dark:text-gray-9 mt-2">{info}</p>
+        <p className="text-gray-11 dark:text-gray-9 lg-text[1.1rem] mt-2 text-[.8rem] md:text-[1rem]">
+          {info}
+        </p>
       </div>
     </div>
   );
