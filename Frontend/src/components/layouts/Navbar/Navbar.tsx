@@ -8,7 +8,7 @@ function Navbar() {
   const { theme, toggleTheme } = useTheme();
   console.log(theme);
   return (
-    <div className="bg-bg-blue-1 dark:bg-dark-bg-blue-1 fixed z-50 flex h-16 w-full items-center justify-center py-3">
+    <div className="bg-bg-blue-1 fixed z-50 flex h-16 w-full items-center justify-center py-3 dark:bg-[#151518]">
       <div className="flex w-11/12 items-center justify-between">
         {/* Logo section */}
         <Link to="/">

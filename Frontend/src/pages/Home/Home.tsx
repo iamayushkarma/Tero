@@ -1,4 +1,5 @@
 import AIScoringExplanation from "../../components/modules/AIScoringExplanation";
+import FAQSection from "../../components/modules/FAQSection";
 import Features from "../../components/modules/Features";
 import HeroSection from "../../components/modules/HeroSection";
 import StartResumeScan from "../../components/modules/StartResumeScan";
@@ -12,6 +13,7 @@ function Home() {
       <AIScoringExplanation />
       <Features />
       <StartResumeScan />
+      <FAQSection />
     </div>
   );
 }
