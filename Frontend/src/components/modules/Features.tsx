@@ -16,62 +16,120 @@ interface FeatureCardProps {
   heading: string;
   info: string;
 }
+// const featureCardContent = [
+//   {
+//     icon: Gauge,
+//     iconColor: "#EF4444",
+//     bgClass: "bg-red-100 dark:bg-[#3A1F22]",
+//     heading: "ATS Resume Score",
+//     info: "Measure how well your resume aligns with modern ATS parsing and screening standards.",
+//   },
+//   {
+//     icon: Puzzle,
+//     iconColor: "#3B82F6",
+//     bgClass: "bg-blue-100 dark:bg-[#1C2F45]",
+//     heading: "Skill Match Analysis",
+//     info: "Compare your skills with job requirements to identify matches, gaps, and weak areas.",
+//   },
+//   {
+//     icon: SearchCheck,
+//     iconColor: "#22C55E",
+//     bgClass: "bg-green-100 dark:bg-[#1F4D3A]",
+//     heading: "Keyword Coverage",
+//     info: "Analyze job-specific keywords and see what’s missing or overused in your resume.",
+//   },
+//   {
+//     icon: Layers,
+//     iconColor: "#F59E0B",
+//     bgClass: "bg-yellow-100 dark:bg-[#4A3A1E]",
+//     heading: "Section-Wise Resume Review",
+//     info: "Evaluate each resume section separately, including experience, skills, projects, and education.",
+//   },
+//   {
+//     icon: TextAlignCenter,
+//     iconColor: "#A855F7",
+//     bgClass: "bg-purple-100 dark:bg-[#3A2A4A]",
+//     heading: "Formatting & Readability",
+//     info: "Check layout, spacing, and structure to ensure your resume is easy to scan.",
+//   },
+//   {
+//     icon: Briefcase,
+//     iconColor: "#FB923C",
+//     bgClass: "bg-orange-100 dark:bg-[#4A2F1E]",
+//     heading: "Experience Relevance",
+//     info: "Assess how relevant your experience and projects are to the target role.",
+//   },
+//   {
+//     icon: SpellCheck,
+//     iconColor: "#F472B6",
+//     bgClass: "bg-pink-100 dark:bg-[#4A2436]",
+//     heading: "Language & Style Checks",
+//     info: "Spots weak wording, overused phrases, and passive sentences that make your resume less effective.",
+//   },
+//   {
+//     icon: ListChecks,
+//     iconColor: "#9CA3AF",
+//     bgClass: "bg-gray-100 dark:bg-[#2A2E35]",
+//     heading: "Resume Consistency",
+//     info: "Verify contact details, dates, section order, and overall resume completeness.",
+//   },
+// ];
 const featureCardContent = [
   {
     icon: Gauge,
     iconColor: "#EF4444",
     bgClass: "bg-red-100 dark:bg-[#3A1F22]",
     heading: "ATS Resume Score",
-    info: "Measure how well your resume aligns with modern ATS parsing and screening standards.",
+    info: "Measure how well your resume aligns with modern ATS parsing and screening standards. Get a clear score that reflects how likely your resume is to pass automated filters.",
   },
   {
     icon: Puzzle,
     iconColor: "#3B82F6",
     bgClass: "bg-blue-100 dark:bg-[#1C2F45]",
     heading: "Skill Match Analysis",
-    info: "Compare your skills with job requirements to identify matches, gaps, and weak areas.",
+    info: "Compare your skills with job requirements to identify strong matches, gaps, and weak areas. This helps you focus on skills that matter most for the role.",
   },
   {
     icon: SearchCheck,
     iconColor: "#22C55E",
     bgClass: "bg-green-100 dark:bg-[#1F4D3A]",
     heading: "Keyword Coverage",
-    info: "Analyze job-specific keywords and see what’s missing or overused in your resume.",
+    info: "Analyze job-specific keywords and see what’s missing or overused in your resume. Ensure critical terms appear naturally in the right sections.",
   },
   {
     icon: Layers,
     iconColor: "#F59E0B",
     bgClass: "bg-yellow-100 dark:bg-[#4A3A1E]",
     heading: "Section-Wise Resume Review",
-    info: "Evaluate each resume section separately, including experience, skills, projects, and education.",
+    info: "Evaluate each resume section separately, including experience, skills, projects, and education. This ensures every section is clear, complete, and ATS-friendly.",
   },
   {
     icon: TextAlignCenter,
     iconColor: "#A855F7",
     bgClass: "bg-purple-100 dark:bg-[#3A2A4A]",
     heading: "Formatting & Readability",
-    info: "Check layout, spacing, and structure to ensure your resume is easy to scan.",
+    info: "Check layout, spacing, and structure to ensure your resume is easy to scan. Avoid formatting issues that can confuse ATS systems or recruiters.",
   },
   {
     icon: Briefcase,
     iconColor: "#FB923C",
     bgClass: "bg-orange-100 dark:bg-[#4A2F1E]",
     heading: "Experience Relevance",
-    info: "Assess how relevant your experience and projects are to the target role.",
+    info: "Assess how relevant your experience and projects are to the target role. The AI highlights areas that need clearer impact or better alignment.",
   },
   {
     icon: SpellCheck,
     iconColor: "#F472B6",
     bgClass: "bg-pink-100 dark:bg-[#4A2436]",
     heading: "Language & Style Checks",
-    info: "Spots weak wording, overused phrases, and passive sentences that make your resume less effective.",
+    info: "Identify weak wording, overused phrases, and passive sentences. Improve clarity and tone to make your resume more professional and impactful.",
   },
   {
     icon: ListChecks,
     iconColor: "#9CA3AF",
     bgClass: "bg-gray-100 dark:bg-[#2A2E35]",
     heading: "Resume Consistency",
-    info: "Verify contact details, dates, section order, and overall resume completeness.",
+    info: "Verify contact details, dates, section order, and overall completeness. Catch small inconsistencies that can reduce credibility during screening.",
   },
 ];
 
