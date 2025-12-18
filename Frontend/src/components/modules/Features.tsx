@@ -75,9 +75,9 @@ const featureCardContent = [
   },
 ];
 
-function HowItWorks() {
+function Features() {
   return (
-    <div className="mx-auto mt-20 w-[95%] p-4">
+    <div className="mx-auto mt-20 mb-30 w-[95%] p-4">
       {/* Heading */}
       <div>
         <span className="text-primary border-gray-7 dark:border-gray-10 mx-auto flex w-fit items-center justify-center gap-2 rounded-lg border px-2 py-0.5 text-[.8rem] font-medium select-none md:text-[.9rem]">
@@ -118,14 +118,14 @@ function HowItWorks() {
   );
 }
 
-export default HowItWorks;
+export default Features;
 
 const FeatureCard = ({ icon: Icon, iconColor, bgClass, heading, info }: FeatureCardProps) => {
   return (
-    <div className="border-gray-5 dark:border-gray-11 rounded-lg border-2 p-4 md:p-6">
+    <div className="border-gray-5 dark:border-gray-11 hover:bg-gray-3/60 dark:hover:bg-gray-12/40 rounded-lg border-2 p-4 md:p-6">
       <div>
         <div className={`w-fit rounded-lg p-2.5 transition-colors md:p-3 ${bgClass}`}>
-          <Icon className="h-4 w-4 md:h-6 md:w-6" style={{ color: iconColor }} />
+          <Icon aria-hidden className="h-4 w-4 md:h-6 md:w-6" style={{ color: iconColor }} />
         </div>
       </div>
       <div className="mt-6">

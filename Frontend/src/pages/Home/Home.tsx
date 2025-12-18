@@ -1,4 +1,4 @@
-import HowItWorks from "../../components/modules/HowItWorks";
+import Features from "../../components/modules/Features";
 import HeroSection from "../../components/modules/HeroSection";
 import WhyTeroStandsOut from "../../components/modules/WhyTeroStandsOut";
 
@@ -7,12 +7,9 @@ function Home() {
     <div className="mt-16">
       <HeroSection />
       <WhyTeroStandsOut />
-      <HowItWorks />
+      <Features />
       {/* Problem Section 
-      How It Works 
       Features Before/After Improvement (Optional)
-      Why Choose Tero 
-      Testimonials (Optional) 
       Bottom CTA Footer */}
     </div>
   );
