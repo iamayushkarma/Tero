@@ -11,7 +11,7 @@ function StartResumeScan() {
           <p className="text-gray-3 mt-5 mb-8 text-[.9rem] sm:text-[1rem] md:w-3/4 md:text-[1.1rem] lg:text-[1.3rem]">
             Upload your resume to get an instant ATS score and clear suggestions to improve it.
           </p>
-          <div className="">
+          <div>
             <FileUploder />
           </div>
         </div>
