@@ -180,7 +180,7 @@ export default Features;
 
 const FeatureCard = ({ icon: Icon, iconColor, bgClass, heading, info }: FeatureCardProps) => {
   return (
-    <div className="border-gray-5 dark:border-gray-11 hover:bg-gray-3/60 dark:hover:bg-gray-12/40 rounded-lg border-2 p-4 md:p-6">
+    <div className="border-gray-5 dark:border-gray-12 hover:bg-gray-3/60 dark:hover:bg-gray-12/40 rounded-lg border-2 p-4 md:p-6">
       <div>
         <div className={`w-fit rounded-lg p-2.5 transition-colors md:p-3 ${bgClass}`}>
           <Icon aria-hidden className="h-4 w-4 md:h-6 md:w-6" style={{ color: iconColor }} />

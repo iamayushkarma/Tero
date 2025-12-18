@@ -39,7 +39,7 @@ const explanationCardContent = [
 ];
 function AIScoringExplanation() {
   return (
-    <div className="mt-40 flex items-center justify-center pb-20">
+    <div className="mt-20 flex items-center justify-center pb-20">
       <div className="w-[95%]">
         {/* Heading */}
         <div className="mx-auto mt-20 flex flex-col items-center justify-center text-center">
@@ -75,7 +75,7 @@ export default AIScoringExplanation;
 const ExplanationCard = ({ className, imgSrc, heading, subHeading }: ExplanationCardProp) => {
   return (
     <div
-      className={` ${className} bg-bg-gray-1 dark:bg-gray-12 border-gray-5 dark:border-gray-11 hover:bg-gray-3/60 dark:hover:bg-gray-12/40 rounded-xl border-2 p-4 md:p-6`}
+      className={` ${className} bg-bg-gray-1 dark:bg-gray-12/10 border-gray-5 dark:border-gray-12 hover:bg-gray-3/60 dark:hover:bg-gray-12/40 rounded-xl border-2 p-4 md:p-6`}
     >
       <div className="flex items-center justify-center p-2 py-10">
         <img className="size-40 md:size-74" src={imgSrc} />
