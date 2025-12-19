@@ -52,7 +52,7 @@ function FileUploder() {
     console.log("File Size (bytes):", selectedFile.size);
   };
 
-  //> Drag and drop functionality
+  // Drag and drop functionality
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
@@ -82,6 +82,7 @@ function FileUploder() {
     console.log("File Size (bytes):", droppedFile.size);
   };
 
+  // Handle file upload
   const handleUpload = async (uploadFile: File) => {
     console.log("Uploading:", uploadFile.name);
     setError(null);
