@@ -1,0 +1,53 @@
+import mammoth from "mammoth";
+import { ApiResponse } from "../utils/api-response.js";
+import { asyncHandler } from "../utils/async-handler.js";
+
+// PDF
+const uploadResumeText = asyncHandler(async (req, res) => {
+  const { text } = req.body;
+
+  if (!text || text.trim().length === 0) {
+    return res.status(400).json(new ApiResponse(400, null, "Resume text is required"));
+  }
+
+  console.log("PDF resume received");
+  console.log("Text length:", text.length);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        textLength: text.length,
+        preview: text.slice(0, 300),
+      },
+      "Resume processed successfully",
+    ),
+  );
+});
+
+// DOCS
+const uploadResumeFile = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json(new ApiResponse(400, null, "Resume file is required"));
+  }
+
+  const result = await mammoth.extractRawText({
+    buffer: req.file.buffer,
+  });
+
+  console.log("DOCX resume received");
+  console.log("Text length:", result.value.length);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        textLength: result.value.length,
+        preview: result.value.slice(0, 300),
+      },
+      "Resume processed successfully",
+    ),
+  );
+});
+
+export { uploadResumeText, uploadResumeFile };

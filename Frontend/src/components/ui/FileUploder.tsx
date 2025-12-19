@@ -1,3 +1,4 @@
+import pdfToText from "react-pdftotext";
 import axios from "axios";
 import { Upload } from "lucide-react";
 import { useRef, useState, type ChangeEvent } from "react";
@@ -44,6 +45,7 @@ function FileUploder() {
     }
     setError(null);
     setFile(selectedFile);
+    handleUpload(selectedFile);
 
     console.log("File Name:", selectedFile.name);
     console.log("File Type:", selectedFile.type);
@@ -80,14 +82,31 @@ function FileUploder() {
     console.log("File Size (bytes):", droppedFile.size);
   };
 
-  const handleUpload = async () => {
-    if (!file) return;
+  const handleUpload = async (uploadFile: File) => {
+    console.log("Uploading:", uploadFile.name);
     setError(null);
-
-    const formData = new FormData();
-    formData.append("resume", file);
-
     try {
+      // Extract PDF text
+      if (uploadFile.type == "application/pdf") {
+        const extractedText = await pdfToText(uploadFile);
+
+        if (!extractedText || extractedText.trim().length === 0) {
+          setError("Unable to extract text from this PDF");
+          return;
+        }
+        console.log("PDF text length:", extractedText.length);
+
+        const response = await axios.post(`${serverUrl}resume/upload-text`, {
+          text: extractedText,
+        });
+        console.log("Backend response:", response.data);
+        return;
+      }
+
+      // Send extracted text to backend
+      const formData = new FormData();
+      formData.append("resume", uploadFile);
+
       const response = await axios.post(`${serverUrl}resume/upload`, formData);
       const data = response.data;
       if (data.success) {
