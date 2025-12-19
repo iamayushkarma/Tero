@@ -1,9 +1,30 @@
+import axios from "axios";
 import { Upload } from "lucide-react";
 import { useRef, useState, type ChangeEvent } from "react";
+import { serverUrl } from "../../utils/contants.ts";
 
 function FileUploder() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Validate file
+  const validateFile = (file: File): string | null => {
+    const allowedTypes = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (!allowedTypes.includes(file.type)) {
+      return "Only PDF and DOCX files are allowed";
+    }
+
+    // Check file size max 5MB
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return "File size must be less than 5MB";
+    }
+    return null;
+  };
 
   const fileUploadRef = useRef<HTMLInputElement | null>(null);
   const handleClick = () => {
@@ -13,7 +34,17 @@ function FileUploder() {
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
 
+    // Validate uploaded file
+    const errorMsg = validateFile(selectedFile);
+
+    if (errorMsg) {
+      setError(errorMsg);
+      setFile(null);
+      return;
+    }
+    setError(null);
     setFile(selectedFile);
+
     console.log("File Name:", selectedFile.name);
     console.log("File Type:", selectedFile.type);
     console.log("File Size (bytes):", selectedFile.size);
@@ -34,10 +65,39 @@ function FileUploder() {
     const droppedFile = e.dataTransfer.files?.[0];
     if (!droppedFile) return;
 
+    const errorMsg = validateFile(droppedFile);
+
+    if (errorMsg) {
+      setError(errorMsg);
+      setFile(null);
+      return;
+    }
+    setError(null);
+
     setFile(droppedFile);
     console.log("File Name:", droppedFile.name);
     console.log("File Type:", droppedFile.type);
     console.log("File Size (bytes):", droppedFile.size);
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+    setError(null);
+
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    try {
+      const response = await axios.post(`${serverUrl}resume/upload`, formData);
+      const data = response.data();
+      if (data.success) {
+        console.log("Analysis:", data.data);
+      } else {
+        setError(data.message || "Analysis failed");
+      }
+    } catch (err) {
+      setError("Upload failed. Please try again.");
+    }
   };
   return (
     <section className="bg-gray-3 mt-6 flex h-30 w-86 items-center justify-center rounded-lg p-2 md:h-36 md:w-102">
