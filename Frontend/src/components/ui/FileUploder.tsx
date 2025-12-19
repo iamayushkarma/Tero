@@ -89,7 +89,7 @@ function FileUploder() {
 
     try {
       const response = await axios.post(`${serverUrl}resume/upload`, formData);
-      const data = response.data();
+      const data = response.data;
       if (data.success) {
         console.log("Analysis:", data.data);
       } else {
