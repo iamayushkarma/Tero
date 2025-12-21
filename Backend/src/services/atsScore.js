@@ -17,7 +17,9 @@ export function calculateATSScore({
   };
 
   // 1. KEYWORD MATCHING (30 points)
-  if (jobDescription && metrics.resumeText) {
+  const hasJobDescription = typeof jobDescription === "string" && jobDescription.trim().length > 0;
+
+  if (hasJobDescription && metrics.resumeText) {
     const keywordScore = calculateKeywordMatch(metrics.resumeText, jobDescription);
     breakdown.keywordMatch = Math.round(keywordScore * 30);
 
@@ -31,9 +33,8 @@ export function calculateATSScore({
       penalties.push("Low keyword match - tailor resume to job description");
     }
   } else {
-    // If no job description provided, give partial credit
+    // If no job description provided, give partial credit but don't penalize the user
     breakdown.keywordMatch = 15;
-    penalties.push("No job description provided for keyword analysis");
   }
 
   // 2. FORMATTING & PARSEABILITY (15 points)
@@ -77,6 +78,67 @@ export function calculateATSScore({
   }
 
   breakdown.formatting = Math.max(formatScore, 0);
+
+  // 2.5. INFER MISSING SECTIONS FROM METRICS/TEXT (robustness for different resume layouts)
+  const fullText = (metrics.resumeText || "").toLowerCase();
+
+  // Infer experience section if strong experience signals are present
+  const hasExperienceSignals =
+    metrics.hasJobTitles ||
+    metrics.hasCompanyNames ||
+    metrics.hasDates ||
+    metrics.experienceUsesStrongActionVerbs ||
+    metrics.experienceHasQuantifiableResults;
+
+  if (!sections.experience?.found && hasExperienceSignals) {
+    sections.experience = {
+      ...(sections.experience || {}),
+      found: true,
+      hasClearHeader: sections.experience?.hasClearHeader || false,
+      lines: sections.experience?.lines || [],
+    };
+  }
+
+  // Infer skills section if we clearly detect skills in the text
+  const hasSkillSignals =
+    (typeof metrics.totalSkillsListed === "number" && metrics.totalSkillsListed > 0) ||
+    (typeof metrics.hardSkillsCount === "number" && metrics.hardSkillsCount > 0) ||
+    (typeof metrics.softSkillsCount === "number" && metrics.softSkillsCount > 0);
+
+  if (!sections.skills?.found && hasSkillSignals) {
+    sections.skills = {
+      ...(sections.skills || {}),
+      found: true,
+      hasClearHeader: sections.skills?.hasClearHeader || false,
+      lines: sections.skills?.lines || [],
+    };
+  }
+
+  // Infer education section if we see clear education keywords
+  const hasEducationSignals = /\b(bachelor|bca|b\.tech|bsc|mca|msc|degree|university|college|diploma)\b/i.test(
+    fullText,
+  );
+
+  if (!sections.education?.found && hasEducationSignals) {
+    sections.education = {
+      ...(sections.education || {}),
+      found: true,
+      hasClearHeader: sections.education?.hasClearHeader || false,
+      lines: sections.education?.lines || [],
+    };
+  }
+
+  // Infer projects section if we see repeated project mentions
+  const hasProjectSignals = /\bproject(s)?\b/i.test(fullText);
+
+  if (!sections.projects?.found && hasProjectSignals) {
+    sections.projects = {
+      ...(sections.projects || {}),
+      found: true,
+      hasClearHeader: sections.projects?.hasClearHeader || false,
+      lines: sections.projects?.lines || [],
+    };
+  }
 
   // 3. SECTION PRESENCE & STRUCTURE (20 points)
   const REQUIRED_SECTIONS = {
@@ -122,13 +184,19 @@ export function calculateATSScore({
   // 4. SKILLS SECTION (15 points)
   let skillScore = 0;
 
-  if (metrics.totalSkillsListed >= 10 && metrics.totalSkillsListed <= 20) {
+  // Be robust: fall back to hardSkillsCount when totalSkillsListed is missing/zero
+  const effectiveSkillsCount =
+    (typeof metrics.totalSkillsListed === "number" && metrics.totalSkillsListed > 0
+      ? metrics.totalSkillsListed
+      : 0) || metrics.hardSkillsCount || 0;
+
+  if (effectiveSkillsCount >= 10 && effectiveSkillsCount <= 20) {
     skillScore = 15;
     strengths.push("Comprehensive skills section");
-  } else if (metrics.totalSkillsListed >= 6 && metrics.totalSkillsListed <= 25) {
+  } else if (effectiveSkillsCount >= 6 && effectiveSkillsCount <= 25) {
     skillScore = 12;
     strengths.push("Good skills coverage");
-  } else if (metrics.totalSkillsListed >= 3) {
+  } else if (effectiveSkillsCount >= 3) {
     skillScore = 7;
     penalties.push("Skills section needs expansion");
   } else {
