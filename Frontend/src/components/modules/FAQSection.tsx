@@ -31,7 +31,7 @@ export const faqContent = [
   {
     question: "Can I paste my resume text instead of uploading a file?",
     answer:
-      "Yes, you can paste your resume text directly into the editor if you do not have a file ready. The pasted content is analyzed in the same way as an uploaded document.",
+      "We currently support resume uploads in PDF, DOC, and DOCX formats. Please make sure your file is in one of these formats for accurate analysis.",
   },
   {
     question: "Will my resume be stored after the scan?",
@@ -69,7 +69,7 @@ function FAQSection() {
           <h2 className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.2rem] font-semibold md:w-1/2 lg:text-4xl">
             Frequently Asked Questions
           </h2>
-          <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-lg">
+          <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-[.9rem]">
             Quick answers to common questions about uploading, scanning, and improving your resume.
           </p>
         </div>
@@ -100,7 +100,7 @@ const AccordionItem = ({ question, answer, isOpen, onToggle }: AccordionItemProp
     >
       {/* question */}
       <div className="flex items-center justify-between">
-        <h3 className="text-gray-12 dark:text-gray-3 font-medium md:text-[1.3rem]">{question}</h3>
+        <h3 className="text-gray-12 dark:text-gray-3 font-medium md:text-[1.09rem]">{question}</h3>
         <button>
           <ChevronDown
             className={`text-gray-12 dark:text-gray-3 h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -109,7 +109,7 @@ const AccordionItem = ({ question, answer, isOpen, onToggle }: AccordionItemProp
       </div>
       {/* answer */}
       {isOpen && (
-        <div className="text-gray-11 dark:text-gray-9 mt-2 text-[.9rem] md:text-[1.15rem]">
+        <div className="text-gray-11 dark:text-gray-9 mt-2 text-[.9rem] md:text-[.9rem]">
           {answer}
         </div>
       )}
