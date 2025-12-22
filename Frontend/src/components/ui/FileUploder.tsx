@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, CircleCheck, File, Search } from "lucide-react";
 import { useRef, useState, type ChangeEvent } from "react";
 import { serverUrl } from "../../utils/contants.ts";
 import * as pdfjsLib from "pdfjs-dist";
@@ -193,33 +193,86 @@ function FileUploader() {
   };
 
   return (
-    <section className="bg-gray-3 mt-6 flex h-30 w-86 items-center justify-center rounded-lg p-2 md:h-36 md:w-102">
-      <div
-        onClick={handleClick}
-        onDragOver={handleDrag}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`group box-border flex h-[97%] w-[98%] flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-2 transition-transform duration-250 ${
-          isDragging ? "border-blue-10 bg-blue-3/40 scale-[1.01]" : "border-gray-7"
-        } `}
+    <div className="py-2">
+      <section
+        className={`bg-gray-3 mt-6 flex w-86 flex-col items-center justify-center rounded-lg p-2 md:w-102`}
       >
-        <div className="text-gray-12 text-center text-[0.65rem] font-medium md:text-[.8rem]">
-          <div>
-            <strong className="text-blue-11">Click</strong> or{" "}
-            <strong className="text-blue-11">drop</strong> your PDF, DOC, or DOCX file here to get
-            an instant resume score.
+        {file ? (
+          <div className="box-border flex h-32 w-[98%] flex-col items-center rounded-lg border-2 border-dashed border-green-500 bg-green-100/90 p-2 text-center text-[.8rem] sm:h-34 md:h-36">
+            <span>
+              <CircleCheck className="mt-1 size-7 text-green-500" />
+            </span>
+            <div className="mt-3 flex w-full max-w-[90%] items-center justify-center gap-2">
+              <File className="size-4 shrink-0 md:size-6" />
+              <p className="truncate font-medium md:text-sm" title={file.name}>
+                {file.name}
+              </p>
+            </div>
+            <p className="text-gray-10 mt-1 text-xs">{(file.size / 1024).toFixed(2)} KB</p>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setFile(null);
+                setError("");
+              }}
+              className="text-primary mt-2 hover:underline"
+            >
+              Remove
+            </button>
+          </div>
+        ) : (
+          <div
+            onClick={handleClick}
+            onDragOver={handleDrag}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`group box-border flex h-28 w-[98%] flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-2 transition-transform duration-250 sm:h-30 md:h-32 ${
+              isDragging ? "border-blue-10 bg-blue-3/40 scale-[1.01]" : "border-gray-7"
+            } `}
+          >
+            <div className="text-gray-12 group text-center text-[0.65rem] font-medium transition-all duration-200 md:text-[.85rem]">
+              <div>
+                <span className="flex">
+                  <Upload className="text-gray-10 mx-auto mb-2 size-5 transition-transform duration-200 group-hover:-translate-y-0.5" />
+                </span>
+                <strong className="text-blue-11">Click</strong> or{" "}
+                <strong className="text-blue-11">drop</strong> your PDF, DOC, or DOCX file here to
+                get an instant resume score.
+              </div>
+            </div>
+            <input
+              type="file"
+              ref={fileUploadRef}
+              className="hidden"
+              accept=".pdf,.docx"
+              onChange={handleFileChange}
+            />
+          </div>
+        )}
+
+        {/* Role selection */}
+        <div className="relative mx-auto mt-6 flex w-[97%] flex-col">
+          <label className="text-gray-12 text-sm md:text-[1rem]">Target Job Role</label>
+          <div className="relative mt-2">
+            <Search className="text-gray-10 absolute top-1/2 left-2 h-5 w-5 -translate-y-1/2" />
+            <input
+              placeholder="Select or type a role (e.g. Full Stack Developer)"
+              type="text"
+              className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-10 font-medium outline-none placeholder:text-sm placeholder:md:text-[1rem]"
+            />
           </div>
         </div>
 
-        <input
-          type="file"
-          ref={fileUploadRef}
-          className="hidden"
-          accept=".pdf,.docx"
-          onChange={handleFileChange}
-        />
-      </div>
-    </section>
+        {/* Submit button */}
+        <button className="bg-primary mt-6 w-[98%] cursor-pointer rounded-lg p-2 text-white shadow-md md:p-3 md:text-[1.2rem]">
+          Analyze Resume
+        </button>
+        <span className="border-gray-7 mt-5 w-3/4 border border-t-[.1px]"></span>
+        <p className="text-gray-10 mt-2 text-center text-[.7rem] md:text-[.8rem]">
+          Your resume is analyzed securely and never stored on our servers
+        </p>
+      </section>
+    </div>
   );
 }
 
