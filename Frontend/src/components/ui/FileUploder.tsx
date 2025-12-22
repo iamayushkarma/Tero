@@ -258,7 +258,7 @@ function FileUploader() {
         </div>
 
         {/* Submit button */}
-        <button className="bg-primary z-20 mx-auto mt-6 w-[97%] cursor-pointer rounded-lg p-2 text-white shadow-md md:p-3 md:text-[1.2rem]">
+        <button className="bg-primary z-20 mx-auto mt-6 w-[97%] cursor-pointer rounded-lg p-2 text-white shadow-md md:p-3 md:text-[1rem]">
           Analyze Resume
         </button>
         <span className="border-gray-7 mt-5 w-3/4 border border-t-[.1px]"></span>

@@ -38,7 +38,7 @@ function SearchBox() {
           onFocus={() => setShowJobRole(true)}
           onBlur={() => setShowJobRole(false)}
           onChange={(e) => setInput(e?.target.value)}
-          className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[1rem]"
+          className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[.9rem]"
         />
         <div className="relative">
           {showJobRole && input.length > 0 && (
