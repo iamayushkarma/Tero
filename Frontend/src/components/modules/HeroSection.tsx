@@ -13,10 +13,10 @@ function HeroSection() {
           {/* Heading badge */}
           <HeroBadge />
           {/* Heading Section */}
-          <h1 className="text-bg-gray-1 mt-4 text-left text-[1.68rem] font-medium md:text-center md:text-4xl lg:text-left lg:text-6xl">
+          <h1 className="text-bg-gray-1 mt-4 text-left text-[1.68rem] font-medium md:text-center md:text-4xl lg:text-left lg:text-5xl">
             Better Understanding. Better Decisions. Better Resume
           </h1>
-          <p className="text-gray-3 mt-5 mb-8 text-[.9rem] sm:text-[1rem] md:w-3/4 md:text-[1.1rem] lg:text-[1.3rem]">
+          <p className="text-gray-3 mt-5 mb-8 text-[.9rem] sm:text-[1rem] md:w-3/4 md:text-[1.1rem]">
             Tero highlights what’s working in your resume and what could be stronger, offering
             simple suggestions to help you refine it with confidence.
           </p>
