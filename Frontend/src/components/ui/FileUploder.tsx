@@ -1,10 +1,11 @@
 import axios from "axios";
-import { Upload, CircleCheck, File, Search } from "lucide-react";
+import { Upload, CircleCheck, File } from "lucide-react";
 import { useRef, useState, type ChangeEvent } from "react";
 import { serverUrl } from "../../utils/contants.ts";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
+import SearchBox from "./SearchBox.tsx";
 
 // Set worker from imported URL
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -253,14 +254,7 @@ function FileUploader() {
         {/* Role selection */}
         <div className="relative mx-auto mt-6 flex w-[97%] flex-col">
           <label className="text-gray-12 text-sm md:text-[1rem]">Target Job Role</label>
-          <div className="relative mt-2">
-            <Search className="text-gray-10 absolute top-1/2 left-2 h-5 w-5 -translate-y-1/2" />
-            <input
-              placeholder="Select or type a role (e.g. Full Stack Developer)"
-              type="text"
-              className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-10 font-medium outline-none placeholder:text-sm placeholder:md:text-[1rem]"
-            />
-          </div>
+          <SearchBox />
         </div>
 
         {/* Submit button */}
