@@ -159,7 +159,7 @@ function Features() {
         <h2 className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.2rem] font-semibold md:w-1/2 lg:text-4xl">
           Smart resume analysis focused on issues recruiters and ATS notice first
         </h2>
-        <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-lg">
+        <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-[.95rem]">
           Evaluate content, formatting, and relevance to improve how your resume performs during
           initial screening.
         </p>
@@ -187,10 +187,10 @@ const FeatureCard = ({ icon: Icon, iconColor, bgClass, heading, info }: FeatureC
         </div>
       </div>
       <div className="mt-6">
-        <h4 className="text-gray-12 dark:text-gray-3 text-[1rem] font-semibold sm:text-[1.1rem] md:text-[1.2rem] lg:text-[1.3rem]">
+        <h4 className="text-gray-12 dark:text-gray-3 text-[1rem] font-semibold sm:text-[1.1rem] md:text-[1.2rem] lg:text-[1.2rem]">
           {heading}
         </h4>
-        <p className="text-gray-11 dark:text-gray-9 lg-text[1.1rem] mt-2 text-[.8rem] md:text-[1rem]">
+        <p className="text-gray-11 dark:text-gray-9 lg-text[1.1rem] mt-2 text-[.8rem] md:text-[.9rem]">
           {info}
         </p>
       </div>
