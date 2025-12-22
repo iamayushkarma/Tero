@@ -46,7 +46,7 @@ function AIScoringExplanation() {
           <h2 className="text-gray-12 dark:text-bg-gray-1 text-lg font-semibold max-sm:w-3/4 md:text-3xl lg:text-4xl">
             How Our AI Analyzes Your Resume for ATS Compatibility
           </h2>
-          <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-lg">
+          <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-[1.1rem]">
             Understand how Tero evaluates your resume to improve its chances of passing automated
             screening systems.
           </p>
@@ -78,7 +78,7 @@ const ExplanationCard = ({ className, imgSrc, heading, subHeading }: Explanation
       className={` ${className} bg-bg-gray-1 dark:bg-gray-12/10 border-gray-5 dark:border-gray-12 hover:bg-gray-3/60 dark:hover:bg-gray-12/40 rounded-xl border-2 p-4 md:p-6`}
     >
       <div className="flex items-center justify-center p-2 py-10">
-        <img className="size-40 md:size-74" src={imgSrc} />
+        <img className="size-40 md:size-58" src={imgSrc} />
       </div>
       <div>
         <div className="relative mb-3 dark:hidden">
@@ -87,7 +87,7 @@ const ExplanationCard = ({ className, imgSrc, heading, subHeading }: Explanation
         <h3 className="text-gray-12 dark:text-gray-3 text-[1rem] font-semibold sm:text-[1.1rem] md:text-[1.2rem] lg:text-[1.3rem]">
           {heading}
         </h3>
-        <p className="text-gray-11 dark:text-gray-9 lg-text[1.1rem] mt-2 text-[.8rem] md:text-[1rem]">
+        <p className="text-gray-11 dark:text-gray-9 lg-text[1.1rem] mt-2 text-[.8rem] md:text-[.95rem]">
           {subHeading}
         </p>
       </div>
