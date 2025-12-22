@@ -4,7 +4,7 @@ function StartResumeScan() {
   return (
     <>
       <div className="StartResumeScan relative flex flex-col items-center justify-center p-10">
-        <div className="flex flex-col items-center justify-center text-center">
+        <div className="flex max-h-220 flex-col items-center justify-center text-center">
           <h3 className="text-bg-gray-1 mt-4 text-xl font-medium md:text-3xl lg:text-4xl">
             Test Your Resume Against ATS Systems
           </h3>

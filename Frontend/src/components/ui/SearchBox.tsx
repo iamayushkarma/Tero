@@ -1,14 +1,71 @@
-import { Search } from "lucide-react";
+import { Search, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { jobRoles } from "../../utils/jobRoles";
+import "./common.css";
 
 function SearchBox() {
+  const [input, setInput] = useState<string>("");
+  const [filteredRoles, setFilteredRoles] = useState<string[]>([]);
+  const [showJobRole, setShowJobRole] = useState<boolean>(false);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!input.trim()) {
+      setFilteredRoles([]);
+      setSelectedRole(null);
+      return;
+    }
+
+    const filterRoles = jobRoles.filter((role) => role.toLowerCase().includes(input.toLowerCase()));
+
+    filterRoles.length === 0 ? setFilteredRoles([input]) : setFilteredRoles(filterRoles);
+  }, [input]);
+
+  const handleSelectRole = (role: string) => {
+    setInput(role);
+    setSelectedRole(role);
+    setShowJobRole(false);
+  };
+
   return (
-    <div className="relative mt-2">
-      <Search className="text-gray-10 absolute top-1/2 left-2 h-5 w-5 -translate-y-1/2" />
-      <input
-        placeholder="Select or type a role (e.g. Full Stack Developer)"
-        type="text"
-        className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[1rem]"
-      />
+    <div className="relative">
+      <div className="relative mt-2">
+        <Search className="text-gray-10 absolute top-1/2 left-2 h-5 w-5 -translate-y-1/2" />
+        <input
+          placeholder="Select or type a role (e.g. Full Stack Developer)"
+          type="text"
+          value={input}
+          onFocus={() => setShowJobRole(true)}
+          onBlur={() => setShowJobRole(false)}
+          onChange={(e) => setInput(e?.target.value)}
+          className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[1rem]"
+        />
+        <div className="relative">
+          {showJobRole && input.length > 0 && (
+            <div className="bg-bg-gray-2 border-gray-8 no-scrollbar absolute right-0 left-0 z-999 mx-auto mt-3 max-h-60 overflow-y-scroll rounded-xl border">
+              {filteredRoles.map((jobRole, index) => {
+                const isCustom = !jobRoles.includes(jobRole);
+                return (
+                  <div
+                    className="hover:bg-gray-4 border-b border-gray-200 px-3 py-2 transition-colors last:border-b-0"
+                    key={index}
+                    onMouseDown={() => handleSelectRole(jobRole)}
+                  >
+                    {isCustom && <span className="text-xs text-gray-500">Add </span>}
+                    {jobRole}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+      {selectedRole && (
+        <div className="mt-2 ml-1 flex items-center justify-start gap-1 text-green-600">
+          <Check className="size-4 text-green-500" />{" "}
+          <p className="text-sm">Selected: {selectedRole}</p>
+        </div>
+      )}
     </div>
   );
 }

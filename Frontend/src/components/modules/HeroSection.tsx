@@ -7,7 +7,7 @@ function HeroSection() {
   return (
     <section className="mt-4 flex w-full items-center justify-center sm:mt-8">
       {/* Main section with blue bg */}
-      <div className="bg-checker-blue box-border flex w-[97%] items-center rounded-2xl p-5 max-sm:h-150 md:p-10">
+      <div className="bg-checker-blue box-border flex w-[97%] items-center rounded-2xl p-5 max-sm:min-h-220 md:p-10">
         {/* Heading portion */}
         <div className="flex w-full flex-col max-lg:items-center sm:justify-center sm:p-2 lg:w-[40%]">
           {/* Heading badge */}

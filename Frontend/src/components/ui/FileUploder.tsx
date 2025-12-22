@@ -196,7 +196,7 @@ function FileUploader() {
   return (
     <div className="py-2">
       <section
-        className={`bg-gray-3 mt-6 flex w-86 flex-col items-center justify-center rounded-lg p-2 md:w-102`}
+        className={`bg-bg-gray-2 mt-6 flex w-86 flex-col items-center justify-center overflow-visible rounded-lg p-2 md:w-102`}
       >
         {file ? (
           <div className="box-border flex h-32 w-[98%] flex-col items-center rounded-lg border-2 border-dashed border-green-500 bg-green-100/90 p-2 text-center text-[.8rem] sm:h-34 md:h-36">
@@ -227,7 +227,7 @@ function FileUploader() {
             onDragOver={handleDrag}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`group box-border flex h-28 w-[98%] flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-2 transition-transform duration-250 sm:h-30 md:h-32 ${
+            className={`group bg-gray-3/90 box-border flex h-28 w-[98%] flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-2 transition-transform duration-250 sm:h-30 md:h-32 ${
               isDragging ? "border-blue-10 bg-blue-3/40 scale-[1.01]" : "border-gray-7"
             } `}
           >
@@ -258,7 +258,7 @@ function FileUploader() {
         </div>
 
         {/* Submit button */}
-        <button className="bg-primary mt-6 w-[98%] cursor-pointer rounded-lg p-2 text-white shadow-md md:p-3 md:text-[1.2rem]">
+        <button className="bg-primary z-20 mx-auto mt-6 w-[97%] cursor-pointer rounded-lg p-2 text-white shadow-md md:p-3 md:text-[1.2rem]">
           Analyze Resume
         </button>
         <span className="border-gray-7 mt-5 w-3/4 border border-t-[.1px]"></span>
