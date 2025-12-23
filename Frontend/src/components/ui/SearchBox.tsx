@@ -133,7 +133,7 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
           {shouldShowDropdown && (
             <div
               ref={listRef}
-              className="bg-bg-gray-2 border-gray-8 no-scrollbar absolute right-0 left-0 z-999 mx-auto mt-3 max-h-60 overflow-y-scroll rounded-xl border"
+              className="bg-bg-gray-2 border-gray-8 absolute right-0 left-0 z-999 mx-auto mt-3 max-h-60 overflow-y-scroll rounded-xl border"
             >
               {filteredRoles.map((jobRole, index) => {
                 const isCustom = !jobRoles.includes(jobRole);
