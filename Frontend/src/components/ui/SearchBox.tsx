@@ -13,6 +13,8 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
   const [showJobRole, setShowJobRole] = useState<boolean>(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const [isSearching, setIsSearching] = useState(false);
+
   const cacheRef = useRef<Map<string, string[]>>(new Map());
 
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -72,9 +74,11 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
     if (!input.trim()) {
       setFilteredRoles([]);
       setActiveIndex(-1);
+      setIsSearching(false);
       return;
     }
 
+    setIsSearching(true);
     // debouncing
     const timer = setTimeout(() => {
       const query = input.toLowerCase();
@@ -83,6 +87,7 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
       if (cacheRef.current.has(query)) {
         setFilteredRoles(cacheRef.current.get(query)!);
         setActiveIndex(-1);
+        setIsSearching(false);
         return;
       }
 
@@ -94,6 +99,7 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
       cacheRef.current.set(query, finalResults);
       setFilteredRoles(finalResults);
       setActiveIndex(-1);
+      setIsSearching(false);
     }, 300);
 
     return () => clearTimeout(timer);
@@ -105,6 +111,9 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
     setShowJobRole(false);
     onSelectRole?.(role);
   };
+
+  const shouldShowDropdown =
+    showJobRole && !isSearching && input.length > 0 && filteredRoles.length > 0;
 
   return (
     <div className="relative">
@@ -121,7 +130,7 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
           className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[.9rem]"
         />
         <div className="relative">
-          {showJobRole && input.length > 0 && (
+          {shouldShowDropdown && (
             <div
               ref={listRef}
               className="bg-bg-gray-2 border-gray-8 no-scrollbar absolute right-0 left-0 z-999 mx-auto mt-3 max-h-60 overflow-y-scroll rounded-xl border"
