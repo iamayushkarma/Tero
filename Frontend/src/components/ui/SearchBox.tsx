@@ -9,6 +9,7 @@ function SearchBox() {
   const [showJobRole, setShowJobRole] = useState<boolean>(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const cacheRef = useRef<Map<string, string[]>>(new Map());
 
   const listRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -63,18 +64,28 @@ function SearchBox() {
       return;
     }
 
+    // debouncing
     const timer = setTimeout(() => {
-      const filterRoles = jobRoles.filter((role) =>
-        role.toLowerCase().includes(input.toLowerCase()),
-      );
+      const query = input.toLowerCase();
 
-      setFilteredRoles(filterRoles.length === 0 ? [input] : filterRoles);
+      // Check cache
+      if (cacheRef.current.has(query)) {
+        setFilteredRoles(cacheRef.current.get(query)!);
+        setActiveIndex(-1);
+        return;
+      }
+
+      // Compute + cache
+      const results = jobRoles.filter((role) => role.toLowerCase().includes(query));
+
+      const finalResults = results.length === 0 ? [input] : results;
+
+      cacheRef.current.set(query, finalResults);
+      setFilteredRoles(finalResults);
       setActiveIndex(-1);
     }, 300);
 
-    return () => {
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [input]);
 
   const handleSelectRole = (role: string) => {
@@ -126,7 +137,7 @@ function SearchBox() {
         </div>
       </div>
       {selectedRole && (
-        <div className="mt-2 ml-1 flex items-center justify-start gap-1 text-green-600">
+        <div className="mt-2 flex items-center justify-start gap-1 text-green-600">
           <Check className="text-success-text size-4" />{" "}
           <p className="text-sm">Selected: {selectedRole}</p>
         </div>
