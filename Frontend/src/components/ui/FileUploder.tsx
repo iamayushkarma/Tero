@@ -12,6 +12,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 function FileUploader() {
   const [file, setFile] = useState<File | null>(null);
+  const [jobRole, setJobRole] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isFormValid = Boolean(file);
@@ -113,7 +114,6 @@ function FileUploader() {
 
     setError(null);
     setFile(selectedFile);
-    handleUpload(selectedFile);
     console.log("File Name:", selectedFile.name);
     console.log("File Type:", selectedFile.type);
     console.log("File Size (bytes):", selectedFile.size);
@@ -176,6 +176,7 @@ function FileUploader() {
         // Send extracted text to backend
         const uploadResponse = await axios.post(`${serverUrl}resume/upload-text`, {
           text: extractedText,
+          jobRole,
         });
         console.log("Backend response:", uploadResponse.data);
       } else if (
@@ -198,6 +199,11 @@ function FileUploader() {
         setError(err.message || "Upload failed. Please try again.");
       }
     }
+  };
+  const handleAnalyze = async () => {
+    if (!file) return;
+
+    await handleUpload(file);
   };
 
   return (
@@ -272,12 +278,13 @@ function FileUploader() {
           <p className="text-gray-9 text-xs">
             Selecting a job role improves keyword and skill matching.
           </p>
-          <SearchBox />
+          <SearchBox onSelectRole={setJobRole} />
         </div>
 
         {/* Submit button */}
         <button
           disabled={!isFormValid}
+          onClick={handleAnalyze}
           className={`:p-3 z-20 mx-auto mt-6 w-[97%] rounded-lg p-2 md:text-[1rem] ${
             isFormValid
               ? "bg-primary hover:bg-blue-10 md cursor-pointer text-white shadow-md"

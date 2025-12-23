@@ -3,7 +3,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { jobRoles } from "../../utils/jobRoles";
 import "./common.css";
 
-function SearchBox() {
+type SearchBoxProps = {
+  onSelectRole?: (role: string | null) => void;
+};
+
+function SearchBox({ onSelectRole }: SearchBoxProps) {
   const [input, setInput] = useState<string>("");
   const [filteredRoles, setFilteredRoles] = useState<string[]>([]);
   const [showJobRole, setShowJobRole] = useState<boolean>(false);
@@ -39,6 +43,13 @@ function SearchBox() {
         break;
     }
   };
+
+  useEffect(() => {
+    if (!input.trim()) {
+      onSelectRole?.(null);
+    }
+  }, [input]);
+
   useEffect(() => {
     if (activeIndex < 0) return;
 
@@ -92,6 +103,7 @@ function SearchBox() {
     setInput(role);
     setSelectedRole(role);
     setShowJobRole(false);
+    onSelectRole?.(role);
   };
 
   return (

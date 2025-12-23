@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 
 // PDF
 const uploadResumeText = asyncHandler(async (req, res) => {
-  const { text } = req.body;
+  const { text, jobRole } = req.body;
 
   if (!text || text.trim().length === 0) {
     return res.status(400).json(new ApiResponse(400, null, "Resume text is required"));
@@ -18,6 +18,7 @@ const uploadResumeText = asyncHandler(async (req, res) => {
       200,
       {
         textLength: text.length,
+        jobRole,
         preview: text.slice(0, 300),
       },
       "Resume processed successfully",
