@@ -51,6 +51,10 @@ body {
 
   /*> Accent colors */
   --color-accent-gold: oklch(85.58% 0.122 84.38); /* #F5C96C*/
+  --color-error: oklch(58% 0.3 25); /* #E54848 */
+  --color-success-bg: oklch(96% 0.05 145); /* #EAF7F0 */
+  --color-success-border: oklch(72% 0.24 145); /* #3FD08A */
+  --color-success-text: oklch(56% 0.28 145); /* #1FA971 */
 
   /*> Interactive Colors — Blue (Steps 3–5)  */
   /* Blue 3 — subtle hover */

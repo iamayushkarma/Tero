@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Upload, CircleCheck, File } from "lucide-react";
-import { useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { serverUrl } from "../../utils/contants.ts";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
@@ -30,9 +30,15 @@ function FileUploader() {
     if (file.size > maxSize) {
       return "File size must be less than 5MB";
     }
+
     return null;
   };
 
+  useEffect(() => {
+    if (error) {
+      console.error("Upload error:", error);
+    }
+  }, [error]);
   // Extract text from PDF using PDF.js with better word spacing
   const extractPDFText = async (file: File): Promise<string> => {
     try {
@@ -200,9 +206,9 @@ function FileUploader() {
         className={`bg-bg-gray-2 mt-6 flex w-86 flex-col items-center justify-center overflow-visible rounded-lg p-2 md:w-102`}
       >
         {file ? (
-          <div className="box-border flex h-32 w-[98%] flex-col items-center rounded-lg border-2 border-dashed border-green-500 bg-green-100/90 p-2 text-center text-[.8rem] sm:h-34 md:h-36">
+          <div className="border-success-border bg-success-bg box-border flex h-32 w-[98%] flex-col items-center rounded-lg border-2 border-dashed p-2 text-center text-[.8rem] sm:h-34 md:h-36">
             <span>
-              <CircleCheck className="mt-1 size-7 text-green-500" />
+              <CircleCheck className="text-success-text mt-1 size-7" />
             </span>
             <div className="mt-3 flex w-full max-w-[90%] items-center justify-center gap-2">
               <File className="size-4 shrink-0 md:size-6" />
@@ -228,7 +234,7 @@ function FileUploader() {
             onDragOver={handleDrag}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`group bg-gray-3/90 box-border flex h-28 w-[98%] flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-2 transition-transform duration-250 sm:h-30 md:h-32 ${
+            className={`group bg-gray-3/90 box-border flex h-32 w-[98%] flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-2 transition-transform duration-250 sm:h-34 md:h-36 ${
               isDragging ? "border-blue-10 bg-blue-3/40 scale-[1.01]" : "border-gray-7"
             } `}
           >
@@ -251,12 +257,15 @@ function FileUploader() {
             />
           </div>
         )}
+        <div className="text-error mt-2 ml-2 flex w-[98%] items-start text-[.75rem] md:text-[.8rem]">
+          {error}
+        </div>
 
         {/* Role selection */}
         <div className="relative mx-auto mt-6 flex w-[97%] flex-col gap-1">
           <label className="text-gray-12 flex items-center gap-2 text-sm font-medium md:text-[1rem]">
             Target Job Role
-            <span className="bg-gray-3 text-gray-10 rounded-md px-2 py-[2px] text-xs font-medium">
+            <span className="bg-gray-3 text-gray-10 rounded-md px-2 py-0.5 text-xs font-medium">
               Optional
             </span>
           </label>

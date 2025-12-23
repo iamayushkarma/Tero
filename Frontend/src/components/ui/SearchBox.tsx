@@ -51,17 +51,30 @@ function SearchBox() {
   }, [activeIndex]);
 
   useEffect(() => {
+    if (selectedRole && input !== selectedRole) {
+      setSelectedRole(null);
+    }
+  }, [input, selectedRole]);
+
+  useEffect(() => {
     if (!input.trim()) {
       setFilteredRoles([]);
-      setSelectedRole(null);
       setActiveIndex(-1);
       return;
     }
 
-    const filterRoles = jobRoles.filter((role) => role.toLowerCase().includes(input.toLowerCase()));
+    const timer = setTimeout(() => {
+      const filterRoles = jobRoles.filter((role) =>
+        role.toLowerCase().includes(input.toLowerCase()),
+      );
 
-    setFilteredRoles(filterRoles.length === 0 ? [input] : filterRoles);
-    setActiveIndex(-1);
+      setFilteredRoles(filterRoles.length === 0 ? [input] : filterRoles);
+      setActiveIndex(-1);
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [input]);
 
   const handleSelectRole = (role: string) => {
@@ -114,7 +127,7 @@ function SearchBox() {
       </div>
       {selectedRole && (
         <div className="mt-2 ml-1 flex items-center justify-start gap-1 text-green-600">
-          <Check className="size-4 text-green-500" />{" "}
+          <Check className="text-success-text size-4" />{" "}
           <p className="text-sm">Selected: {selectedRole}</p>
         </div>
       )}
