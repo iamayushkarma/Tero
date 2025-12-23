@@ -1,5 +1,5 @@
 import { Search, Check } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { jobRoles } from "../../utils/jobRoles";
 import "./common.css";
 
@@ -8,17 +8,60 @@ function SearchBox() {
   const [filteredRoles, setFilteredRoles] = useState<string[]>([]);
   const [showJobRole, setShowJobRole] = useState<boolean>(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
+
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const handleKeyEvents = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showJobRole || filteredRoles.length === 0) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setActiveIndex((prev) => (prev < filteredRoles.length - 1 ? prev + 1 : 0));
+        break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        setActiveIndex((prev) => (prev > 0 ? prev - 1 : filteredRoles.length - 1));
+        break;
+
+      case "Enter":
+        if (activeIndex >= 0) {
+          handleSelectRole(filteredRoles[activeIndex]);
+        }
+        break;
+
+      case "Escape":
+        setShowJobRole(false);
+        break;
+    }
+  };
+  useEffect(() => {
+    if (activeIndex < 0) return;
+
+    const activeItem = itemRefs.current[activeIndex];
+    if (activeItem) {
+      activeItem.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [activeIndex]);
 
   useEffect(() => {
     if (!input.trim()) {
       setFilteredRoles([]);
       setSelectedRole(null);
+      setActiveIndex(-1);
       return;
     }
 
     const filterRoles = jobRoles.filter((role) => role.toLowerCase().includes(input.toLowerCase()));
 
-    filterRoles.length === 0 ? setFilteredRoles([input]) : setFilteredRoles(filterRoles);
+    setFilteredRoles(filterRoles.length === 0 ? [input] : filterRoles);
+    setActiveIndex(-1);
   }, [input]);
 
   const handleSelectRole = (role: string) => {
@@ -37,17 +80,26 @@ function SearchBox() {
           value={input}
           onFocus={() => setShowJobRole(true)}
           onBlur={() => setShowJobRole(false)}
+          onKeyDown={handleKeyEvents}
           onChange={(e) => setInput(e?.target.value)}
           className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[.9rem]"
         />
         <div className="relative">
           {showJobRole && input.length > 0 && (
-            <div className="bg-bg-gray-2 border-gray-8 no-scrollbar absolute right-0 left-0 z-999 mx-auto mt-3 max-h-60 overflow-y-scroll rounded-xl border">
+            <div
+              ref={listRef}
+              className="bg-bg-gray-2 border-gray-8 no-scrollbar absolute right-0 left-0 z-999 mx-auto mt-3 max-h-60 overflow-y-scroll rounded-xl border"
+            >
               {filteredRoles.map((jobRole, index) => {
                 const isCustom = !jobRoles.includes(jobRole);
                 return (
                   <div
-                    className="hover:bg-gray-4 border-b border-gray-200 px-3 py-2 transition-colors last:border-b-0"
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
+                    className={`border-b border-gray-200 px-3 py-2 transition-colors last:border-b-0 ${
+                      index === activeIndex ? "bg-gray-4" : "hover:bg-gray-4"
+                    }`}
                     key={index}
                     onMouseDown={() => handleSelectRole(jobRole)}
                   >

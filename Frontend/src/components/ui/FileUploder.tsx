@@ -14,6 +14,7 @@ function FileUploader() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isFormValid = Boolean(file);
 
   // Validate file
   const validateFile = (file: File): string | null => {
@@ -252,13 +253,28 @@ function FileUploader() {
         )}
 
         {/* Role selection */}
-        <div className="relative mx-auto mt-6 flex w-[97%] flex-col">
-          <label className="text-gray-12 text-sm md:text-[1rem]">Target Job Role</label>
+        <div className="relative mx-auto mt-6 flex w-[97%] flex-col gap-1">
+          <label className="text-gray-12 flex items-center gap-2 text-sm font-medium md:text-[1rem]">
+            Target Job Role
+            <span className="bg-gray-3 text-gray-10 rounded-md px-2 py-[2px] text-xs font-medium">
+              Optional
+            </span>
+          </label>
+          <p className="text-gray-9 text-xs">
+            Selecting a job role improves keyword and skill matching.
+          </p>
           <SearchBox />
         </div>
 
         {/* Submit button */}
-        <button className="bg-primary z-20 mx-auto mt-6 w-[97%] cursor-pointer rounded-lg p-2 text-white shadow-md md:p-3 md:text-[1rem]">
+        <button
+          disabled={!isFormValid}
+          className={`:p-3 z-20 mx-auto mt-6 w-[97%] rounded-lg p-2 md:text-[1rem] ${
+            isFormValid
+              ? "bg-primary hover:bg-blue-10 md cursor-pointer text-white shadow-md"
+              : "bg-gray-5 text-gray-10 cursor-not-allowed"
+          }`}
+        >
           Analyze Resume
         </button>
         <span className="border-gray-7 mt-5 w-3/4 border border-t-[.1px]"></span>
