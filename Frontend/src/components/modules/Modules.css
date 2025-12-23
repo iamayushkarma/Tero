@@ -28,7 +28,6 @@
 }
 .StartResumeScan {
   background-color: #3b82f6;
-  overflow: hidden;
 }
 
 .StartResumeScan::before {

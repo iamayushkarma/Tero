@@ -217,7 +217,7 @@ function FileUploader() {
               <CircleCheck className="text-success-text mt-1 size-7" />
             </span>
             <div className="mt-3 flex w-full max-w-[90%] items-center justify-center gap-2">
-              <File className="size-4 shrink-0 md:size-6" />
+              <File className="size-4 shrink-0 md:size-5" />
               <p className="truncate font-medium md:text-sm" title={file.name}>
                 {file.name}
               </p>
@@ -244,7 +244,7 @@ function FileUploader() {
               isDragging ? "border-blue-10 bg-blue-3/40 scale-[1.01]" : "border-gray-7"
             } `}
           >
-            <div className="text-gray-12 group text-center text-[0.65rem] font-medium transition-all duration-200 md:text-[.85rem]">
+            <div className="text-gray-12 group text-center text-[0.7rem] font-medium transition-all duration-200 md:text-[.85rem]">
               <div>
                 <span className="flex">
                   <Upload className="text-gray-10 mx-auto mb-2 size-5 transition-transform duration-200 group-hover:-translate-y-0.5" />
@@ -269,13 +269,13 @@ function FileUploader() {
 
         {/* Role selection */}
         <div className="relative mx-auto mt-6 flex w-[97%] flex-col gap-1">
-          <label className="text-gray-12 flex items-center gap-2 text-sm font-medium md:text-[1rem]">
+          <label className="text-gray-12 flex items-center gap-2 text-[.9rem] font-medium md:text-[1rem]">
             Target Job Role
             <span className="bg-gray-3 text-gray-10 rounded-md px-2 py-0.5 text-xs font-medium">
               Optional
             </span>
           </label>
-          <p className="text-gray-9 text-xs">
+          <p className="text-gray-9 text-[.8rem]">
             Selecting a job role improves keyword and skill matching.
           </p>
           <SearchBox onSelectRole={setJobRole} />
