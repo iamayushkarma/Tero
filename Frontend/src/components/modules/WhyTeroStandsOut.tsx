@@ -83,7 +83,7 @@ const WhyTeroStandsOutCard: React.FC<WhyTeroStandsOutCardProps> = ({
         >
           {heading}
         </h3>
-        <p className="dark:text-gray-9 text-gray-11 font-normal md:text-[.95rem]">{paragraph}</p>
+        <p className="dark:text-gray-9 text-gray-11 font-normal md:text-[.94rem]">{paragraph}</p>
       </div>
     </article>
   );
