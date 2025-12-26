@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Role-agnostic keyword matching rules for ATS resume scoring"
+  },
+
+  "matchingConfig": {
+    "caseSensitive": false,
+    "enableStemming": true,
+    "enableSynonyms": true,
+    "allowPartialMatches": true,
+    "minKeywordLength": 2
+  },
+
+  "roleCategories": {
+    "technical": {
+      "description": "Engineering, IT, data, and software roles"
+    },
+    "non_technical": {
+      "description": "HR, marketing, sales, operations, finance, management roles"
+    },
+    "hybrid": {
+      "description": "Roles with both technical and business requirements"
+    }
+  },
+
+  "keywordGroups": [
+    {
+      "group": "technical_skills",
+      "roleCategory": "technical",
+      "importance": "very_high",
+      "required": false,
+      "keywords": ["javascript", "python", "java", "react", "node.js", "sql", "html", "css"],
+      "synonyms": {
+        "javascript": ["js", "ecmascript"],
+        "node.js": ["node", "nodejs"],
+        "react": ["react.js"]
+      }
+    },
+
+    {
+      "group": "tools_and_technologies",
+      "roleCategory": "technical",
+      "importance": "high",
+      "required": false,
+      "keywords": ["git", "github", "docker", "aws", "linux", "mongodb", "postgresql"],
+      "synonyms": {
+        "postgresql": ["postgres"],
+        "mongodb": ["mongo"]
+      }
+    },
+
+    {
+      "group": "business_and_domain_skills",
+      "roleCategory": "non_technical",
+      "importance": "high",
+      "required": false,
+      "keywords": [
+        "business analysis",
+        "market research",
+        "sales strategy",
+        "client management",
+        "stakeholder management",
+        "process improvement"
+      ]
+    },
+
+    {
+      "group": "management_and_leadership",
+      "roleCategory": "non_technical",
+      "importance": "medium",
+      "required": false,
+      "keywords": [
+        "leadership",
+        "team management",
+        "project management",
+        "cross functional",
+        "decision making"
+      ]
+    },
+
+    {
+      "group": "soft_skills",
+      "roleCategory": "hybrid",
+      "importance": "low",
+      "required": false,
+      "keywords": [
+        "communication",
+        "problem solving",
+        "collaboration",
+        "time management",
+        "adaptability"
+      ]
+    },
+
+    {
+      "group": "action_verbs",
+      "roleCategory": "hybrid",
+      "importance": "low",
+      "required": false,
+      "keywords": [
+        "designed",
+        "developed",
+        "implemented",
+        "managed",
+        "led",
+        "improved",
+        "optimized",
+        "analyzed"
+      ]
+    }
+  ],
+
+  "penalties": {
+    "missingRelevantKeywords": {
+      "enabled": true,
+      "severity": "medium"
+    },
+    "keywordStuffing": {
+      "enabled": true,
+      "repeatThreshold": 8,
+      "severity": "medium"
+    }
+  }
+}

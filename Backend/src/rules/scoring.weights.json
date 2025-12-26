@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "ATS scoring weights and penalty mappings"
+  },
+
+  "scoreScale": {
+    "min": 0,
+    "max": 100
+  },
+
+  "baseWeights": {
+    "sections": 30,
+    "keywords": 30,
+    "experience_quality": 15,
+    "skills_relevance": 15,
+    "formatting": 10
+  },
+
+  "sectionWeights": {
+    "experience": 12,
+    "skills": 8,
+    "projects": 4,
+    "education": 4,
+    "summary": 2
+  },
+
+  "keywordWeights": {
+    "very_high": 1.0,
+    "high": 0.8,
+    "medium": 0.5,
+    "low": 0.2
+  },
+
+  "formattingPenaltyMap": {
+    "high": -8,
+    "medium": -4,
+    "low": -2
+  },
+
+  "missingSectionPenalty": {
+    "required": -10,
+    "optional": -3
+  },
+
+  "experienceSignals": {
+    "quantifiedAchievements": 5,
+    "actionVerbsUsed": 5,
+    "consistentTimeline": 5
+  },
+
+  "caps": {
+    "maxFormattingPenalty": -10,
+    "maxKeywordPenalty": -15
+  }
+}

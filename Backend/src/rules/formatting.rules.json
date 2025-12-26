@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "ATS formatting and layout compatibility rules"
+  },
+
+  "atsCompatibility": {
+    "preferredLayout": "single_column",
+    "allowMultiColumn": false,
+    "allowTables": false,
+    "allowImages": false,
+    "allowIcons": false
+  },
+
+  "fontRules": {
+    "allowedFontTypes": ["sans-serif", "serif"],
+    "recommendedFonts": ["arial", "calibri", "times new roman", "helvetica"],
+    "minFontSize": 9,
+    "maxFontSize": 16
+  },
+
+  "structureRules": {
+    "maxPages": 2,
+    "minLineSpacing": 1.0,
+    "maxLineSpacing": 2.0,
+    "consistentBulletStyle": true
+  },
+
+  "contentRules": {
+    "requireTextSelectable": true,
+    "avoidTextInHeadersFooters": true,
+    "avoidExcessiveWhitespace": true,
+    "avoidAllCapsText": true
+  },
+
+  "penalties": {
+    "multiColumnLayout": {
+      "enabled": true,
+      "severity": "high"
+    },
+    "tablesUsed": {
+      "enabled": true,
+      "severity": "high"
+    },
+    "imagesOrIconsUsed": {
+      "enabled": true,
+      "severity": "medium"
+    },
+    "nonStandardFonts": {
+      "enabled": true,
+      "severity": "low"
+    },
+    "tooManyPages": {
+      "enabled": true,
+      "severity": "medium"
+    }
+  }
+}

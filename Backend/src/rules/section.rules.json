@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Resume section detection and structural validation rules"
+  },
+
+  "sections": [
+    {
+      "key": "summary",
+      "displayName": "Professional Summary",
+      "headings": [
+        "summary",
+        "professional summary",
+        "career summary",
+        "objective",
+        "career objective"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 40,
+        "maxWords": 120
+      },
+      "importance": "low"
+    },
+
+    {
+      "key": "skills",
+      "displayName": "Skills",
+      "headings": ["skills", "technical skills", "core skills", "key skills", "skills & tools"],
+      "required": true,
+      "validation": {
+        "minWords": 20,
+        "expectList": true
+      },
+      "importance": "high"
+    },
+
+    {
+      "key": "experience",
+      "displayName": "Work Experience",
+      "headings": [
+        "experience",
+        "work experience",
+        "professional experience",
+        "employment",
+        "employment history"
+      ],
+      "required": true,
+      "validation": {
+        "minWords": 120,
+        "expectDates": true,
+        "expectBullets": true
+      },
+      "importance": "very_high"
+    },
+
+    {
+      "key": "projects",
+      "displayName": "Projects",
+      "headings": ["projects", "personal projects", "academic projects", "key projects"],
+      "required": false,
+      "validation": {
+        "minWords": 60,
+        "expectBullets": true
+      },
+      "importance": "medium"
+    },
+
+    {
+      "key": "education",
+      "displayName": "Education",
+      "headings": ["education", "academic background", "educational qualifications"],
+      "required": true,
+      "validation": {
+        "minWords": 30,
+        "expectDates": true
+      },
+      "importance": "medium"
+    },
+
+    {
+      "key": "certifications",
+      "displayName": "Certifications",
+      "headings": ["certifications", "certificates", "licenses", "professional certifications"],
+      "required": false,
+      "validation": {
+        "minWords": 15
+      },
+      "importance": "low"
+    }
+  ]
+}
