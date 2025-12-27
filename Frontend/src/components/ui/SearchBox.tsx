@@ -10,6 +10,7 @@ interface SearchBoxProps {
 function SearchBox({ onSelectRole }: SearchBoxProps) {
   const [userInput, setUserInput] = useState<string>("");
   const [jobRoleResult, setJobRoleResult] = useState<string[]>([]);
+  const [selectedItem, setSelectedItem] = useState<number>(-1);
   const searchCache = useRef<Map<string, string[]>>(new Map());
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -23,6 +24,49 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  // Keyboard navigation for results
+  useEffect(() => {
+    setSelectedItem(-1);
+  }, [jobRoleResult]);
+
+  // Handle role selection
+  const handleSelectRole = (role: string) => {
+    setUserInput(role);
+    setJobRoleResult([]);
+    setSelectedItem(-1);
+    onSelectRole?.(role);
+  };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedItem(
+          (prev) => (prev < jobRoleResult.length - 1 ? prev + 1 : 0), // Loop to top
+        );
+        break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedItem(
+          (prev) => (prev > 0 ? prev - 1 : jobRoleResult.length - 1), // Loop to bottom
+        );
+        break;
+
+      case "Enter":
+        e.preventDefault();
+        if (selectedItem >= 0 && selectedItem < jobRoleResult.length) {
+          handleSelectRole(jobRoleResult[selectedItem]);
+        }
+        break;
+
+      case "Escape":
+        e.preventDefault();
+        setJobRoleResult([]);
+        setSelectedItem(-1);
+        break;
+    }
+  };
 
   // Debouncing
   useEffect(() => {
@@ -68,13 +112,14 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
           type="text"
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Select or type a role (e.g. Full Stack Developer)"
           className="border-gray-8 focus:border-gray-11 w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[.9rem]"
         />
 
         {hasSearchResults && (
           <div className="bg-bg-gray-2 border-gray-8 absolute z-999 mt-2 max-h-60 w-full overflow-y-auto rounded-xl border shadow">
-            {jobRoleResult.map((searchResult) => {
+            {jobRoleResult.map((searchResult, index) => {
               return (
                 <div
                   onClick={(e) => {
@@ -83,7 +128,9 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
                     setJobRoleResult([]);
                     onSelectRole?.(searchResult);
                   }}
-                  className="hover:bg-gray-4 cursor-pointer p-2.5"
+                  className={`cursor-pointer p-2.5 transition-colors ${
+                    selectedItem === index ? "bg-gray-4" : "hover:bg-gray-4"
+                  }`}
                   key={searchResult}
                 >
                   {searchResult}
@@ -94,7 +141,7 @@ function SearchBox({ onSelectRole }: SearchBoxProps) {
         )}
       </div>
       {isExactMatch && userInput.length > 0 && (
-        <div className="text-success-text absolute mt-1 ml-1 flex items-center gap-1">
+        <div className="text-success-text mt-1 ml-1 flex items-center gap-1">
           {" "}
           <Check className="size-4.5" /> <p className="text-sm">Selected: {userInput}</p>
         </div>

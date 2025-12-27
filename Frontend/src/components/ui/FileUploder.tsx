@@ -145,7 +145,7 @@ function FileUploader() {
 
     setError(null);
     setFile(droppedFile);
-    handleUpload(droppedFile);
+    // handleUpload(droppedFile);
     console.log("File Name:", droppedFile.name);
     console.log("File Type:", droppedFile.type);
     console.log("File Size (bytes):", droppedFile.size);
@@ -185,6 +185,12 @@ function FileUploader() {
       ) {
         const formData = new FormData();
         formData.append("resume", uploadFile);
+        if (jobRole) formData.append("jobRole", jobRole);
+
+        const uploadResponse = await axios.post(`${serverUrl}resume/upload-file`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        console.log("Backend response:", uploadResponse.data);
       }
     } catch (err: any) {
       console.error("Upload error:", err);
@@ -286,7 +292,7 @@ function FileUploader() {
         <button
           disabled={!isFormValid}
           onClick={handleAnalyze}
-          className={`:p-3 z-20 mx-auto mt-7 w-[97%] rounded-lg p-2 md:text-[1rem] ${
+          className={`:p-3 z-20 mx-auto mt-4 w-[97%] rounded-lg p-2 md:text-[1rem] ${
             isFormValid
               ? "bg-primary hover:bg-blue-10 md cursor-pointer text-white shadow-md"
               : "bg-gray-5 text-gray-10 cursor-not-allowed"

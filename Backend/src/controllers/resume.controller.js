@@ -28,13 +28,23 @@ const uploadResumeText = asyncHandler(async (req, res) => {
 
 // DOCS
 const uploadResumeFile = asyncHandler(async (req, res) => {
+  const { jobRole } = req.body;
   if (!req.file) {
     return res.status(400).json(new ApiResponse(400, null, "Resume file is required"));
   }
 
-  const result = await mammoth.extractRawText({
-    buffer: req.file.buffer,
-  });
+  let result;
+  try {
+    result = await mammoth.extractRawText({
+      buffer: req.file.buffer,
+    });
+  } catch (err) {
+    return res.status(400).json(new ApiResponse(400, null, "Failed to read DOCX file"));
+  }
+
+  if (!result.value || result.value.trim().length === 0) {
+    return res.status(400).json(new ApiResponse(400, null, "No readable text found in DOCX"));
+  }
 
   console.log("DOCX resume received");
   console.log("Text length:", result.value.length);
@@ -44,6 +54,7 @@ const uploadResumeFile = asyncHandler(async (req, res) => {
       200,
       {
         textLength: result.value.length,
+        jobRole,
         preview: result.value.slice(0, 300),
       },
       "Resume processed successfully",
