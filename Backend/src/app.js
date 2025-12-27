@@ -13,7 +13,11 @@ app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 app.use(express.static("public"));
 
 // CORS configurations
-const allowedOrigins = ["http://localhost:5173", "http://192.168.1.3:5173"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://192.168.1.3:5173",
+  "http://192.168.1.2:5173",
+];
 
 app.use(
   cors({

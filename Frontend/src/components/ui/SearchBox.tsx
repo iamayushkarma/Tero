@@ -1,166 +1,102 @@
 import { Search, Check } from "lucide-react";
-import React, { useEffect, useState, useRef } from "react";
-import { jobRoles } from "../../utils/jobRoles";
 import "./common.css";
+import { jobRoles } from "../../utils/jobRoles";
+import { useEffect, useRef, useState } from "react";
 
-type SearchBoxProps = {
-  onSelectRole?: (role: string | null) => void;
-};
+interface SearchBoxProps {
+  onSelectRole?: (role: string) => void;
+}
 
 function SearchBox({ onSelectRole }: SearchBoxProps) {
-  const [input, setInput] = useState<string>("");
-  const [filteredRoles, setFilteredRoles] = useState<string[]>([]);
-  const [showJobRole, setShowJobRole] = useState<boolean>(false);
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number>(-1);
-  const [isSearching, setIsSearching] = useState(false);
+  const [userInput, setUserInput] = useState<string>("");
+  const [jobRoleResult, setJobRoleResult] = useState<string[]>([]);
+  const searchCache = useRef<Map<string, string[]>>(new Map());
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const cacheRef = useRef<Map<string, string[]>>(new Map());
-
-  const listRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const handleKeyEvents = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showJobRole || filteredRoles.length === 0) return;
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setActiveIndex((prev) => (prev < filteredRoles.length - 1 ? prev + 1 : 0));
-        break;
-
-      case "ArrowUp":
-        e.preventDefault();
-        setActiveIndex((prev) => (prev > 0 ? prev - 1 : filteredRoles.length - 1));
-        break;
-
-      case "Enter":
-        if (activeIndex >= 0) {
-          handleSelectRole(filteredRoles[activeIndex]);
-        }
-        break;
-
-      case "Escape":
-        setShowJobRole(false);
-        break;
-    }
-  };
-
+  // Close dropdown if clicked outside
   useEffect(() => {
-    if (!input.trim()) {
-      onSelectRole?.(null);
-    }
-  }, [input]);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setJobRoleResult([]);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
+  // Debouncing
   useEffect(() => {
-    if (activeIndex < 0) return;
-
-    const activeItem = itemRefs.current[activeIndex];
-    if (activeItem) {
-      activeItem.scrollIntoView({
-        block: "nearest",
-        behavior: "smooth",
-      });
+    if (userInput.trim().length === 0) {
+      setJobRoleResult([]);
+      return;
     }
-  }, [activeIndex]);
-
-  useEffect(() => {
-    if (selectedRole && input !== selectedRole) {
-      setSelectedRole(null);
-    }
-  }, [input, selectedRole]);
-
-  useEffect(() => {
-    if (!input.trim()) {
-      setFilteredRoles([]);
-      setActiveIndex(-1);
-      setIsSearching(false);
+    // Don't search if user selected an exact match
+    if (jobRoles.includes(userInput)) {
+      setJobRoleResult([]);
       return;
     }
 
-    setIsSearching(true);
-    // debouncing
     const timer = setTimeout(() => {
-      const query = input.toLowerCase();
+      const searchKey = userInput.toLowerCase();
 
-      // Check cache
-      if (cacheRef.current.has(query)) {
-        setFilteredRoles(cacheRef.current.get(query)!);
-        setActiveIndex(-1);
-        setIsSearching(false);
+      // Search from cache first
+      if (searchCache.current.has(searchKey)) {
+        setJobRoleResult(searchCache.current.get(searchKey)!);
         return;
       }
+      const searchResult = jobRoles.filter((roles) => roles.toLowerCase().includes(searchKey));
 
-      // Compute + cache
-      const results = jobRoles.filter((role) => role.toLowerCase().includes(query));
+      // Store in cache
+      searchCache.current.set(searchKey, searchResult);
 
-      const finalResults = results.length === 0 ? [input] : results;
-
-      cacheRef.current.set(query, finalResults);
-      setFilteredRoles(finalResults);
-      setActiveIndex(-1);
-      setIsSearching(false);
+      setJobRoleResult(searchResult);
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [input]);
+  }, [userInput]);
 
-  const handleSelectRole = (role: string) => {
-    setInput(role);
-    setSelectedRole(role);
-    setShowJobRole(false);
-    onSelectRole?.(role);
-  };
-
-  const shouldShowDropdown =
-    showJobRole && !isSearching && input.length > 0 && filteredRoles.length > 0;
+  // condition for showing result
+  const hasSearchResults = userInput.trim().length > 0 && jobRoleResult.length > 0;
+  const isExactMatch = jobRoles.includes(userInput);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <div className="relative mt-2">
         <Search className="text-gray-10 absolute top-1/2 left-2 h-5 w-5 -translate-y-1/2" />
+
         <input
-          placeholder="Select or type a role (e.g. Full Stack Developer)"
           type="text"
-          value={input}
-          onFocus={() => setShowJobRole(true)}
-          onBlur={() => setShowJobRole(false)}
-          onKeyDown={handleKeyEvents}
-          onChange={(e) => setInput(e?.target.value)}
-          className="border-gray-8 focus:border-gray-11 relative w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[.9rem]"
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          placeholder="Select or type a role (e.g. Full Stack Developer)"
+          className="border-gray-8 focus:border-gray-11 w-full rounded-lg border p-2 pl-9 font-medium outline-none placeholder:text-sm placeholder:md:text-[.9rem]"
         />
-        <div className="relative">
-          {shouldShowDropdown && (
-            <div
-              ref={listRef}
-              className="bg-bg-gray-2 border-gray-8 absolute right-0 left-0 z-999 mx-auto mt-3 max-h-60 overflow-y-scroll rounded-xl border"
-            >
-              {filteredRoles.map((jobRole, index) => {
-                const isCustom = !jobRoles.includes(jobRole);
-                return (
-                  <div
-                    ref={(el) => {
-                      itemRefs.current[index] = el;
-                    }}
-                    className={`border-b border-gray-200 px-3 py-2 transition-colors last:border-b-0 ${
-                      index === activeIndex ? "bg-gray-4" : "hover:bg-gray-4"
-                    }`}
-                    key={index}
-                    onMouseDown={() => handleSelectRole(jobRole)}
-                  >
-                    {isCustom && <span className="text-xs text-gray-500">Add </span>}
-                    {jobRole}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+
+        {hasSearchResults && (
+          <div className="bg-bg-gray-2 border-gray-8 absolute z-999 mt-2 max-h-60 w-full overflow-y-auto rounded-xl border shadow">
+            {jobRoleResult.map((searchResult) => {
+              return (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setUserInput(searchResult);
+                    setJobRoleResult([]);
+                    onSelectRole?.(searchResult);
+                  }}
+                  className="hover:bg-gray-4 cursor-pointer p-2.5"
+                  key={searchResult}
+                >
+                  {searchResult}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-      {selectedRole && (
-        <div className="mt-2 flex items-center justify-start gap-1 text-green-600">
-          <Check className="text-success-text size-4" />{" "}
-          <p className="text-sm">Selected: {selectedRole}</p>
+      {isExactMatch && userInput.length > 0 && (
+        <div className="text-success-text absolute mt-1 ml-1 flex items-center gap-1">
+          {" "}
+          <Check className="size-4.5" /> <p className="text-sm">Selected: {userInput}</p>
         </div>
       )}
     </div>

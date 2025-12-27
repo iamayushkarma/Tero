@@ -279,13 +279,14 @@ function FileUploader() {
             Selecting a job role improves keyword and skill matching.
           </p>
           <SearchBox onSelectRole={setJobRole} />
+          {/* <SearchBox onSelectRole={setJobRole} /> */}
         </div>
 
         {/* Submit button */}
         <button
           disabled={!isFormValid}
           onClick={handleAnalyze}
-          className={`:p-3 z-20 mx-auto mt-6 w-[97%] rounded-lg p-2 md:text-[1rem] ${
+          className={`:p-3 z-20 mx-auto mt-7 w-[97%] rounded-lg p-2 md:text-[1rem] ${
             isFormValid
               ? "bg-primary hover:bg-blue-10 md cursor-pointer text-white shadow-md"
               : "bg-gray-5 text-gray-10 cursor-not-allowed"
