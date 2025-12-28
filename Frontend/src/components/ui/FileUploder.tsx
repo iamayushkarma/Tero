@@ -269,7 +269,7 @@ function FileUploader() {
             />
           </div>
         )}
-        <div className="text-error mt-2 ml-2 flex w-[98%] items-start text-[.75rem] md:text-[.8rem]">
+        <div className="text-error mt-2 ml-2 flex w-[98%] items-start text-[.7rem] md:text-[.8rem]">
           {error}
         </div>
 
