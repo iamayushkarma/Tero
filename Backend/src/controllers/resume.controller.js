@@ -2,6 +2,7 @@ import mammoth from "mammoth";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { resumeParser } from "../services/resumeParser.js";
+import { sectionDetector } from "../services/sectionDetector.js";
 
 // PDF
 const uploadResumeText = asyncHandler(async (req, res) => {
@@ -17,6 +18,9 @@ const uploadResumeText = asyncHandler(async (req, res) => {
   const parsedResume = resumeParser({
     text,
     source: "pdf",
+  });
+  const sectionData = sectionDetector({
+    lines: parsedResume.lines,
   });
 
   return res.status(200).json(
@@ -60,6 +64,9 @@ const uploadResumeFile = asyncHandler(async (req, res) => {
   const parsedResume = resumeParser({
     text: result.value,
     source: "DOCS",
+  });
+  const sectionData = sectionDetector({
+    lines: parsedResume.lines,
   });
 
   return res.status(200).json(

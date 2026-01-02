@@ -92,18 +92,6 @@ export const resumeParser = ({ text, source }) => {
     uppercaseRatio: totalLetters ? uppercaseLetters / totalLetters : 0,
   };
 
-  console.log("rawText");
-
-  console.log(rawText);
-
-  console.log("cleanText");
-
-  console.log(cleanText);
-
-  console.log("normalizedText");
-
-  console.log(normalizedText);
-
   return {
     rawText,
     cleanText,

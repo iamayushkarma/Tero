@@ -1,10 +1,26 @@
 {
   "meta": {
-    "version": "1.0",
-    "description": "Resume section detection and structural validation rules"
+    "version": "2.0",
+    "description": "Comprehensive resume section detection and structural validation rules for tech applicants",
+    "lastUpdated": "2026-01-02",
+    "targetAudience": "tech"
   },
-
   "sections": [
+    {
+      "key": "contact",
+      "displayName": "Contact Information",
+      "headings": ["contact", "contact information", "personal details", "personal information"],
+      "required": true,
+      "validation": {
+        "minWords": 10,
+        "expectEmail": true,
+        "expectPhone": true,
+        "expectGithub": true,
+        "expectLinkedIn": true,
+        "optionalFields": ["portfolio", "website", "blog", "stackoverflow", "twitter"]
+      },
+      "importance": "critical"
+    },
     {
       "key": "summary",
       "displayName": "Professional Summary",
@@ -12,29 +28,58 @@
         "summary",
         "professional summary",
         "career summary",
-        "objective",
-        "career objective"
+        "profile",
+        "professional profile",
+        "about",
+        "about me"
       ],
       "required": false,
       "validation": {
         "minWords": 40,
-        "maxWords": 120
+        "maxWords": 150,
+        "avoidFirstPerson": true,
+        "highlightTechStack": true
       },
-      "importance": "low"
+      "importance": "medium",
+      "notes": "Recommended for experienced developers; optional for entry-level"
     },
-
     {
       "key": "skills",
-      "displayName": "Skills",
-      "headings": ["skills", "technical skills", "core skills", "key skills", "skills & tools"],
+      "displayName": "Technical Skills",
+      "headings": [
+        "skills",
+        "technical skills",
+        "core skills",
+        "key skills",
+        "core competencies",
+        "skills & tools",
+        "technical expertise",
+        "technology stack",
+        "tech stack"
+      ],
       "required": true,
       "validation": {
         "minWords": 20,
-        "expectList": true
+        "expectList": true,
+        "groupByCategory": true
       },
-      "importance": "high"
+      "importance": "critical",
+      "subcategories": [
+        "programming languages",
+        "web technologies",
+        "frameworks & libraries",
+        "databases",
+        "cloud platforms",
+        "devops & ci/cd",
+        "tools & ides",
+        "version control",
+        "testing frameworks",
+        "mobile development",
+        "data science & ml",
+        "operating systems",
+        "soft skills"
+      ]
     },
-
     {
       "key": "experience",
       "displayName": "Work Experience",
@@ -43,50 +88,355 @@
         "work experience",
         "professional experience",
         "employment",
-        "employment history"
+        "employment history",
+        "career history",
+        "work history",
+        "relevant experience"
       ],
       "required": true,
       "validation": {
         "minWords": 120,
         "expectDates": true,
-        "expectBullets": true
+        "expectBullets": true,
+        "expectCompanyName": true,
+        "expectJobTitle": true,
+        "bulletFormat": "action-oriented",
+        "quantifyResults": true,
+        "includeTechStack": true
       },
-      "importance": "very_high"
+      "importance": "critical",
+      "notes": "Most important section; should include technologies used in each role"
     },
-
     {
-      "key": "projects",
-      "displayName": "Projects",
-      "headings": ["projects", "personal projects", "academic projects", "key projects"],
+      "key": "internships",
+      "displayName": "Internships",
+      "headings": [
+        "internship",
+        "internships",
+        "internship experience",
+        "industrial training",
+        "summer internship",
+        "co-op experience"
+      ],
       "required": false,
       "validation": {
         "minWords": 60,
-        "expectBullets": true
+        "expectDates": true,
+        "expectBullets": true,
+        "includeTechStack": true
       },
-      "importance": "medium"
+      "importance": "high",
+      "notes": "Critical for students and recent graduates; can be merged with experience"
     },
-
+    {
+      "key": "projects",
+      "displayName": "Projects",
+      "headings": [
+        "projects",
+        "personal projects",
+        "academic projects",
+        "key projects",
+        "technical projects",
+        "portfolio projects",
+        "major projects",
+        "side projects",
+        "open source contributions"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 60,
+        "expectBullets": true,
+        "expectTechnologies": true,
+        "expectGithubLinks": true,
+        "expectLiveDemo": false
+      },
+      "importance": "very_high",
+      "notes": "Highly recommended for all developers; essential for entry-level and self-taught"
+    },
+    {
+      "key": "opensource",
+      "displayName": "Open Source Contributions",
+      "headings": [
+        "open source",
+        "open source contributions",
+        "oss contributions",
+        "open source projects",
+        "contributions"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 30,
+        "expectLinks": true,
+        "expectContributionType": true
+      },
+      "importance": "high",
+      "notes": "Strong signal for senior developers and maintainers"
+    },
     {
       "key": "education",
       "displayName": "Education",
-      "headings": ["education", "academic background", "educational qualifications"],
+      "headings": [
+        "education",
+        "academic background",
+        "educational qualifications",
+        "academic qualifications",
+        "educational background"
+      ],
       "required": true,
       "validation": {
         "minWords": 30,
-        "expectDates": true
+        "expectDates": true,
+        "expectDegree": true,
+        "expectInstitution": true,
+        "optionalFields": ["gpa", "honors", "relevant coursework"]
       },
-      "importance": "medium"
+      "importance": "high",
+      "notes": "Place before experience if recent graduate; after if experienced (3+ years)"
     },
-
     {
       "key": "certifications",
       "displayName": "Certifications",
-      "headings": ["certifications", "certificates", "licenses", "professional certifications"],
+      "headings": [
+        "certifications",
+        "certificates",
+        "professional certifications",
+        "licenses & certifications"
+      ],
       "required": false,
       "validation": {
-        "minWords": 15
+        "minWords": 15,
+        "expectIssuingOrg": true,
+        "expectDate": true,
+        "expectCredentialId": false
       },
-      "importance": "low"
+      "importance": "medium",
+      "examples": [
+        "AWS Certified Solutions Architect",
+        "Google Cloud Professional",
+        "Kubernetes Administrator",
+        "Azure Developer Associate",
+        "Oracle Certified Professional"
+      ]
+    },
+    {
+      "key": "publications",
+      "displayName": "Publications & Research",
+      "headings": [
+        "publications",
+        "research papers",
+        "papers",
+        "published work",
+        "research publications",
+        "research"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 20,
+        "expectCitation": true,
+        "expectDOI": false
+      },
+      "importance": "medium",
+      "notes": "Important for research engineers, ML engineers, and academic roles"
+    },
+    {
+      "key": "patents",
+      "displayName": "Patents",
+      "headings": ["patents", "patent applications", "intellectual property"],
+      "required": false,
+      "validation": {
+        "minWords": 15,
+        "expectPatentNumber": true,
+        "expectStatus": true
+      },
+      "importance": "medium",
+      "notes": "Valuable for senior engineers and innovation-focused roles"
+    },
+    {
+      "key": "awards",
+      "displayName": "Awards & Achievements",
+      "headings": [
+        "awards",
+        "honors",
+        "achievements",
+        "awards & honors",
+        "honors & awards",
+        "accomplishments",
+        "recognitions",
+        "hackathons"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 15,
+        "expectList": true,
+        "expectDate": true
+      },
+      "importance": "low",
+      "examples": [
+        "Hackathon wins",
+        "Coding competition rankings",
+        "Employee of the month",
+        "Dean's list",
+        "Scholarship awards"
+      ]
+    },
+    {
+      "key": "hackathons",
+      "displayName": "Hackathons & Competitions",
+      "headings": [
+        "hackathons",
+        "competitions",
+        "coding competitions",
+        "programming contests",
+        "competitive programming"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 20,
+        "expectRanking": true,
+        "expectDate": true
+      },
+      "importance": "medium",
+      "notes": "Shows problem-solving skills and passion for coding"
+    },
+    {
+      "key": "conferences",
+      "displayName": "Conferences & Speaking",
+      "headings": [
+        "conferences",
+        "presentations",
+        "speaking engagements",
+        "talks",
+        "workshops",
+        "tech talks"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 20,
+        "expectDate": true,
+        "expectEventName": true
+      },
+      "importance": "low",
+      "notes": "Valuable for thought leadership and senior/staff engineer roles"
+    },
+    {
+      "key": "volunteer",
+      "displayName": "Volunteer & Community",
+      "headings": [
+        "volunteer",
+        "volunteer experience",
+        "volunteering",
+        "community involvement",
+        "mentorship",
+        "teaching"
+      ],
+      "required": false,
+      "validation": {
+        "minWords": 30,
+        "expectBullets": true
+      },
+      "importance": "low",
+      "notes": "Tech mentorship, coding bootcamp instruction, community organizing"
+    },
+    {
+      "key": "languages",
+      "displayName": "Languages",
+      "headings": ["languages", "language skills", "spoken languages"],
+      "required": false,
+      "validation": {
+        "minWords": 10,
+        "expectProficiencyLevel": true
+      },
+      "importance": "low",
+      "notes": "Important for international companies or remote positions"
+    },
+    {
+      "key": "interests",
+      "displayName": "Interests",
+      "headings": ["interests", "hobbies", "personal interests", "hobbies & interests"],
+      "required": false,
+      "validation": {
+        "minWords": 10,
+        "maxWords": 30
+      },
+      "importance": "very_low",
+      "notes": "Optional; tech-related interests preferred (e.g., 3D printing, robotics)"
     }
-  ]
+  ],
+  "recommendedSectionOrder": {
+    "experienced": [
+      "contact",
+      "summary",
+      "skills",
+      "experience",
+      "projects",
+      "education",
+      "certifications",
+      "opensource",
+      "publications",
+      "patents",
+      "conferences",
+      "awards"
+    ],
+    "mid-level": [
+      "contact",
+      "summary",
+      "skills",
+      "experience",
+      "projects",
+      "education",
+      "certifications",
+      "hackathons",
+      "awards"
+    ],
+    "entry-level": [
+      "contact",
+      "summary",
+      "education",
+      "skills",
+      "internships",
+      "projects",
+      "hackathons",
+      "certifications",
+      "awards"
+    ],
+    "student": [
+      "contact",
+      "education",
+      "skills",
+      "projects",
+      "internships",
+      "hackathons",
+      "coursework",
+      "awards"
+    ]
+  },
+  "generalGuidelines": {
+    "maxPages": 2,
+    "preferredPages": 1,
+    "fontSize": {
+      "min": 10,
+      "max": 12,
+      "preferred": 11
+    },
+    "margins": {
+      "min": 0.5,
+      "max": 1.0,
+      "preferred": 0.75
+    },
+    "formatting": {
+      "useConsistentBullets": true,
+      "avoidGraphics": true,
+      "useSimpleFonts": true,
+      "maintainWhiteSpace": true,
+      "atsOptimized": true
+    },
+    "techSpecificGuidelines": {
+      "includeGithubProfile": "required",
+      "includePortfolio": "highly_recommended",
+      "includeTechStackInExperience": true,
+      "quantifyImpact": true,
+      "includeProjectLinks": true,
+      "avoidBuzzwords": true
+    }
+  }
 }
