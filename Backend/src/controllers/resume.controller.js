@@ -1,6 +1,7 @@
 import mammoth from "mammoth";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
+import { resumeParser } from "../services/resumeParser.js";
 
 // PDF
 const uploadResumeText = asyncHandler(async (req, res) => {
@@ -9,15 +10,21 @@ const uploadResumeText = asyncHandler(async (req, res) => {
   if (!text || text.trim().length === 0) {
     return res.status(400).json(new ApiResponse(400, null, "Resume text is required"));
   }
-
   console.log("PDF resume received");
   console.log("Text length:", text.length);
+
+  // sending extracted text to resumeParser.js
+  const parsedResume = resumeParser({
+    text,
+    source: "pdf",
+  });
 
   return res.status(200).json(
     new ApiResponse(
       200,
       {
         textLength: text.length,
+        parsedResume,
         jobRole,
         preview: text.slice(0, 300),
       },
@@ -49,11 +56,18 @@ const uploadResumeFile = asyncHandler(async (req, res) => {
   console.log("DOCX resume received");
   console.log("Text length:", result.value.length);
 
+  // sending extracted text to resumeParser.js
+  const parsedResume = resumeParser({
+    text: result.value,
+    source: "DOCS",
+  });
+
   return res.status(200).json(
     new ApiResponse(
       200,
       {
         textLength: result.value.length,
+        parsedResume,
         jobRole,
         preview: result.value.slice(0, 300),
       },
