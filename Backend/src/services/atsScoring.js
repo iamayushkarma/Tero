@@ -176,85 +176,13 @@ import { fileURLToPath } from "url";
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-/**
- * @typedef {Object} Section
- * @property {string} key - Section identifier
- * @property {string} displayName - Human-readable section name
- * @property {boolean} found - Whether section was detected
- * @property {boolean} required - Whether section is required
- * @property {string} importance - Importance level
- */
-
-/**
- * @typedef {Object} SectionData
- * @property {Section[]} sections - Array of detected sections
- * @property {string[]} missingRequiredSections - Array of missing required section keys
- */
-
-/**
- * @typedef {Object} GroupMatch
- * @property {string[]} matched - Matched keywords
- * @property {number} totalCount - Total occurrences
- * @property {number} uniqueCount - Unique keyword count
- * @property {string} importance - Importance level
- */
-
-/**
- * @typedef {Object} KeywordData
- * @property {Object.<string, GroupMatch>} globalMatches - Keyword matches by group
- * @property {Object} actionVerbs - Action verb statistics
- * @property {number} actionVerbs.count - Number of action verbs found
- * @property {string[]} actionVerbs.verbs - List of action verbs
- * @property {string[]} [quantifiedAchievements] - Quantified achievement patterns
- * @property {Array<{keyword: string, count: number}>} [stuffingSignals] - Keyword stuffing signals
- */
-
-/**
- * @typedef {Object} FormattingData
- * @property {string[]} ruleFindings - Formatting rule violations
- * @property {Object} layoutSignals - Layout-related signals
- * @property {Object} fontSignals - Font-related signals
- * @property {Object} structureSignals - Structure-related signals
- */
-
-/**
- * @typedef {Object} ScoreBreakdown
- * @property {number} sections - Points from sections
- * @property {number} keywords - Points from keywords
- * @property {number} formatting - Formatting penalty (negative, but contributes positive score)
- * @property {number} penalties - Other penalties (negative)
- * @property {number} experience_quality - Points from experience quality
- * @property {number} skills_relevance - Points from skills relevance
- */
-
-/**
- * @typedef {Object} DetailedExplanation
- * @property {string} category - Category of the explanation (section, keyword, formatting, bonus, penalty)
- * @property {string} message - Human-readable message
- * @property {number} impact - Numerical impact on score
- * @property {string} severity - Severity level (positive, neutral, negative)
- */
-
-/**
- * @typedef {Object} ScoringResult
- * @property {number} score - Final ATS score (0-100)
- * @property {string} verdict - Overall verdict (excellent, good, average, poor)
- * @property {ScoreBreakdown} breakdown - Detailed score breakdown
- * @property {DetailedExplanation[]} explanations - Detailed explanations
- * @property {Object} recommendations - Actionable recommendations
- * @property {string[]} recommendations.critical - Critical issues to fix
- * @property {string[]} recommendations.improvements - Suggested improvements
- * @property {Object} meta - Metadata about scoring
- */
-
 /**
  * Score thresholds for verdicts
  */
 const VERDICT_THRESHOLDS = {
-  excellent: 75,
-  good: 60,
-  average: 40,
+  excellent: 70,
+  good: 55,
+  average: 35,
   poor: 0,
 };
 
@@ -585,35 +513,6 @@ function generateRecommendations(sectionData, keywordData, formattingData, score
 
   return { critical, improvements };
 }
-
-/**
- * Main ATS scoring function
- * Calculates comprehensive ATS score with detailed breakdown
- *
- * @param {Object} params - Scoring parameters
- * @param {SectionData} params.sectionData - Section detection results
- * @param {KeywordData} params.keywordData - Keyword matching results
- * @param {FormattingData} params.formattingData - Formatting analysis results
- * @param {string} [params.rulesPath] - Optional custom path to scoring rules file
- * @returns {ScoringResult} Comprehensive scoring results
- * @throws {Error} If input validation fails or rules cannot be loaded
- *
- * @example
- * const result = atsScoring({
- *   sectionData: { sections: [...], missingRequiredSections: [] },
- *   keywordData: { globalMatches: {...}, actionVerbs: {...} },
- *   formattingData: { ruleFindings: [...] }
- * });
- *
- * // Result:
- * // {
- * //   score: 78,
- * //   verdict: "good",
- * //   breakdown: { sections: 25, keywords: 40, ... },
- * //   explanations: [...],
- * //   recommendations: { critical: [], improvements: [...] }
- * // }
- */
 export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath }) => {
   // Validate input
   validateInput(sectionData, keywordData, formattingData);
@@ -693,21 +592,29 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
   // Add points for experience quality
   const actionVerbCount = keywordData.actionVerbs?.count || 0;
   if (actionVerbCount >= 5) {
-    totalScore += 5;
+    totalScore += 4;
     explanations.push({
       category: "experience",
       message: `Action verbs: ${actionVerbCount}`,
-      impact: 5,
+      impact: 4,
+      severity: SEVERITY.POSITIVE,
+    });
+  } else if (actionVerbCount >= 3) {
+    totalScore += 2;
+    explanations.push({
+      category: "experience",
+      message: `Action verbs: ${actionVerbCount}`,
+      impact: 2,
       severity: SEVERITY.POSITIVE,
     });
   }
   const quantifiedAchievements = keywordData.quantifiedAchievements || [];
   if (quantifiedAchievements.length > 0) {
-    totalScore += 5;
+    totalScore += 4;
     explanations.push({
       category: "experience",
       message: `Quantified achievements: ${quantifiedAchievements.length}`,
-      impact: 5,
+      impact: 4,
       severity: SEVERITY.POSITIVE,
     });
   }
@@ -721,7 +628,7 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
     }
     return sum;
   }, 0);
-  const skillsRatio = keywordPoints / 20; // assume 20 is good
+  const skillsRatio = Math.min(keywordPoints / 25, 1); // assume 25 is excellent
   const skillsPoints = Math.round(skillsRatio * scoringRules.baseWeights.skills_relevance);
   const cappedSkills = Math.min(skillsPoints, scoringRules.baseWeights.skills_relevance);
   totalScore += cappedSkills;
@@ -745,8 +652,8 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
     });
   });
 
-  // Clamp to 0-100
-  const finalScore = Math.max(0, Math.min(100, totalScore));
+  // Clamp to 5-95 range (instead of 0-100)
+  const finalScore = Math.max(5, Math.min(95, totalScore));
 
   // Determine verdict
   const verdict = determineVerdict(finalScore);
@@ -782,7 +689,8 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
           0,
         );
   const experiencePoints =
-    (actionVerbCount >= 5 ? 5 : 0) + (quantifiedAchievements.length > 0 ? 5 : 0);
+    (actionVerbCount >= 5 ? 4 : actionVerbCount >= 3 ? 2 : 0) +
+    (quantifiedAchievements.length > 0 ? 4 : 0);
   const penaltiesPoints = stuffingSignals.length * penaltyPerStuffing;
 
   const breakdown = {

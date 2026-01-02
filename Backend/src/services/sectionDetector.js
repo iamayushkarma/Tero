@@ -120,52 +120,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * @typedef {Object} SectionConfig
- * @property {string} key - Section identifier
- * @property {string} displayName - Human-readable section name
- * @property {boolean} required - Whether this section is required
- * @property {string} importance - Importance level (critical, high, medium, low)
- * @property {string[]} headings - List of possible heading variations
- */
-
-/**
- * @typedef {Object} PreparedSectionConfig
- * @property {string} key - Section identifier
- * @property {string} displayName - Human-readable section name
- * @property {boolean} required - Whether this section is required
- * @property {string} importance - Importance level
- * @property {Set<string>} headingSet - Set of normalized heading variations for O(1) lookup
- */
-
-/**
- * @typedef {Object} DetectedSection
- * @property {string} key - Section identifier
- * @property {string} displayName - Human-readable section name
- * @property {boolean} required - Whether this section is required
- * @property {string} importance - Importance level
- * @property {boolean} found - Whether this section was found
- * @property {string[]} content - Array of content lines for this section
- * @property {number} lineCount - Number of content lines
- * @property {number} [startLine] - Line number where section starts (0-indexed)
- * @property {number} [endLine] - Line number where section ends (0-indexed)
- */
-
-/**
- * @typedef {Object} DetectionResult
- * @property {DetectedSection[]} sections - Array of all sections with their content
- * @property {string[]} detectedSections - Array of detected section keys in order
- * @property {string[]} missingRequiredSections - Array of missing required section keys
- * @property {string[]} sectionOrder - Order in which sections appear
- * @property {Object} statistics - Detection statistics
- * @property {number} statistics.totalSections - Total sections configured
- * @property {number} statistics.detectedCount - Number of sections detected
- * @property {number} statistics.requiredCount - Number of required sections
- * @property {number} statistics.missingRequiredCount - Number of missing required sections
- * @property {number} statistics.completionRate - Percentage of sections detected
- * @property {Object} meta - Metadata about the detection
- */
-
-/**
  * Cache for loaded section rules to avoid repeated file reads
  */
 let cachedSectionRules = null;
@@ -181,14 +135,6 @@ const NORMALIZATION_CONFIG = {
   // Maximum heading length to consider (longer lines are likely content)
   maxHeadingLength: 100,
 };
-
-/**
- * Loads and caches section detection rules from JSON file
- * @param {string} rulesPath - Path to the section rules JSON file
- * @param {boolean} [forceReload=false] - Force reload even if cached
- * @returns {Object} Section detection rules configuration
- * @throws {Error} If rules file cannot be loaded or is invalid
- */
 function loadSectionRules(rulesPath, forceReload = false) {
   if (cachedSectionRules && !forceReload) {
     return cachedSectionRules;
@@ -213,12 +159,6 @@ function loadSectionRules(rulesPath, forceReload = false) {
     throw new Error(`Failed to load section rules: ${error.message}`);
   }
 }
-
-/**
- * Validates the structure of section rules
- * @param {Object} rules - Rules object to validate
- * @throws {Error} If validation fails
- */
 function validateRulesStructure(rules) {
   if (!rules.sections || !Array.isArray(rules.sections)) {
     throw new Error("Invalid rules structure: 'sections' must be an array");
@@ -238,12 +178,6 @@ function validateRulesStructure(rules) {
     }
   });
 }
-
-/**
- * Validates input parameters for section detection
- * @param {string[]} lines - Array of text lines from resume
- * @throws {Error} If validation fails
- */
 function validateInput(lines) {
   if (!Array.isArray(lines)) {
     throw new Error("sectionDetector: lines must be an array");
@@ -261,19 +195,6 @@ function validateInput(lines) {
     );
   }
 }
-
-/**
- * Normalizes a heading line for matching
- * Removes special characters, extra whitespace, and converts to lowercase
- *
- * @param {string} line - Raw heading line
- * @returns {string} Normalized heading
- *
- * @example
- * normalizeHeading("EXPERIENCE:"); // "experience"
- * normalizeHeading("Work Experience"); // "work experience"
- * normalizeHeading("  Skills • "); // "skills"
- */
 function normalizeHeading(line) {
   if (typeof line !== "string") {
     return "";
@@ -287,11 +208,6 @@ function normalizeHeading(line) {
     .trim();
 }
 
-/**
- * Checks if a line is likely a section heading based on formatting
- * @param {string} line - Line to check
- * @returns {boolean} True if line appears to be a heading
- */
 function isLikelyHeading(line) {
   const trimmed = line.trim();
 
@@ -312,12 +228,6 @@ function isLikelyHeading(line) {
 
   return hasAllCaps || hasColonOrDash || isShort;
 }
-
-/**
- * Checks if a line likely contains contact information
- * @param {string} line - Line to check
- * @returns {boolean} True if line appears to contain contact info
- */
 function isLikelyContactInfo(line) {
   const trimmed = line.trim().toLowerCase();
 
@@ -347,6 +257,9 @@ function isLikelyContactInfo(line) {
     "city",
     "state",
     "zip",
+    "contact",
+    "tel",
+    "cell",
   ];
   if (contactKeywords.some((keyword) => trimmed.includes(keyword))) {
     return true;
@@ -358,9 +271,9 @@ function isLikelyContactInfo(line) {
     return true;
   }
 
-  // Check for potential names (2-3 words, title case or all caps)
+  // Check for potential names (2-4 words, title case or all caps)
   const words = trimmed.split(/\s+/);
-  if (words.length >= 2 && words.length <= 4) {
+  if (words.length >= 2 && words.length <= 5) {
     // Check if it looks like a name (starts with capital letters)
     const looksLikeName = words.every(
       (word) =>
@@ -380,14 +293,15 @@ function isLikelyContactInfo(line) {
     return true;
   }
 
+  // Check for location patterns (City, State or City, Country)
+  const locationRegex = /^[A-Z][a-z]+,?\s*[A-Z][a-z]+$/;
+  if (locationRegex.test(trimmed)) {
+    return true;
+  }
+
   return false;
 }
 
-/**
- * Prepares section configurations for efficient matching
- * @param {SectionConfig[]} sections - Raw section configurations
- * @returns {PreparedSectionConfig[]} Prepared configurations with normalized heading sets
- */
 function prepareSectionConfigs(sections) {
   return sections.map((section) => ({
     key: section.key,
@@ -398,17 +312,6 @@ function prepareSectionConfigs(sections) {
   }));
 }
 
-/**
- * Matches a line against known section headings
- * @param {string} line - Line to match
- * @param {PreparedSectionConfig[]} sectionConfigs - Prepared section configurations
- * @returns {string|null} Matched section key or null
- *
- * @example
- * matchSectionHeading("EXPERIENCE", configs); // "experience"
- * matchSectionHeading("Work Experience:", configs); // "experience"
- * matchSectionHeading("Random Text", configs); // null
- */
 function matchSectionHeading(line, sectionConfigs) {
   const normalized = normalizeHeading(line);
 
@@ -429,15 +332,27 @@ function matchSectionHeading(line, sectionConfigs) {
     }
   }
 
+  // Fuzzy matching for common section names
+  const fuzzyMatches = {
+    experience: ["exp", "work", "job", "career", "employment", "professional"],
+    skills: ["skill", "tech", "technical", "abilities", "competencies"],
+    education: ["edu", "academic", "degree", "qualification", "school", "university"],
+    projects: ["project", "portfolio", "work samples"],
+    contact: ["info", "details", "personal"],
+  };
+
+  for (const [sectionKey, keywords] of Object.entries(fuzzyMatches)) {
+    if (keywords.some((keyword) => normalized.includes(keyword))) {
+      // Find the section config
+      const section = sectionConfigs.find((s) => s.key === sectionKey);
+      if (section) {
+        return sectionKey;
+      }
+    }
+  }
+
   return null;
 }
-
-/**
- * Processes lines and detects sections
- * @param {string[]} lines - Array of text lines
- * @param {PreparedSectionConfig[]} sectionConfigs - Prepared section configurations
- * @returns {Object} Processing results with content map and order
- */
 function processLines(lines, sectionConfigs) {
   const sectionContentMap = {};
   const sectionOrder = [];
@@ -477,11 +392,16 @@ function processLines(lines, sectionConfigs) {
     } else if (currentSectionKey) {
       // Add content to current section
       // Special handling for auto-detected contact section
-      if (currentSectionKey === "contact" && sectionContentMap["contact"].length >= 6) {
-        // Stop adding to contact section after 6 lines to avoid including too much
-        // This will be treated as unassigned content
-      } else if (currentSectionKey === "contact" && !isLikelyContactInfo(line)) {
-        // Stop contact section if line doesn't look like contact info
+      if (currentSectionKey === "contact" && sectionContentMap["contact"].length >= 8) {
+        // Stop adding to contact section after 8 lines to avoid including too much
+        currentSectionKey = null;
+      } else if (
+        currentSectionKey === "contact" &&
+        sectionContentMap["contact"].length > 2 &&
+        !isLikelyContactInfo(line) &&
+        !isLikelyHeading(line)
+      ) {
+        // Stop contact section if line doesn't look like contact info or heading after we've collected some contact info
         currentSectionKey = null;
       } else {
         sectionContentMap[currentSectionKey].push(line);
@@ -489,8 +409,8 @@ function processLines(lines, sectionConfigs) {
       }
     } else {
       // No section started yet - check if this might be contact info at the top
-      if (lineIndex < 10 && isLikelyContactInfo(line)) {
-        // Auto-start contact section for content at the beginning that looks like contact info
+      if (lineIndex < 15 && (isLikelyContactInfo(line) || isLikelyHeading(line))) {
+        // Auto-start contact section for content at the beginning that looks like contact info or could be a heading
         if (!sectionContentMap["contact"]) {
           sectionContentMap["contact"] = [];
           sectionOrder.push("contact");
@@ -514,13 +434,6 @@ function processLines(lines, sectionConfigs) {
   };
 }
 
-/**
- * Builds section objects with complete information
- * @param {PreparedSectionConfig[]} sectionConfigs - Section configurations
- * @param {Object.<string, string[]>} sectionContentMap - Map of section keys to content
- * @param {Object.<string, Object>} sectionPositions - Map of section keys to positions
- * @returns {DetectedSection[]} Array of section objects
- */
 function buildSectionObjects(sectionConfigs, sectionContentMap, sectionPositions) {
   return sectionConfigs.map((config) => {
     const content = sectionContentMap[config.key] || [];
@@ -547,13 +460,6 @@ function buildSectionObjects(sectionConfigs, sectionContentMap, sectionPositions
   });
 }
 
-/**
- * Calculates detection statistics
- * @param {DetectedSection[]} sections - Array of detected sections
- * @param {string[]} detectedSections - Array of detected section keys
- * @param {string[]} missingRequiredSections - Array of missing required section keys
- * @returns {Object} Detection statistics
- */
 function calculateStatistics(sections, detectedSections, missingRequiredSections) {
   const totalSections = sections.length;
   const detectedCount = detectedSections.length;
@@ -571,36 +477,97 @@ function calculateStatistics(sections, detectedSections, missingRequiredSections
   };
 }
 
-/**
- * Main section detector function
- * Detects and extracts sections from resume text lines
- *
- * @param {Object} params - Detection parameters
- * @param {string[]} params.lines - Array of text lines from the resume
- * @param {string} [params.rulesPath] - Optional custom path to section rules file
- * @returns {DetectionResult} Comprehensive section detection results
- * @throws {Error} If input validation fails or rules cannot be loaded
- *
- * @example
- * const result = sectionDetector({
- *   lines: [
- *     "John Doe",
- *     "EXPERIENCE",
- *     "Software Engineer at ABC Corp",
- *     "EDUCATION",
- *     "BS Computer Science"
- *   ]
- * });
- *
- * // Result:
- * // {
- * //   sections: [{ key: 'experience', found: true, content: [...] }, ...],
- * //   detectedSections: ['experience', 'education'],
- * //   missingRequiredSections: [],
- * //   sectionOrder: ['experience', 'education'],
- * //   statistics: { totalSections: 10, detectedCount: 2, ... }
- * // }
- */
+function postProcessSections(sections, lines, sectionConfigs) {
+  const enhancedSections = [...sections];
+
+  // Find sections that are still missing
+  const missingSections = sectionConfigs.filter(
+    (config) => !enhancedSections.find((s) => s.key === config.key)?.found,
+  );
+
+  // For each missing section, try to find content that might belong to it
+  for (const missingConfig of missingSections) {
+    const detectedContent = findSectionContentByKeywords(lines, missingConfig);
+    if (detectedContent.length > 0) {
+      // Update the section with detected content
+      const sectionIndex = enhancedSections.findIndex((s) => s.key === missingConfig.key);
+      if (sectionIndex >= 0) {
+        enhancedSections[sectionIndex] = {
+          ...enhancedSections[sectionIndex],
+          found: true,
+          content: detectedContent,
+          lineCount: detectedContent.length,
+        };
+      }
+    }
+  }
+
+  return enhancedSections;
+}
+
+function findSectionContentByKeywords(lines, sectionConfig) {
+  const contentLines = [];
+  const sectionKeywords = getSectionKeywords(sectionConfig.key);
+
+  for (const line of lines) {
+    const lineLower = line.toLowerCase();
+    // Check if line contains keywords relevant to this section
+    if (sectionKeywords.some((keyword) => lineLower.includes(keyword))) {
+      contentLines.push(line);
+    }
+  }
+
+  return contentLines;
+}
+
+function getSectionKeywords(sectionKey) {
+  const keywordMap = {
+    experience: [
+      "worked",
+      "developed",
+      "led",
+      "managed",
+      "created",
+      "built",
+      "designed",
+      "implemented",
+      "company",
+      "role",
+      "position",
+      "years",
+    ],
+    skills: [
+      "javascript",
+      "python",
+      "java",
+      "react",
+      "node",
+      "sql",
+      "html",
+      "css",
+      "aws",
+      "docker",
+      "git",
+      "api",
+    ],
+    education: [
+      "university",
+      "college",
+      "degree",
+      "bachelor",
+      "master",
+      "phd",
+      "gpa",
+      "graduated",
+      "major",
+      "minor",
+    ],
+    projects: ["project", "built", "developed", "created", "github", "demo", "live", "features"],
+    contact: ["email", "phone", "linkedin", "github", "website", "address"],
+  };
+
+  return keywordMap[sectionKey] || [];
+}
 export const sectionDetector = ({ lines, rulesPath }) => {
   // Validate input
   validateInput(lines);
@@ -630,13 +597,32 @@ export const sectionDetector = ({ lines, rulesPath }) => {
   // Calculate statistics
   const statistics = calculateStatistics(sections, detectedSections, missingRequiredSections);
 
+  // Post-processing: Try to detect missed sections based on content analysis
+  const enhancedSections = postProcessSections(sections, lines, sectionConfigs);
+
+  // Update detected sections and missing sections based on post-processing
+  const finalDetectedSections = enhancedSections.filter((s) => s.found).map((s) => s.key);
+
+  const finalMissingRequiredSections = sectionConfigs
+    .filter(
+      (config) => config.required && !enhancedSections.find((s) => s.key === config.key)?.found,
+    )
+    .map((config) => config.key);
+
+  // Recalculate statistics with enhanced sections
+  const finalStatistics = calculateStatistics(
+    enhancedSections,
+    finalDetectedSections,
+    finalMissingRequiredSections,
+  );
+
   // Return comprehensive results
   return {
-    sections,
-    detectedSections,
-    missingRequiredSections,
-    sectionOrder,
-    statistics,
+    sections: enhancedSections,
+    detectedSections: finalDetectedSections,
+    missingRequiredSections: finalMissingRequiredSections,
+    sectionOrder: finalDetectedSections,
+    statistics: finalStatistics,
     meta: {
       rulesVersion: sectionRules.meta?.version || "unknown",
       targetAudience: sectionRules.meta?.targetAudience || "general",

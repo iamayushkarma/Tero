@@ -9,7 +9,15 @@
     {
       "key": "contact",
       "displayName": "Contact Information",
-      "headings": ["contact", "contact information", "personal details", "personal information"],
+      "headings": [
+        "contact",
+        "contact information",
+        "personal details",
+        "personal information",
+        "contact details",
+        "contact info",
+        "personal info"
+      ],
       "required": true,
       "validation": {
         "minWords": 10,
@@ -91,7 +99,14 @@
         "employment history",
         "career history",
         "work history",
-        "relevant experience"
+        "relevant experience",
+        "job experience",
+        "career experience",
+        "professional background",
+        "work background",
+        "positions",
+        "roles",
+        "jobs"
       ],
       "required": true,
       "validation": {

@@ -131,46 +131,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * @typedef {Object} ParsedResume
- * @property {string} cleanText - The cleaned text content of the resume
- * @property {Array<{text: string}>|Array<string>} lines - Array of lines from the resume
- */
+// Configuration for formatting detection thresholds
 
-/**
- * @typedef {Object} LayoutSignals
- * @property {boolean} multiColumnSuspected - Whether multi-column layout is detected
- * @property {boolean} tablesSuspected - Whether tables are detected
- * @property {boolean} imagesOrIconsSuspected - Whether images or icons are detected
- */
-
-/**
- * @typedef {Object} FontSignals
- * @property {boolean} excessiveAllCaps - Whether excessive all-caps text is detected
- * @property {boolean} excessiveWhitespace - Whether excessive whitespace is detected
- */
-
-/**
- * @typedef {Object} StructureSignals
- * @property {boolean} bulletConsistency - Whether bullet points are consistent
- * @property {boolean} lineSpacingIssues - Whether line spacing issues exist
- * @property {number} pageLengthEstimate - Estimated number of pages
- */
-
-/**
- * @typedef {Object} AnalysisResult
- * @property {LayoutSignals} layoutSignals - Layout-related signals
- * @property {FontSignals} fontSignals - Font-related signals
- * @property {StructureSignals} structureSignals - Structure-related signals
- * @property {string[]} ruleFindings - List of formatting rule violations
- * @property {Object} meta - Metadata about the analysis
- * @property {string} meta.rulesVersion - Version of the formatting rules
- * @property {string} meta.analyzer - Name of the analyzer
- */
-
-/**
- * Configuration for formatting detection thresholds
- */
 const DETECTION_THRESHOLDS = {
   multiColumn: {
     minAlignedSeparators: 3,
@@ -205,12 +167,6 @@ const PATTERNS = {
   excessiveNewlines: /\n{3,}/,
 };
 
-/**
- * Loads and validates formatting rules from JSON file
- * @param {string} rulesPath - Path to the rules JSON file
- * @returns {Object} Formatting rules configuration
- * @throws {Error} If rules file cannot be loaded or is invalid
- */
 function loadFormattingRules(rulesPath) {
   try {
     const rulesContent = fs.readFileSync(rulesPath, "utf-8");
@@ -230,11 +186,6 @@ function loadFormattingRules(rulesPath) {
   }
 }
 
-/**
- * Validates the parsed resume input
- * @param {ParsedResume} parsedResume - The parsed resume object
- * @throws {Error} If validation fails
- */
 function validateInput(parsedResume) {
   if (!parsedResume) {
     throw new Error("formattingAnalyzer: parsedResume is required");
@@ -253,11 +204,6 @@ function validateInput(parsedResume) {
   }
 }
 
-/**
- * Normalizes line data to string format
- * @param {Array<{text: string}>|Array<string>} lines - Array of line objects or strings
- * @returns {string[]} Array of line strings
- */
 function normalizeLines(lines) {
   return lines.map((line) => {
     if (typeof line === "string") {
@@ -270,12 +216,6 @@ function normalizeLines(lines) {
   });
 }
 
-/**
- * Detects multi-column layout in the resume
- * @param {string[]} lines - Array of text lines
- * @param {number} threshold - Minimum number of lines to confirm multi-column
- * @returns {boolean} True if multi-column layout is suspected
- */
 function detectMultiColumn(
   lines,
   threshold = DETECTION_THRESHOLDS.multiColumn.minAlignedSeparators,
@@ -294,12 +234,6 @@ function detectMultiColumn(
   return false;
 }
 
-/**
- * Detects table-like structures in the resume
- * @param {string[]} lines - Array of text lines
- * @param {number} threshold - Minimum number of table-like lines
- * @returns {boolean} True if tables are suspected
- */
 function detectTables(lines, threshold = DETECTION_THRESHOLDS.tables.minTableLikeLines) {
   let tableLikeLines = 0;
 
@@ -318,21 +252,10 @@ function detectTables(lines, threshold = DETECTION_THRESHOLDS.tables.minTableLik
   return false;
 }
 
-/**
- * Detects icons or special characters in the text
- * @param {string} text - The full text content
- * @returns {boolean} True if icons are detected
- */
 function detectIcons(text) {
   return PATTERNS.icons.test(text);
 }
 
-/**
- * Detects excessive use of all-caps text
- * @param {string[]} lines - Array of text lines
- * @param {Object} config - Configuration for all-caps detection
- * @returns {boolean} True if excessive all-caps detected
- */
 function detectAllCaps(
   lines,
   config = {
@@ -352,20 +275,10 @@ function detectAllCaps(
   return capsLines.length >= config.minOccurrences;
 }
 
-/**
- * Detects excessive whitespace in the text
- * @param {string} text - The full text content
- * @returns {boolean} True if excessive whitespace detected
- */
 function detectExcessiveWhitespace(text) {
   return PATTERNS.excessiveNewlines.test(text);
 }
 
-/**
- * Checks consistency of bullet point styles
- * @param {string[]} lines - Array of text lines
- * @returns {boolean} True if bullets are consistent
- */
 function detectBulletConsistency(lines) {
   const bulletTypes = new Set();
 
@@ -380,11 +293,6 @@ function detectBulletConsistency(lines) {
   return bulletTypes.size <= 1;
 }
 
-/**
- * Detects line spacing issues
- * @param {string} text - The full text content
- * @returns {boolean} True if line spacing issues detected
- */
 function detectLineSpacing(text) {
   const allLines = text.split("\n");
   const blankLines = allLines.filter((line) => line.trim() === "").length;
@@ -393,24 +301,11 @@ function detectLineSpacing(text) {
   return blankLineRatio > DETECTION_THRESHOLDS.whitespace.maxBlankLineRatio;
 }
 
-/**
- * Estimates the number of pages in the resume
- * @param {string[]} lines - Array of text lines
- * @param {number} linesPerPage - Average lines per page
- * @returns {number} Estimated page count
- */
 function estimatePages(lines, linesPerPage = DETECTION_THRESHOLDS.pageEstimation.linesPerPage) {
   if (lines.length === 0) return 0;
   return Math.ceil(lines.length / linesPerPage);
 }
 
-/**
- * Evaluates formatting rules and identifies violations
- * @param {Object} rules - Formatting rules configuration
- * @param {LayoutSignals} layoutSignals - Detected layout signals
- * @param {StructureSignals} structureSignals - Detected structure signals
- * @returns {string[]} Array of rule violation identifiers
- */
 function evaluateRules(rules, layoutSignals, structureSignals) {
   const findings = [];
 
@@ -440,24 +335,6 @@ function evaluateRules(rules, layoutSignals, structureSignals) {
   return findings;
 }
 
-/**
- * Main formatting analyzer function
- * Analyzes resume formatting and identifies ATS compatibility issues
- *
- * @param {Object} params - Analysis parameters
- * @param {ParsedResume} params.parsedResume - The parsed resume to analyze
- * @param {string} [params.rulesPath] - Optional custom path to rules file
- * @returns {AnalysisResult} Comprehensive formatting analysis results
- * @throws {Error} If input validation fails or rules cannot be loaded
- *
- * @example
- * const result = formattingAnalyzer({
- *   parsedResume: {
- *     cleanText: "Resume text...",
- *     lines: ["Line 1", "Line 2"]
- *   }
- * });
- */
 export const formattingAnalyzer = ({ parsedResume, rulesPath }) => {
   // Validate input
   validateInput(parsedResume);

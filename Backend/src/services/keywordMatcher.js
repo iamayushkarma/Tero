@@ -188,79 +188,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * @typedef {Object} ParsedResume
- * @property {string} normalizedText - Normalized text content of the resume
- * @property {string[]} [tokens] - Tokenized words from the resume
- */
-
-/**
- * @typedef {Object} Section
- * @property {string} key - Section identifier (e.g., 'experience', 'skills')
- * @property {string[]} content - Array of text content for this section
- */
-
-/**
- * @typedef {Object} SectionData
- * @property {Section[]} sections - Array of resume sections
- */
-
-/**
- * @typedef {Object} KeywordGroup
- * @property {string} group - Group identifier
- * @property {string} roleCategory - Role category (technical, non_technical, etc.)
- * @property {string|null} subcategory - Subcategory identifier
- * @property {string} importance - Importance level (very_high, high, medium, low)
- * @property {number} weight - Numerical weight for scoring
- * @property {boolean} required - Whether this group is required
- * @property {string[]} keywords - Array of keywords to match
- */
-
-/**
- * @typedef {Object} GroupMatches
- * @property {string[]} matched - Array of matched keywords
- * @property {number} totalCount - Total count of all keyword occurrences
- * @property {number} uniqueCount - Count of unique matched keywords
- */
-
-/**
- * @typedef {Object} SectionGroupMatch
- * @property {string[]} matched - Matched keywords in this section
- * @property {number} count - Total occurrence count in section
- */
-
-/**
- * @typedef {Object} StuffingSignal
- * @property {string} keyword - The repeated keyword
- * @property {number} count - Number of repetitions
- * @property {number} threshold - Allowed threshold
- */
-
-/**
- * @typedef {Object} MatchingResult
- * @property {Object.<string, GroupMatches>} globalMatches - Keyword matches across entire resume
- * @property {Object.<string, Object.<string, SectionGroupMatch>>} sectionMatches - Keyword matches per section
- * @property {Object.<string, number>} keywordDensity - Density of keywords per group
- * @property {Object} actionVerbs - Action verb analysis
- * @property {number} actionVerbs.count - Number of action verbs found
- * @property {string[]} actionVerbs.verbs - List of action verbs found
- * @property {string[]} quantifiedAchievements - Patterns of quantified achievements found
- * @property {StuffingSignal[]} stuffingSignals - Detected keyword stuffing instances
- * @property {Object} meta - Metadata about the matching process
- */
-
-/**
- * Cache for loaded keyword rules to avoid repeated file reads
- */
 let cachedKeywordRules = null;
-
-/**
- * Loads and caches keyword matching rules from JSON file
- * @param {string} rulesPath - Path to the keyword rules JSON file
- * @param {boolean} [forceReload=false] - Force reload even if cached
- * @returns {Object} Keyword matching rules configuration
- * @throws {Error} If rules file cannot be loaded or is invalid
- */
 function loadKeywordRules(rulesPath, forceReload = false) {
   if (cachedKeywordRules && !forceReload) {
     return cachedKeywordRules;
@@ -286,11 +214,6 @@ function loadKeywordRules(rulesPath, forceReload = false) {
   }
 }
 
-/**
- * Validates the structure of keyword rules
- * @param {Object} rules - Rules object to validate
- * @throws {Error} If validation fails
- */
 function validateRulesStructure(rules) {
   const requiredFields = ["keywordGroups", "matchingConfig", "penalties", "meta"];
 
@@ -309,12 +232,6 @@ function validateRulesStructure(rules) {
   }
 }
 
-/**
- * Validates input parameters for keyword matching
- * @param {ParsedResume} parsedResume - The parsed resume object
- * @param {SectionData} sectionData - The section data object
- * @throws {Error} If validation fails
- */
 function validateInput(parsedResume, sectionData) {
   if (!parsedResume) {
     throw new Error("keywordMatcher: parsedResume is required");
@@ -347,25 +264,10 @@ function validateInput(parsedResume, sectionData) {
     }
   }
 }
-
-/**
- * Escapes special regex characters in a string
- * @param {string} str - String to escape
- * @returns {string} Escaped string safe for use in regex
- */
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/**
- * Builds a regular expression for keyword matching based on config
- * @param {string} keyword - The keyword to match
- * @param {Object} config - Matching configuration
- * @param {boolean} config.enablePhraseMatching - Enable phrase matching
- * @param {boolean} config.allowPartialMatches - Allow partial word matches
- * @param {boolean} config.caseSensitive - Case sensitive matching
- * @returns {RegExp} Configured regular expression
- */
 function buildKeywordRegex(keyword, config) {
   const escaped = escapeRegex(keyword);
   const flags = config.caseSensitive ? "g" : "gi";
@@ -383,13 +285,6 @@ function buildKeywordRegex(keyword, config) {
   // For exact word boundary matches
   return new RegExp(`\\b${escaped}\\b`, flags);
 }
-
-/**
- * Prepares keyword groups by expanding synonyms and normalizing
- * @param {Array} keywordGroups - Raw keyword groups from rules
- * @param {Object} matchingConfig - Matching configuration
- * @returns {KeywordGroup[]} Prepared keyword groups
- */
 function prepareKeywordGroups(keywordGroups, matchingConfig) {
   return keywordGroups.map((group) => {
     const keywordSet = new Set();
@@ -419,14 +314,6 @@ function prepareKeywordGroups(keywordGroups, matchingConfig) {
     };
   });
 }
-
-/**
- * Performs global keyword matching across entire resume text
- * @param {string} text - Normalized resume text
- * @param {KeywordGroup[]} groups - Prepared keyword groups
- * @param {Object} matchingConfig - Matching configuration
- * @returns {{matches: Object.<string, GroupMatches>, repetitions: Object.<string, number>}}
- */
 function performGlobalMatching(text, groups, matchingConfig) {
   const globalMatches = {};
   const repetitionMap = {};
@@ -455,14 +342,6 @@ function performGlobalMatching(text, groups, matchingConfig) {
 
   return { matches: globalMatches, repetitions: repetitionMap };
 }
-
-/**
- * Performs section-wise keyword matching
- * @param {Section[]} sections - Array of resume sections
- * @param {KeywordGroup[]} groups - Prepared keyword groups
- * @param {Object} matchingConfig - Matching configuration
- * @returns {Object.<string, Object.<string, SectionGroupMatch>>} Section-wise matches
- */
 function performSectionMatching(sections, groups, matchingConfig) {
   const sectionMatches = {};
 
@@ -496,12 +375,6 @@ function performSectionMatching(sections, groups, matchingConfig) {
   return sectionMatches;
 }
 
-/**
- * Calculates keyword density for each group
- * @param {Object.<string, GroupMatches>} globalMatches - Global keyword matches
- * @param {number} totalTokens - Total number of tokens in resume
- * @returns {Object.<string, number>} Density per group
- */
 function calculateKeywordDensity(globalMatches, totalTokens) {
   const density = {};
 
@@ -512,13 +385,6 @@ function calculateKeywordDensity(globalMatches, totalTokens) {
   return density;
 }
 
-/**
- * Detects action verbs in the resume text
- * @param {string} text - Resume text
- * @param {KeywordGroup[]} groups - Prepared keyword groups
- * @param {Object} matchingConfig - Matching configuration
- * @returns {{count: number, verbs: string[]}} Action verb analysis
- */
 function detectActionVerbs(text, groups, matchingConfig) {
   const actionVerbGroup = groups.find((g) => g.group === "action_verbs");
 
@@ -543,13 +409,6 @@ function detectActionVerbs(text, groups, matchingConfig) {
     verbs,
   };
 }
-
-/**
- * Detects quantified achievements using predefined patterns
- * @param {string} text - Resume text
- * @param {string[]} patterns - Regex patterns for quantified achievements
- * @returns {string[]} Matched patterns
- */
 function detectQuantifiedAchievements(text, patterns) {
   if (!patterns || patterns.length === 0) {
     return [];
@@ -564,13 +423,6 @@ function detectQuantifiedAchievements(text, patterns) {
     }
   });
 }
-
-/**
- * Detects keyword stuffing based on repetition threshold
- * @param {Object.<string, number>} repetitionMap - Keyword repetition counts
- * @param {Object} penalties - Penalty configuration
- * @returns {StuffingSignal[]} Detected stuffing signals
- */
 function detectKeywordStuffing(repetitionMap, penalties) {
   const stuffingSignals = [];
 
@@ -593,31 +445,6 @@ function detectKeywordStuffing(repetitionMap, penalties) {
   return stuffingSignals;
 }
 
-/**
- * Main keyword matcher function
- * Performs comprehensive keyword analysis on a resume
- *
- * @param {Object} params - Matching parameters
- * @param {ParsedResume} params.parsedResume - The parsed resume to analyze
- * @param {SectionData} params.sectionData - Section-wise resume data
- * @param {string} [params.rulesPath] - Optional custom path to keyword rules file
- * @returns {MatchingResult} Comprehensive keyword matching results
- * @throws {Error} If input validation fails or rules cannot be loaded
- *
- * @example
- * const result = keywordMatcher({
- *   parsedResume: {
- *     normalizedText: "software engineer with react experience...",
- *     tokens: ["software", "engineer", "react", ...]
- *   },
- *   sectionData: {
- *     sections: [
- *       { key: "experience", content: ["Software Engineer at..."] },
- *       { key: "skills", content: ["React, Node.js, ..."] }
- *     ]
- *   }
- * });
- */
 export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
   // Validate input
   validateInput(parsedResume, sectionData);
