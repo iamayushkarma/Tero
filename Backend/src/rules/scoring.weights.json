@@ -10,37 +10,40 @@
   },
 
   "baseWeights": {
-    "sections": 30,
-    "keywords": 30,
+    "sections": 10,
+    "keywords": 35,
     "experience_quality": 15,
-    "skills_relevance": 15,
+    "skills_relevance": 10,
     "formatting": 10
   },
 
   "sectionWeights": {
-    "experience": 12,
-    "skills": 8,
-    "projects": 4,
-    "education": 4,
-    "summary": 2
+    "contact": 2,
+    "experience": 7,
+    "skills": 5,
+    "projects": 3,
+    "education": 2,
+    "summary": 1
   },
 
   "keywordWeights": {
-    "very_high": 1.0,
-    "high": 0.8,
-    "medium": 0.5,
-    "low": 0.2
+    "very_high": 2.0,
+    "high": 1.5,
+    "medium": 1.0,
+    "low": 0.5
   },
 
   "formattingPenaltyMap": {
-    "high": -8,
-    "medium": -4,
-    "low": -2
+    "multiColumnLayout": -5,
+    "tablesUsed": -5,
+    "imagesOrIconsUsed": -3,
+    "tooManyPages": -3,
+    "nonStandardFonts": -1
   },
 
   "missingSectionPenalty": {
-    "required": -10,
-    "optional": -3
+    "required": -5,
+    "optional": -2
   },
 
   "experienceSignals": {
@@ -51,6 +54,6 @@
 
   "caps": {
     "maxFormattingPenalty": -10,
-    "maxKeywordPenalty": -15
+    "maxKeywordPenalty": -10
   }
 }
