@@ -1,104 +1,688 @@
 {
   "meta": {
-    "version": "1.0",
-    "description": "Role-agnostic keyword matching rules for ATS resume scoring"
+    "version": "2.0",
+    "description": "Industry-standard ATS keyword matching rules for comprehensive resume scoring",
+    "lastUpdated": "2025-01-02",
+    "targetSystem": "ATS Resume Parser"
   },
-
   "matchingConfig": {
     "caseSensitive": false,
     "enableStemming": true,
     "enableSynonyms": true,
+    "enablePhraseMatching": true,
     "allowPartialMatches": true,
-    "minKeywordLength": 2
+    "minKeywordLength": 2,
+    "fuzzyMatchThreshold": 0.85,
+    "contextWindow": 5
   },
-
+  "scoringWeights": {
+    "very_high": 10,
+    "high": 7,
+    "medium": 4,
+    "low": 2,
+    "minimal": 1
+  },
   "roleCategories": {
     "technical": {
-      "description": "Engineering, IT, data, and software roles"
+      "description": "Engineering, IT, data science, DevOps, and software development roles",
+      "subcategories": [
+        "software_engineering",
+        "data_science",
+        "devops",
+        "qa_testing",
+        "system_administration"
+      ]
     },
     "non_technical": {
-      "description": "HR, marketing, sales, operations, finance, management roles"
+      "description": "Business, marketing, sales, HR, finance, and operations roles",
+      "subcategories": ["marketing", "sales", "hr", "finance", "operations", "consulting"]
     },
     "hybrid": {
-      "description": "Roles with both technical and business requirements"
+      "description": "Roles requiring both technical and business expertise",
+      "subcategories": [
+        "product_management",
+        "technical_sales",
+        "business_analytics",
+        "project_management"
+      ]
+    },
+    "creative": {
+      "description": "Design, content, and creative roles",
+      "subcategories": ["ui_ux_design", "graphic_design", "content_writing", "video_production"]
     }
   },
-
   "keywordGroups": [
     {
-      "group": "technical_skills",
+      "group": "programming_languages",
       "roleCategory": "technical",
+      "subcategory": "software_engineering",
       "importance": "very_high",
       "required": false,
-      "keywords": ["javascript", "python", "java", "react", "node.js", "sql", "html", "css"],
+      "weight": 10,
+      "keywords": [
+        "javascript",
+        "python",
+        "java",
+        "c++",
+        "c#",
+        "typescript",
+        "ruby",
+        "php",
+        "swift",
+        "kotlin",
+        "go",
+        "rust",
+        "scala",
+        "r",
+        "matlab",
+        "perl",
+        "objective-c",
+        "dart",
+        "shell scripting",
+        "bash"
+      ],
       "synonyms": {
-        "javascript": ["js", "ecmascript"],
-        "node.js": ["node", "nodejs"],
-        "react": ["react.js"]
+        "javascript": ["js", "ecmascript", "es6", "es2015"],
+        "typescript": ["ts"],
+        "c#": ["csharp", "c sharp"],
+        "c++": ["cpp", "c plus plus"],
+        "objective-c": ["objc"],
+        "shell scripting": ["shell", "bash scripting"]
       }
     },
-
     {
-      "group": "tools_and_technologies",
+      "group": "frontend_frameworks",
       "roleCategory": "technical",
+      "subcategory": "software_engineering",
+      "importance": "very_high",
+      "required": false,
+      "weight": 9,
+      "keywords": [
+        "react",
+        "angular",
+        "vue.js",
+        "svelte",
+        "next.js",
+        "nuxt.js",
+        "ember.js",
+        "backbone.js",
+        "jquery",
+        "bootstrap",
+        "tailwind css",
+        "material ui",
+        "redux",
+        "mobx",
+        "webpack",
+        "vite"
+      ],
+      "synonyms": {
+        "react": ["react.js", "reactjs"],
+        "angular": ["angular.js", "angularjs"],
+        "vue.js": ["vue", "vuejs"],
+        "next.js": ["nextjs"],
+        "nuxt.js": ["nuxtjs"],
+        "tailwind css": ["tailwind"],
+        "material ui": ["mui", "material-ui"]
+      }
+    },
+    {
+      "group": "backend_frameworks",
+      "roleCategory": "technical",
+      "subcategory": "software_engineering",
+      "importance": "very_high",
+      "required": false,
+      "weight": 9,
+      "keywords": [
+        "node.js",
+        "express.js",
+        "django",
+        "flask",
+        "fastapi",
+        "spring boot",
+        "asp.net",
+        "ruby on rails",
+        "laravel",
+        "nestjs",
+        "koa",
+        "gin",
+        "fiber"
+      ],
+      "synonyms": {
+        "node.js": ["node", "nodejs"],
+        "express.js": ["express", "expressjs"],
+        "ruby on rails": ["rails", "ror"],
+        "asp.net": ["dotnet", ".net", "aspnet"],
+        "spring boot": ["spring"]
+      }
+    },
+    {
+      "group": "databases",
+      "roleCategory": "technical",
+      "subcategory": "software_engineering",
       "importance": "high",
       "required": false,
-      "keywords": ["git", "github", "docker", "aws", "linux", "mongodb", "postgresql"],
+      "weight": 8,
+      "keywords": [
+        "sql",
+        "mysql",
+        "postgresql",
+        "mongodb",
+        "redis",
+        "oracle",
+        "microsoft sql server",
+        "sqlite",
+        "cassandra",
+        "dynamodb",
+        "firebase",
+        "elasticsearch",
+        "mariadb",
+        "couchdb",
+        "neo4j",
+        "graphql"
+      ],
       "synonyms": {
         "postgresql": ["postgres"],
-        "mongodb": ["mongo"]
+        "mongodb": ["mongo"],
+        "microsoft sql server": ["mssql", "sql server"],
+        "redis": ["redis cache"],
+        "dynamodb": ["dynamo db"],
+        "elasticsearch": ["elastic search"]
       }
     },
-
     {
-      "group": "business_and_domain_skills",
-      "roleCategory": "non_technical",
+      "group": "cloud_platforms",
+      "roleCategory": "technical",
+      "subcategory": "devops",
+      "importance": "very_high",
+      "required": false,
+      "weight": 9,
+      "keywords": [
+        "aws",
+        "azure",
+        "google cloud",
+        "heroku",
+        "digitalocean",
+        "ibm cloud",
+        "oracle cloud",
+        "alibaba cloud",
+        "cloudflare",
+        "vercel",
+        "netlify"
+      ],
+      "synonyms": {
+        "aws": ["amazon web services"],
+        "azure": ["microsoft azure"],
+        "google cloud": ["gcp", "google cloud platform"]
+      }
+    },
+    {
+      "group": "devops_tools",
+      "roleCategory": "technical",
+      "subcategory": "devops",
       "importance": "high",
       "required": false,
+      "weight": 8,
+      "keywords": [
+        "docker",
+        "kubernetes",
+        "jenkins",
+        "terraform",
+        "ansible",
+        "git",
+        "github",
+        "gitlab",
+        "bitbucket",
+        "ci/cd",
+        "circleci",
+        "travis ci",
+        "github actions",
+        "nginx",
+        "apache",
+        "prometheus",
+        "grafana",
+        "datadog",
+        "new relic"
+      ],
+      "synonyms": {
+        "kubernetes": ["k8s"],
+        "ci/cd": ["continuous integration", "continuous deployment"],
+        "github actions": ["gh actions"]
+      }
+    },
+    {
+      "group": "data_science_ml",
+      "roleCategory": "technical",
+      "subcategory": "data_science",
+      "importance": "very_high",
+      "required": false,
+      "weight": 10,
+      "keywords": [
+        "machine learning",
+        "deep learning",
+        "neural networks",
+        "tensorflow",
+        "pytorch",
+        "scikit-learn",
+        "keras",
+        "pandas",
+        "numpy",
+        "matplotlib",
+        "seaborn",
+        "nlp",
+        "computer vision",
+        "data analysis",
+        "data visualization",
+        "statistical modeling",
+        "a/b testing",
+        "predictive modeling",
+        "jupyter",
+        "apache spark",
+        "hadoop",
+        "tableau",
+        "power bi",
+        "looker"
+      ],
+      "synonyms": {
+        "machine learning": ["ml"],
+        "deep learning": ["dl"],
+        "nlp": ["natural language processing"],
+        "scikit-learn": ["sklearn"],
+        "jupyter": ["jupyter notebook"],
+        "power bi": ["powerbi"]
+      }
+    },
+    {
+      "group": "mobile_development",
+      "roleCategory": "technical",
+      "subcategory": "software_engineering",
+      "importance": "high",
+      "required": false,
+      "weight": 8,
+      "keywords": [
+        "react native",
+        "flutter",
+        "ios development",
+        "android development",
+        "swift",
+        "kotlin",
+        "objective-c",
+        "xamarin",
+        "ionic",
+        "cordova",
+        "xcode",
+        "android studio"
+      ],
+      "synonyms": {
+        "react native": ["rn"],
+        "ios development": ["ios"],
+        "android development": ["android"]
+      }
+    },
+    {
+      "group": "testing_qa",
+      "roleCategory": "technical",
+      "subcategory": "qa_testing",
+      "importance": "high",
+      "required": false,
+      "weight": 7,
+      "keywords": [
+        "unit testing",
+        "integration testing",
+        "e2e testing",
+        "test automation",
+        "selenium",
+        "cypress",
+        "jest",
+        "mocha",
+        "pytest",
+        "junit",
+        "testng",
+        "postman",
+        "jmeter",
+        "load testing",
+        "performance testing"
+      ],
+      "synonyms": {
+        "e2e testing": ["end to end testing", "e2e"],
+        "test automation": ["automated testing"]
+      }
+    },
+    {
+      "group": "cybersecurity",
+      "roleCategory": "technical",
+      "subcategory": "system_administration",
+      "importance": "high",
+      "required": false,
+      "weight": 8,
+      "keywords": [
+        "cybersecurity",
+        "penetration testing",
+        "ethical hacking",
+        "network security",
+        "encryption",
+        "firewall",
+        "siem",
+        "vulnerability assessment",
+        "security auditing",
+        "compliance",
+        "oauth",
+        "jwt",
+        "ssl/tls",
+        "vpn"
+      ],
+      "synonyms": {
+        "cybersecurity": ["cyber security", "infosec", "information security"],
+        "oauth": ["oauth2", "oauth 2.0"],
+        "jwt": ["json web token"],
+        "ssl/tls": ["ssl", "tls"]
+      }
+    },
+    {
+      "group": "business_analysis",
+      "roleCategory": "non_technical",
+      "subcategory": "consulting",
+      "importance": "high",
+      "required": false,
+      "weight": 7,
       "keywords": [
         "business analysis",
-        "market research",
-        "sales strategy",
-        "client management",
+        "requirements gathering",
         "stakeholder management",
-        "process improvement"
-      ]
+        "process improvement",
+        "business intelligence",
+        "market research",
+        "competitive analysis",
+        "swot analysis",
+        "kpi tracking",
+        "roi analysis",
+        "cost benefit analysis"
+      ],
+      "synonyms": {
+        "business analysis": ["ba"],
+        "business intelligence": ["bi"],
+        "kpi": ["key performance indicator"],
+        "roi": ["return on investment"]
+      }
     },
-
     {
-      "group": "management_and_leadership",
+      "group": "marketing_skills",
       "roleCategory": "non_technical",
-      "importance": "medium",
+      "subcategory": "marketing",
+      "importance": "high",
       "required": false,
+      "weight": 7,
       "keywords": [
-        "leadership",
-        "team management",
-        "project management",
-        "cross functional",
-        "decision making"
-      ]
+        "digital marketing",
+        "content marketing",
+        "seo",
+        "sem",
+        "social media marketing",
+        "email marketing",
+        "google analytics",
+        "google ads",
+        "facebook ads",
+        "marketing automation",
+        "hubspot",
+        "salesforce",
+        "mailchimp",
+        "brand management",
+        "campaign management",
+        "conversion optimization",
+        "growth hacking"
+      ],
+      "synonyms": {
+        "seo": ["search engine optimization"],
+        "sem": ["search engine marketing"],
+        "social media marketing": ["smm"],
+        "facebook ads": ["meta ads"]
+      }
     },
-
+    {
+      "group": "sales_skills",
+      "roleCategory": "non_technical",
+      "subcategory": "sales",
+      "importance": "high",
+      "required": false,
+      "weight": 7,
+      "keywords": [
+        "sales strategy",
+        "lead generation",
+        "cold calling",
+        "client relationship management",
+        "negotiation",
+        "account management",
+        "b2b sales",
+        "b2c sales",
+        "crm",
+        "salesforce",
+        "pipeline management",
+        "revenue growth",
+        "quota attainment",
+        "proposal writing"
+      ],
+      "synonyms": {
+        "crm": ["customer relationship management"],
+        "b2b": ["business to business"],
+        "b2c": ["business to consumer"]
+      }
+    },
+    {
+      "group": "hr_skills",
+      "roleCategory": "non_technical",
+      "subcategory": "hr",
+      "importance": "high",
+      "required": false,
+      "weight": 7,
+      "keywords": [
+        "recruitment",
+        "talent acquisition",
+        "onboarding",
+        "employee engagement",
+        "performance management",
+        "compensation and benefits",
+        "hr policies",
+        "labor laws",
+        "diversity and inclusion",
+        "training and development",
+        "applicant tracking system",
+        "workday",
+        "bamboohr"
+      ],
+      "synonyms": {
+        "recruitment": ["hiring"],
+        "applicant tracking system": ["ats"],
+        "diversity and inclusion": ["d&i"]
+      }
+    },
+    {
+      "group": "finance_accounting",
+      "roleCategory": "non_technical",
+      "subcategory": "finance",
+      "importance": "high",
+      "required": false,
+      "weight": 7,
+      "keywords": [
+        "financial analysis",
+        "budgeting",
+        "forecasting",
+        "financial modeling",
+        "accounting",
+        "gaap",
+        "ifrs",
+        "tax preparation",
+        "audit",
+        "quickbooks",
+        "sap",
+        "excel",
+        "financial reporting",
+        "variance analysis",
+        "accounts payable",
+        "accounts receivable"
+      ],
+      "synonyms": {
+        "gaap": ["generally accepted accounting principles"],
+        "ifrs": ["international financial reporting standards"],
+        "excel": ["microsoft excel", "ms excel"]
+      }
+    },
+    {
+      "group": "product_management",
+      "roleCategory": "hybrid",
+      "subcategory": "product_management",
+      "importance": "very_high",
+      "required": false,
+      "weight": 9,
+      "keywords": [
+        "product management",
+        "product strategy",
+        "roadmap planning",
+        "user stories",
+        "backlog management",
+        "agile",
+        "scrum",
+        "kanban",
+        "jira",
+        "confluence",
+        "product lifecycle",
+        "go-to-market strategy",
+        "user research",
+        "a/b testing",
+        "feature prioritization",
+        "product analytics"
+      ],
+      "synonyms": {
+        "product management": ["pm"],
+        "go-to-market": ["gtm"],
+        "a/b testing": ["split testing"]
+      }
+    },
+    {
+      "group": "project_management",
+      "roleCategory": "hybrid",
+      "subcategory": "project_management",
+      "importance": "high",
+      "required": false,
+      "weight": 8,
+      "keywords": [
+        "project management",
+        "agile",
+        "scrum",
+        "waterfall",
+        "kanban",
+        "pmp",
+        "prince2",
+        "risk management",
+        "resource allocation",
+        "project planning",
+        "gantt charts",
+        "microsoft project",
+        "asana",
+        "trello",
+        "monday.com",
+        "change management",
+        "sprint planning"
+      ],
+      "synonyms": {
+        "pmp": ["project management professional"],
+        "prince2": ["projects in controlled environments"]
+      }
+    },
+    {
+      "group": "design_tools",
+      "roleCategory": "creative",
+      "subcategory": "ui_ux_design",
+      "importance": "very_high",
+      "required": false,
+      "weight": 9,
+      "keywords": [
+        "figma",
+        "sketch",
+        "adobe xd",
+        "invision",
+        "adobe photoshop",
+        "adobe illustrator",
+        "adobe after effects",
+        "wireframing",
+        "prototyping",
+        "ui design",
+        "ux design",
+        "user research",
+        "usability testing",
+        "design systems",
+        "responsive design",
+        "accessibility"
+      ],
+      "synonyms": {
+        "ui design": ["user interface design"],
+        "ux design": ["user experience design"],
+        "adobe photoshop": ["photoshop"],
+        "adobe illustrator": ["illustrator"]
+      }
+    },
+    {
+      "group": "content_creation",
+      "roleCategory": "creative",
+      "subcategory": "content_writing",
+      "importance": "high",
+      "required": false,
+      "weight": 7,
+      "keywords": [
+        "content writing",
+        "copywriting",
+        "technical writing",
+        "seo writing",
+        "blog writing",
+        "editing",
+        "proofreading",
+        "wordpress",
+        "cms",
+        "storytelling",
+        "content strategy",
+        "social media content"
+      ],
+      "synonyms": {
+        "cms": ["content management system"]
+      }
+    },
     {
       "group": "soft_skills",
       "roleCategory": "hybrid",
-      "importance": "low",
+      "subcategory": null,
+      "importance": "medium",
       "required": false,
+      "weight": 4,
       "keywords": [
         "communication",
-        "problem solving",
+        "teamwork",
         "collaboration",
+        "problem solving",
+        "critical thinking",
         "time management",
-        "adaptability"
-      ]
+        "adaptability",
+        "leadership",
+        "conflict resolution",
+        "emotional intelligence",
+        "creativity",
+        "attention to detail",
+        "organizational skills",
+        "multitasking",
+        "work ethic"
+      ],
+      "synonyms": {
+        "communication": ["verbal communication", "written communication"],
+        "problem solving": ["troubleshooting"],
+        "emotional intelligence": ["eq"]
+      }
     },
-
     {
       "group": "action_verbs",
       "roleCategory": "hybrid",
+      "subcategory": null,
       "importance": "low",
       "required": false,
+      "weight": 2,
       "keywords": [
+        "achieved",
         "designed",
         "developed",
         "implemented",
@@ -106,20 +690,184 @@
         "led",
         "improved",
         "optimized",
-        "analyzed"
-      ]
+        "analyzed",
+        "created",
+        "established",
+        "executed",
+        "launched",
+        "initiated",
+        "streamlined",
+        "coordinated",
+        "facilitated",
+        "delivered",
+        "automated",
+        "increased",
+        "reduced",
+        "enhanced",
+        "built",
+        "architected",
+        "maintained",
+        "collaborated",
+        "spearheaded",
+        "transformed",
+        "resolved",
+        "mentored"
+      ],
+      "synonyms": {}
+    },
+    {
+      "group": "methodologies",
+      "roleCategory": "hybrid",
+      "subcategory": null,
+      "importance": "medium",
+      "required": false,
+      "weight": 5,
+      "keywords": [
+        "agile",
+        "scrum",
+        "kanban",
+        "waterfall",
+        "lean",
+        "six sigma",
+        "devops",
+        "ci/cd",
+        "test driven development",
+        "behavior driven development",
+        "microservices",
+        "monolithic architecture",
+        "rest api",
+        "graphql",
+        "mvc",
+        "mvvm"
+      ],
+      "synonyms": {
+        "test driven development": ["tdd"],
+        "behavior driven development": ["bdd"],
+        "ci/cd": ["continuous integration continuous deployment"],
+        "rest api": ["restful api", "rest"],
+        "mvc": ["model view controller"],
+        "mvvm": ["model view viewmodel"]
+      }
+    },
+    {
+      "group": "certifications",
+      "roleCategory": "hybrid",
+      "subcategory": null,
+      "importance": "medium",
+      "required": false,
+      "weight": 5,
+      "keywords": [
+        "aws certified",
+        "azure certified",
+        "google cloud certified",
+        "pmp",
+        "scrum master",
+        "product owner",
+        "cissp",
+        "ceh",
+        "comptia",
+        "ccna",
+        "cpa",
+        "cfa",
+        "six sigma",
+        "itil",
+        "togaf"
+      ],
+      "synonyms": {
+        "scrum master": ["csm", "certified scrum master"],
+        "product owner": ["cspo", "certified scrum product owner"],
+        "cissp": ["certified information systems security professional"],
+        "ceh": ["certified ethical hacker"],
+        "cpa": ["certified public accountant"],
+        "cfa": ["chartered financial analyst"],
+        "itil": ["information technology infrastructure library"]
+      }
+    },
+    {
+      "group": "education_keywords",
+      "roleCategory": "hybrid",
+      "subcategory": null,
+      "importance": "low",
+      "required": false,
+      "weight": 3,
+      "keywords": [
+        "bachelor's degree",
+        "master's degree",
+        "phd",
+        "mba",
+        "computer science",
+        "engineering",
+        "business administration",
+        "information technology",
+        "data science",
+        "mathematics",
+        "statistics",
+        "bootcamp",
+        "online courses",
+        "coursera",
+        "udemy",
+        "edx"
+      ],
+      "synonyms": {
+        "bachelor's degree": ["bs", "ba", "bachelors"],
+        "master's degree": ["ms", "ma", "masters"],
+        "phd": ["doctorate", "doctoral degree"],
+        "mba": ["master of business administration"],
+        "computer science": ["cs"]
+      }
     }
   ],
-
   "penalties": {
     "missingRelevantKeywords": {
       "enabled": true,
-      "severity": "medium"
+      "severity": "high",
+      "description": "Penalize when critical keywords for the role are missing",
+      "penaltyPerMissing": 5
     },
     "keywordStuffing": {
       "enabled": true,
-      "repeatThreshold": 8,
-      "severity": "medium"
+      "repeatThreshold": 6,
+      "severity": "medium",
+      "description": "Penalize excessive repetition of the same keyword",
+      "penaltyPerExcess": 2
+    },
+    "irrelevantKeywords": {
+      "enabled": true,
+      "severity": "low",
+      "description": "Slight penalty for keywords not matching job role category",
+      "penaltyWeight": 1
+    },
+    "lackOfActionVerbs": {
+      "enabled": true,
+      "minimumRequired": 3,
+      "severity": "low",
+      "description": "Encourage use of strong action verbs",
+      "penaltyIfBelow": 3
     }
+  },
+  "bonuses": {
+    "certifications": {
+      "enabled": true,
+      "bonusPerCert": 5,
+      "description": "Reward relevant certifications"
+    },
+    "quantifiedAchievements": {
+      "enabled": true,
+      "bonusPerMetric": 3,
+      "description": "Reward results with numbers (%, $, metrics)",
+      "patterns": ["\\d+%", "\\$\\d+", "\\d+\\+"]
+    },
+    "diverseSkillset": {
+      "enabled": true,
+      "bonusThreshold": 15,
+      "bonusAmount": 10,
+      "description": "Bonus for having skills across multiple groups"
+    }
+  },
+  "scoring": {
+    "maxScore": 100,
+    "passingScore": 70,
+    "excellentScore": 85,
+    "formula": "weighted_keyword_matches + bonuses - penalties"
   }
 }
