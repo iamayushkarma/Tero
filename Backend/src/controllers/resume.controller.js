@@ -1,134 +1,3 @@
-// import mammoth from "mammoth";
-// import { ApiResponse } from "../utils/api-response.js";
-// import { asyncHandler } from "../utils/async-handler.js";
-// import { resumeParser } from "../services/resumeParser.js";
-// import { sectionDetector } from "../services/sectionDetector.js";
-// import { keywordMatcher } from "../services/keywordMatcher.js";
-// import { formattingAnalyzer } from "../services/formattingAnalyzer.js";
-// import { atsScoring } from "../services/atsScoring.js";
-
-// // PDF
-// const uploadResumeText = asyncHandler(async (req, res) => {
-//   const { text, jobRole } = req.body;
-
-//   if (!text || text.trim().length === 0) {
-//     return res.status(400).json(new ApiResponse(400, null, "Resume text is required"));
-//   }
-
-//   // 1. Parse resume
-//   const parsedResume = resumeParser({
-//     text,
-//     source: "pdf",
-//   });
-
-//   // 2. Detect sections
-//   const sectionData = sectionDetector({
-//     lines: parsedResume.lines,
-//   });
-
-//   // 3. Match keywords
-//   const keywordData = keywordMatcher({
-//     parsedResume,
-//     sectionData,
-//   });
-
-//   // 4. Analyze formatting
-//   const formattingData = formattingAnalyzer({
-//     parsedResume,
-//   });
-
-//   // 5. Final ATS score
-//   const atsResult = atsScoring({
-//     sectionData,
-//     keywordData,
-//     formattingData,
-//   });
-
-//   return res.status(200).json(
-//     new ApiResponse(
-//       200,
-//       {
-//         jobRole,
-//         atsResult,
-//         breakdown: {
-//           sections: sectionData,
-//           keywords: keywordData,
-//           formatting: formattingData,
-//         },
-//       },
-//       "Resume analyzed successfully",
-//     ),
-//   );
-// });
-
-// // DOCS
-// const uploadResumeFile = asyncHandler(async (req, res) => {
-//   const { jobRole } = req.body;
-
-//   if (!req.file) {
-//     return res.status(400).json(new ApiResponse(400, null, "Resume file is required"));
-//   }
-
-//   let result;
-//   try {
-//     result = await mammoth.extractRawText({
-//       buffer: req.file.buffer,
-//     });
-//   } catch {
-//     return res.status(400).json(new ApiResponse(400, null, "Failed to read DOCX file"));
-//   }
-
-//   if (!result.value || result.value.trim().length === 0) {
-//     return res.status(400).json(new ApiResponse(400, null, "No readable text found in DOCX"));
-//   }
-
-//   // 1. Parse resume
-//   const parsedResume = resumeParser({
-//     text: result.value,
-//     source: "docx",
-//   });
-
-//   // 2. Detect sections
-//   const sectionData = sectionDetector({
-//     lines: parsedResume.lines,
-//   });
-
-//   // 3. Match keywords
-//   const keywordData = keywordMatcher({
-//     parsedResume,
-//     sectionData,
-//   });
-
-//   // 4. Analyze formatting
-//   const formattingData = formattingAnalyzer({
-//     parsedResume,
-//   });
-
-//   // 5. Final ATS score
-//   const atsResult = atsScoring({
-//     sectionData,
-//     keywordData,
-//     formattingData,
-//   });
-
-//   return res.status(200).json(
-//     new ApiResponse(
-//       200,
-//       {
-//         jobRole,
-//         atsResult,
-//         breakdown: {
-//           sections: sectionData,
-//           keywords: keywordData,
-//           formatting: formattingData,
-//         },
-//       },
-//       "Resume analyzed successfully",
-//     ),
-//   );
-// });
-
-// export { uploadResumeText, uploadResumeFile };
 import mammoth from "mammoth";
 import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
@@ -137,6 +6,7 @@ import { sectionDetector } from "../services/sectionDetector.js";
 import { keywordMatcher } from "../services/keywordMatcher.js";
 import { formattingAnalyzer } from "../services/formattingAnalyzer.js";
 import { atsScoring } from "../services/atsScoring.js";
+import { generateAIVerdict } from "../services/aiEvaluation.js";
 
 // PDF/Text Upload
 const uploadResumeText = asyncHandler(async (req, res) => {
@@ -176,6 +46,8 @@ const uploadResumeText = asyncHandler(async (req, res) => {
       formattingData,
     });
 
+    const aiVerdict = await generateAIVerdict({ atsResult, jobRole });
+
     return res.status(200).json(
       new ApiResponse(
         200,
@@ -184,6 +56,7 @@ const uploadResumeText = asyncHandler(async (req, res) => {
           score: atsResult.score,
           verdict: atsResult.verdict,
           atsResult,
+          aiVerdict,
           breakdown: {
             sections: sectionData,
             keywords: keywordData,
@@ -251,6 +124,8 @@ const uploadResumeFile = asyncHandler(async (req, res) => {
       formattingData,
     });
 
+    const aiVerdict = await generateAIVerdict({ atsResult, jobRole });
+
     return res.status(200).json(
       new ApiResponse(
         200,
@@ -259,6 +134,7 @@ const uploadResumeFile = asyncHandler(async (req, res) => {
           score: atsResult.score,
           verdict: atsResult.verdict,
           atsResult,
+          aiVerdict,
           breakdown: {
             sections: sectionData,
             keywords: keywordData,

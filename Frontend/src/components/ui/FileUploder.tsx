@@ -114,9 +114,9 @@ function FileUploader() {
 
     setError(null);
     setFile(selectedFile);
-    console.log("File Name:", selectedFile.name);
-    console.log("File Type:", selectedFile.type);
-    console.log("File Size (bytes):", selectedFile.size);
+    // console.log("File Name:", selectedFile.name);
+    // console.log("File Type:", selectedFile.type);
+    // console.log("File Size (bytes):", selectedFile.size);
   };
 
   // Drag and drop functionality
@@ -145,10 +145,9 @@ function FileUploader() {
 
     setError(null);
     setFile(droppedFile);
-    // handleUpload(droppedFile);
-    console.log("File Name:", droppedFile.name);
-    console.log("File Type:", droppedFile.type);
-    console.log("File Size (bytes):", droppedFile.size);
+    // console.log("File Name:", droppedFile.name);
+    // console.log("File Type:", droppedFile.type);
+    // console.log("File Size (bytes):", droppedFile.size);
   };
 
   // Handle file upload
@@ -170,8 +169,6 @@ function FileUploader() {
           );
           return;
         }
-        console.log("PDF text length:", extractedText.length);
-        console.log("Extracted text preview:", extractedText);
 
         // Send extracted text to backend
         const uploadResponse = await axios.post(`${serverUrl}resume/upload-text`, {
