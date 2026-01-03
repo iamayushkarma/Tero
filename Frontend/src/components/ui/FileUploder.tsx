@@ -15,6 +15,7 @@ function FileUploader() {
   const [jobRole, setJobRole] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [aiVerdict, setAiVerdict] = useState<string | null>(null);
   const isFormValid = Boolean(file);
 
   // Validate file
@@ -175,7 +176,10 @@ function FileUploader() {
           text: extractedText,
           jobRole,
         });
+        const analysisData = uploadResponse.data.data;
+        setAiVerdict(analysisData.aiVerdict);
         console.log("Backend response:", uploadResponse.data);
+        console.log("AI Verdict from state:", analysisData.aiVerdict);
       } else if (
         uploadFile.type ===
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -188,6 +192,10 @@ function FileUploader() {
           headers: { "Content-Type": "multipart/form-data" },
         });
         console.log("Backend response:", uploadResponse.data);
+        const analysisData = uploadResponse.data.data;
+        // setAiVerdict(analysisData.aiVerdict);
+        console.log("Backend response:", uploadResponse.data);
+        console.log("AI Verdict from state:", analysisData.aiVerdict);
       }
     } catch (err: any) {
       console.error("Upload error:", err);

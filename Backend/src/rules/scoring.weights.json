@@ -10,10 +10,10 @@
   },
 
   "baseWeights": {
-    "sections": 9,
-    "keywords": 27,
+    "sections": 19,
+    "keywords": 35,
     "experience_quality": 14,
-    "skills_relevance": 9,
+    "skills_relevance": 15,
     "formatting": 9
   },
 
