@@ -1,177 +1,6 @@
-// /**
-//  * ATS Scoring Engine
-//  * ------------------
-//  * Responsibility:
-//  * - Calculate final ATS score (0–100)
-//  * - Apply weights, penalties, bonuses
-//  * - Produce transparent score breakdown
-//  *
-//  * FINAL DECISION LAYER
-//  */
-
-// import fs from "fs";
-// import path from "path";
-// import { fileURLToPath } from "url";
-
-// /* ---------------------------------- */
-// /* Load scoring rules */
-// /* ---------------------------------- */
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// const scoringRules = JSON.parse(
-//   fs.readFileSync(path.join(__dirname, "../rules/scoring.weights.json"), "utf-8"),
-// );
-
-// /* ---------------------------------- */
-// /* Main Scoring Function */
-// /* ---------------------------------- */
-// export const atsScoring = ({ sectionData, keywordData, formattingData }) => {
-//   let score = 0;
-
-//   const breakdown = {
-//     sections: 0,
-//     keywords: 0,
-//     formatting: 0,
-//     bonuses: 0,
-//     penalties: 0,
-//   };
-
-//   const explanations = [];
-
-//   /* ---------------------------------- */
-//   /* 1. Section Score */
-//   /* ---------------------------------- */
-//   const sectionWeightTotal = scoringRules.baseWeights.sections;
-
-//   let sectionScore = 0;
-
-//   sectionData.sections.forEach((section) => {
-//     if (!section.found) return;
-
-//     const weight = scoringRules.sectionWeights[section.key] || 0;
-//     sectionScore += weight;
-
-//     explanations.push(`Section '${section.displayName}' found (+${weight})`);
-//   });
-
-//   breakdown.sections = Math.min(sectionScore, sectionWeightTotal);
-//   score += breakdown.sections;
-
-//   /* ---------------------------------- */
-//   /* 2. Keyword Score */
-//   /* ---------------------------------- */
-//   const keywordWeightTotal = scoringRules.baseWeights.keywords;
-//   let keywordScore = 0;
-
-//   Object.values(keywordData.globalMatches).forEach((group) => {
-//     const importanceWeight = scoringRules.keywordWeights[group.importance] || 0;
-
-//     if (group.uniqueCount > 0) {
-//       keywordScore += importanceWeight * group.uniqueCount;
-//     }
-//   });
-
-//   breakdown.keywords = Math.min(keywordScore, keywordWeightTotal);
-//   score += breakdown.keywords;
-
-//   /* ---------------------------------- */
-//   /* 3. Formatting Penalties */
-//   /* ---------------------------------- */
-//   let formattingPenalty = 0;
-
-//   formattingData.ruleFindings.forEach((ruleKey) => {
-//     const penaltyRule = scoringRules.formattingPenaltyMap[ruleKey];
-
-//     if (penaltyRule) {
-//       formattingPenalty += penaltyRule;
-//       explanations.push(`Formatting issue '${ruleKey}' (${penaltyRule})`);
-//     }
-//   });
-
-//   formattingPenalty = Math.max(formattingPenalty, scoringRules.caps.maxFormattingPenalty);
-
-//   breakdown.formatting = formattingPenalty;
-//   score += formattingPenalty;
-
-//   /* ---------------------------------- */
-//   /* 4. Keyword Penalties */
-//   /* ---------------------------------- */
-//   let keywordPenalty = 0;
-
-//   keywordData.stuffingSignals?.forEach((signal) => {
-//     keywordPenalty -= scoringRules.caps.maxKeywordPenalty / 3;
-//     explanations.push(`Keyword stuffing detected: '${signal.keyword}'`);
-//   });
-
-//   keywordPenalty = Math.max(keywordPenalty, scoringRules.caps.maxKeywordPenalty);
-
-//   breakdown.penalties += keywordPenalty;
-//   score += keywordPenalty;
-
-//   /* ---------------------------------- */
-//   /* 5. Bonuses */
-//   /* ---------------------------------- */
-//   let bonusScore = 0;
-
-//   // Action verbs bonus
-//   if (keywordData.actionVerbs?.count >= 5) {
-//     bonusScore += scoringRules.experienceSignals.actionVerbsUsed;
-//     explanations.push("Strong use of action verbs (+5)");
-//   }
-
-//   // Quantified achievements
-//   if (keywordData.quantifiedAchievements?.length > 0) {
-//     bonusScore += scoringRules.experienceSignals.quantifiedAchievements;
-//     explanations.push("Quantified achievements detected (+5)");
-//   }
-
-//   breakdown.bonuses = bonusScore;
-//   score += bonusScore;
-
-//   /* ---------------------------------- */
-//   /* 6. Final Score Clamp */
-//   /* ---------------------------------- */
-//   score = Math.max(scoringRules.scoreScale.min, score);
-//   score = Math.min(scoringRules.scoreScale.max, score);
-
-//   /* ---------------------------------- */
-//   /* 7. Verdict */
-//   /* ---------------------------------- */
-//   let verdict = "poor";
-
-//   if (score >= 85) verdict = "excellent";
-//   else if (score >= 70) verdict = "good";
-//   else if (score >= 50) verdict = "average";
-
-//   /* ---------------------------------- */
-//   /* 8. Return Final Result */
-//   /* ---------------------------------- */
-//   return {
-//     score,
-//     verdict,
-//     breakdown,
-//     explanations,
-//     meta: {
-//       scoringVersion: scoringRules.meta?.version || "unknown",
-//     },
-//   };
-// };
-
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-
-/**
- * ATS Scoring Engine
- * ------------------
- * Responsibility:
- * - Calculate final ATS score (0–100)
- * - Apply weights, penalties, bonuses
- * - Produce transparent score breakdown
- *
- * FINAL DECISION LAYER
- */
 
 // ES Module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -180,9 +9,9 @@ const __dirname = path.dirname(__filename);
  * Score thresholds for verdicts
  */
 const VERDICT_THRESHOLDS = {
-  excellent: 70,
-  good: 55,
-  average: 35,
+  excellent: 85,
+  good: 70,
+  average: 50,
   poor: 0,
 };
 
@@ -549,13 +378,24 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
     }
   });
 
+  // Calculate sections score with cap
+  const sectionsPoints = sectionData.sections
+    .filter((s) => s.found)
+    .reduce((sum, s) => sum + (scoringRules.sectionWeights?.[s.key] || 0), 0);
+  const sectionsPenalty =
+    (sectionData.missingRequiredSections || []).length *
+    (scoringRules.missingSectionPenalty?.required || -5);
+  const sectionsScore =
+    Math.min(sectionsPoints, scoringRules.baseWeights.sections) + sectionsPenalty;
+
   // Add points for keywords
+  const penaltyPerStuffing = (scoringRules.caps?.maxKeywordPenalty || -10) / 3;
+  const stuffingSignals = keywordData.stuffingSignals || [];
   Object.entries(keywordData.globalMatches || {}).forEach(([groupName, groupData]) => {
     if (groupData.uniqueCount > 0) {
       const importance = groupData.importance || "medium";
       const weight = scoringRules.keywordWeights?.[importance] || 1;
       const points = weight * groupData.uniqueCount;
-      totalScore += points;
       explanations.push({
         category: "keyword",
         message: `Keywords in ${groupName}: ${groupData.uniqueCount} unique`,
@@ -565,10 +405,26 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
     }
   });
 
+  // Calculate keywords score with cap
+  const keywordsPoints = Object.values(keywordData.globalMatches || {}).reduce((sum, g) => {
+    if (g.uniqueCount > 0) {
+      const importance = g.importance || "medium";
+      const weight = scoringRules.keywordWeights?.[importance] || 1;
+      return sum + weight * g.uniqueCount;
+    }
+    return sum;
+  }, 0);
+  const penaltiesPoints = stuffingSignals.length * penaltyPerStuffing;
+  const keywordsScore =
+    Math.min(keywordsPoints, scoringRules.baseWeights.keywords) + penaltiesPoints;
+
+  totalScore += sectionsScore + keywordsScore;
+
   // Add points for formatting (if clean)
   const formattingIssues = formattingData.ruleFindings || [];
+  let formattingPoints;
   if (formattingIssues.length === 0) {
-    const formattingPoints = scoringRules.baseWeights.formatting;
+    formattingPoints = scoringRules.baseWeights.formatting;
     totalScore += formattingPoints;
     explanations.push({
       category: "formatting",
@@ -577,9 +433,13 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
       severity: SEVERITY.POSITIVE,
     });
   } else {
+    formattingPoints = formattingIssues.reduce(
+      (sum, rule) => sum + (scoringRules.formattingPenaltyMap?.[rule] || 0),
+      0,
+    );
+    totalScore += formattingPoints;
     formattingIssues.forEach((ruleKey) => {
       const penalty = scoringRules.formattingPenaltyMap?.[ruleKey] || 0;
-      totalScore += penalty;
       explanations.push({
         category: "formatting",
         message: `Formatting issue: ${ruleKey}`,
@@ -591,8 +451,9 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
 
   // Add points for experience quality
   const actionVerbCount = keywordData.actionVerbs?.count || 0;
+  let experiencePoints = 0;
   if (actionVerbCount >= 5) {
-    totalScore += 4;
+    experiencePoints += 4;
     explanations.push({
       category: "experience",
       message: `Action verbs: ${actionVerbCount}`,
@@ -600,7 +461,7 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
       severity: SEVERITY.POSITIVE,
     });
   } else if (actionVerbCount >= 3) {
-    totalScore += 2;
+    experiencePoints += 2;
     explanations.push({
       category: "experience",
       message: `Action verbs: ${actionVerbCount}`,
@@ -610,7 +471,7 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
   }
   const quantifiedAchievements = keywordData.quantifiedAchievements || [];
   if (quantifiedAchievements.length > 0) {
-    totalScore += 4;
+    experiencePoints += 4;
     explanations.push({
       category: "experience",
       message: `Quantified achievements: ${quantifiedAchievements.length}`,
@@ -618,17 +479,10 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
       severity: SEVERITY.POSITIVE,
     });
   }
+  totalScore += experiencePoints;
 
   // Add points for skills relevance (proportional to keywords)
-  const keywordPoints = Object.values(keywordData.globalMatches || {}).reduce((sum, group) => {
-    if (group.uniqueCount > 0) {
-      const importance = group.importance || "medium";
-      const weight = scoringRules.keywordWeights?.[importance] || 1;
-      return sum + weight * group.uniqueCount;
-    }
-    return sum;
-  }, 0);
-  const skillsRatio = Math.min(keywordPoints / 25, 1); // assume 25 is excellent
+  const skillsRatio = Math.min(keywordsPoints / 25, 1); // assume 25 is excellent
   const skillsPoints = Math.round(skillsRatio * scoringRules.baseWeights.skills_relevance);
   const cappedSkills = Math.min(skillsPoints, scoringRules.baseWeights.skills_relevance);
   totalScore += cappedSkills;
@@ -639,23 +493,8 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
     severity: SEVERITY.POSITIVE,
   });
 
-  // Subtract penalties for stuffing
-  const stuffingSignals = keywordData.stuffingSignals || [];
-  const penaltyPerStuffing = (scoringRules.caps?.maxKeywordPenalty || -10) / 3;
-  stuffingSignals.forEach((signal) => {
-    totalScore += penaltyPerStuffing;
-    explanations.push({
-      category: "penalty",
-      message: `Keyword stuffing: ${signal.keyword}`,
-      impact: penaltyPerStuffing,
-      severity: SEVERITY.NEGATIVE,
-    });
-  });
-
-  // Clamp to 5-95 range (instead of 0-100)
-  const finalScore = Math.max(5, Math.min(95, totalScore));
-
-  // Determine verdict
+  // Final score
+  const finalScore = totalScore;
   const verdict = determineVerdict(finalScore);
 
   // Generate recommendations
@@ -667,43 +506,17 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
   );
 
   // Breakdown
-  const sectionsPoints = sectionData.sections
-    .filter((s) => s.found)
-    .reduce((sum, s) => sum + (scoringRules.sectionWeights?.[s.key] || 0), 0);
-  const sectionsPenalty =
-    (sectionData.missingRequiredSections || []).length *
-    (scoringRules.missingSectionPenalty?.required || -5);
-  const keywordsPoints = Object.values(keywordData.globalMatches || {}).reduce((sum, g) => {
-    if (g.uniqueCount > 0) {
-      const importance = g.importance || "medium";
-      const weight = scoringRules.keywordWeights?.[importance] || 1;
-      return sum + weight * g.uniqueCount;
-    }
-    return sum;
-  }, 0);
-  const formattingPoints =
-    formattingIssues.length === 0
-      ? scoringRules.baseWeights.formatting
-      : formattingIssues.reduce(
-          (sum, rule) => sum + (scoringRules.formattingPenaltyMap?.[rule] || 0),
-          0,
-        );
-  const experiencePoints =
-    (actionVerbCount >= 5 ? 4 : actionVerbCount >= 3 ? 2 : 0) +
-    (quantifiedAchievements.length > 0 ? 4 : 0);
-  const penaltiesPoints = stuffingSignals.length * penaltyPerStuffing;
-
   const breakdown = {
-    sections: sectionsPoints + sectionsPenalty,
-    keywords: keywordsPoints,
+    sections: sectionsScore,
+    keywords: keywordsScore,
     formatting: formattingPoints,
     experience_quality: experiencePoints,
     skills_relevance: cappedSkills,
-    penalties: penaltiesPoints,
+    penalties: 0,
   };
 
   return {
-    score: Math.round(finalScore * 100) / 100,
+    score: finalScore,
     verdict,
     breakdown,
     explanations,
