@@ -46,7 +46,7 @@ const uploadResumeText = asyncHandler(async (req, res) => {
       formattingData,
     });
 
-    // const aiVerdict = await generateAIVerdict({ atsResult, jobRole });
+    const aiVerdict = await generateAIVerdict({ atsResult, jobRole });
 
     return res.status(200).json(
       new ApiResponse(
@@ -56,7 +56,7 @@ const uploadResumeText = asyncHandler(async (req, res) => {
           score: atsResult.score,
           verdict: atsResult.verdict,
           atsResult,
-          // aiVerdict,
+          aiVerdict,
           breakdown: {
             sections: sectionData,
             keywords: keywordData,

@@ -10,11 +10,11 @@
   },
 
   "baseWeights": {
-    "sections": 19,
-    "keywords": 35,
-    "experience_quality": 14,
-    "skills_relevance": 15,
-    "formatting": 9
+    "sections": 20,
+    "keywords": 25,
+    "experience_quality": 20,
+    "skills_relevance": 20,
+    "formatting": 10
   },
 
   "sectionWeights": {
@@ -23,7 +23,7 @@
     "skills": 5,
     "projects": 3,
     "education": 2,
-    "summary": 1
+    "summary": 2
   },
 
   "keywordWeights": {

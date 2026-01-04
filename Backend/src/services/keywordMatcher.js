@@ -445,6 +445,92 @@ function detectKeywordStuffing(repetitionMap, penalties) {
   return stuffingSignals;
 }
 
+function calculateSkillsData(globalMatches, preparedGroups) {
+  // Define which groups are considered "technical skills"
+  const skillGroups = [
+    "programming_languages",
+    "frontend_frameworks",
+    "backend_frameworks",
+    "databases",
+    "cloud_platforms",
+    "devops_tools",
+    "mobile_development",
+    "testing_qa",
+    "data_science_ml",
+    "cybersecurity",
+  ];
+
+  const matchedSkills = [];
+  const coreSkillsByCategory = {};
+
+  // Group core skills by category
+  preparedGroups.forEach((group) => {
+    if (skillGroups.includes(group.group)) {
+      if (!coreSkillsByCategory[group.group]) {
+        coreSkillsByCategory[group.group] = new Set();
+      }
+
+      // Only count primary keywords, not synonyms (limit to first 5-10 per category)
+      const primaryKeywords = group.keywords.slice(0, 8); // Limit to 8 core skills per category
+      primaryKeywords.forEach((keyword) => {
+        const coreSkill = keyword
+          .toLowerCase()
+          .replace(/\..*$/, "") // Remove file extensions
+          .replace(/^.*\//, "") // Remove paths
+          .replace(/\s+/g, "") // Remove spaces
+          .trim();
+
+        if (coreSkill.length > 1) {
+          coreSkillsByCategory[group.group].add(coreSkill);
+        }
+      });
+    }
+  });
+
+  // Count total expected skills (more realistic number)
+  let totalSkills = 0;
+  Object.values(coreSkillsByCategory).forEach((skillSet) => {
+    totalSkills += Math.min(skillSet.size, 5); // Max 5 skills per category
+  });
+
+  // Count matched skills
+  Object.entries(globalMatches).forEach(([groupName, groupData]) => {
+    if (skillGroups.includes(groupName) && groupData.uniqueCount > 0) {
+      groupData.matched.forEach((skill) => {
+        const coreSkill = skill
+          .toLowerCase()
+          .replace(/\..*$/, "")
+          .replace(/^.*\//, "")
+          .replace(/\s+/g, "")
+          .trim();
+
+        matchedSkills.push({
+          name: skill,
+          category: groupName,
+          group: groupName,
+          coreSkill: coreSkill,
+        });
+      });
+    }
+  });
+
+  // Remove duplicates based on core skill name
+  const uniqueMatchedSkills = [];
+  const seen = new Set();
+
+  matchedSkills.forEach((skill) => {
+    if (!seen.has(skill.coreSkill)) {
+      seen.add(skill.coreSkill);
+      uniqueMatchedSkills.push(skill);
+    }
+  });
+
+  return {
+    matchedSkills: uniqueMatchedSkills,
+    totalSkills: Math.max(totalSkills, 10), // Minimum 10 expected skills
+  };
+}
+
 export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
   // Validate input
   validateInput(parsedResume, sectionData);
@@ -491,6 +577,9 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
   // Detect keyword stuffing
   const stuffingSignals = detectKeywordStuffing(repetitionMap, keywordRules.penalties);
 
+  // Calculate skills data for scoring
+  const skillsData = calculateSkillsData(globalMatches, preparedGroups);
+
   // Return comprehensive results
   return {
     globalMatches,
@@ -499,6 +588,8 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
     actionVerbs,
     quantifiedAchievements,
     stuffingSignals,
+    matchedSkills: skillsData.matchedSkills,
+    totalSkills: skillsData.totalSkills,
     meta: {
       rulesVersion: keywordRules.meta?.version || "unknown",
       matchingConfig: keywordRules.matchingConfig,

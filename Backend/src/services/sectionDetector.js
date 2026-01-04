@@ -221,12 +221,19 @@ function isLikelyHeading(line) {
     return false;
   }
 
-  // Check for heading-like characteristics
-  const hasAllCaps = trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed);
-  const hasColonOrDash = /[:\-–—]/.test(trimmed);
-  const isShort = trimmed.length < 50;
+  // Very short lines (1-2 chars) are unlikely to be headings
+  if (trimmed.length < 3) {
+    return false;
+  }
 
-  return hasAllCaps || hasColonOrDash || isShort;
+  // Check for heading-like characteristics (more strict)
+  const hasAllCaps =
+    trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed) && trimmed.length > 3;
+  const hasColonOrDash = /[:\-–—]/.test(trimmed) && trimmed.length > 5;
+  const isReasonableLength = trimmed.length >= 4 && trimmed.length <= 40;
+
+  // Must have at least one strong heading indicator
+  return (hasAllCaps || hasColonOrDash) && isReasonableLength;
 }
 function isLikelyContactInfo(line) {
   const trimmed = line.trim().toLowerCase();
@@ -325,27 +332,35 @@ function matchSectionHeading(line, sectionConfigs) {
     return null;
   }
 
-  // Check against all section configurations
+  // Check against all section configurations (exact match first)
   for (const section of sectionConfigs) {
     if (section.headingSet.has(normalized)) {
       return section.key;
     }
   }
 
-  // Fuzzy matching for common section names
+  // More restrictive fuzzy matching - only for specific patterns
+  const trimmed = line.trim().toLowerCase();
+
+  // Only do fuzzy matching for lines that look like they could be section headers
+  if (trimmed.length < 6 || trimmed.length > 35) {
+    return null;
+  }
+
+  // Fuzzy matching for common section names (more restrictive)
   const fuzzyMatches = {
-    experience: ["exp", "work", "job", "career", "employment", "professional"],
-    skills: ["skill", "tech", "technical", "abilities", "competencies"],
-    education: ["edu", "academic", "degree", "qualification", "school", "university"],
-    projects: ["project", "portfolio", "work samples"],
-    contact: ["info", "details", "personal"],
+    experience: ["work experience", "professional experience", "employment", "career history"],
+    skills: ["technical skills", "skills & competencies"],
+    education: ["education", "academic background"],
+    projects: ["projects", "portfolio"],
+    contact: ["contact information", "personal details"],
   };
 
   for (const [sectionKey, keywords] of Object.entries(fuzzyMatches)) {
-    if (keywords.some((keyword) => normalized.includes(keyword))) {
-      // Find the section config
+    if (keywords.some((keyword) => trimmed.includes(keyword))) {
+      // Additional validation: ensure it's not just a random word match
       const section = sectionConfigs.find((s) => s.key === sectionKey);
-      if (section) {
+      if (section && trimmed.length >= 8) {
         return sectionKey;
       }
     }
@@ -353,18 +368,129 @@ function matchSectionHeading(line, sectionConfigs) {
 
   return null;
 }
+
+/**
+ * Determines if the current section should be stopped based on content analysis
+ * @param {string} sectionKey - Current section key
+ * @param {string[]} sectionContent - Current section content
+ * @param {string} currentLine - Current line being processed
+ * @param {number} lineIndex - Current line index
+ * @param {number} sectionStartLine - Line where section started
+ * @param {number} linesSinceLastHeading - Lines since last heading
+ * @returns {boolean} True if section should be stopped
+ */
+function shouldStopCurrentSection(
+  sectionKey,
+  sectionContent,
+  currentLine,
+  lineIndex,
+  sectionStartLine,
+  linesSinceLastHeading,
+) {
+  const sectionLength = lineIndex - sectionStartLine;
+
+  // Stop contact section after reasonable length or when content doesn't match
+  if (sectionKey === "contact") {
+    if (sectionContent.length >= 6) {
+      return true; // Contact sections shouldn't be longer than 6 lines
+    }
+    if (
+      sectionContent.length > 1 &&
+      !isLikelyContactInfo(currentLine) &&
+      !isLikelyHeading(currentLine)
+    ) {
+      return true; // Stop if line doesn't look like contact info
+    }
+  }
+
+  // Stop sections that become too long (likely false detection)
+  if (sectionLength > 50) {
+    return true;
+  }
+
+  // Stop if we encounter another likely heading (section boundary)
+  if (isLikelyHeading(currentLine) && linesSinceLastHeading > 2) {
+    return true;
+  }
+
+  // Stop sections with too many empty lines (content break)
+  if (linesSinceLastHeading > 5) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Checks if a group of lines has strong contact information indicators
+ * @param {string[]} lines - Lines to check
+ * @returns {boolean} True if lines show strong contact indicators
+ */
+function hasStrongContactIndicators(lines) {
+  let contactScore = 0;
+  const contactText = lines.join(" ").toLowerCase();
+
+  // Email addresses are strong indicators
+  if (/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/.test(contactText)) {
+    contactScore += 3;
+  }
+
+  // Phone numbers are strong indicators
+  if (/(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/.test(contactText)) {
+    contactScore += 3;
+  }
+
+  // URLs (LinkedIn, GitHub, portfolio)
+  if (/https?:\/\/[^\s]+/.test(contactText)) {
+    contactScore += 2;
+  }
+
+  // Contact keywords
+  const contactKeywords = [
+    "email",
+    "phone",
+    "linkedin",
+    "github",
+    "website",
+    "address",
+    "location",
+  ];
+  contactKeywords.forEach((keyword) => {
+    if (contactText.includes(keyword)) {
+      contactScore += 1;
+    }
+  });
+
+  // Name-like patterns (capitalized words)
+  const words = contactText.split(/\s+/);
+  const capitalizedWords = words.filter(
+    (word) =>
+      word.length > 1 &&
+      word[0] === word[0].toUpperCase() &&
+      word.slice(1) === word.slice(1).toLowerCase(),
+  );
+
+  if (capitalizedWords.length >= 2) {
+    contactScore += 2;
+  }
+
+  return contactScore >= 3; // Require at least 3 points for strong contact detection
+}
+
 function processLines(lines, sectionConfigs) {
   const sectionContentMap = {};
   const sectionOrder = [];
   const sectionPositions = {};
   let currentSectionKey = null;
   let currentSectionStartLine = -1;
+  let linesSinceLastHeading = 0;
 
   lines.forEach((line, lineIndex) => {
     const trimmedLine = line.trim();
 
     // Skip empty lines
     if (!trimmedLine) {
+      linesSinceLastHeading++;
       return;
     }
 
@@ -389,40 +515,49 @@ function processLines(lines, sectionConfigs) {
 
       currentSectionKey = matchedKey;
       currentSectionStartLine = lineIndex;
+      linesSinceLastHeading = 0;
     } else if (currentSectionKey) {
-      // Add content to current section
-      // Special handling for auto-detected contact section
-      if (currentSectionKey === "contact" && sectionContentMap["contact"].length >= 8) {
-        // Stop adding to contact section after 8 lines to avoid including too much
+      // Add content to current section with stricter validation
+      const shouldStopSection = shouldStopCurrentSection(
+        currentSectionKey,
+        sectionContentMap[currentSectionKey],
+        line,
+        lineIndex,
+        currentSectionStartLine,
+        linesSinceLastHeading,
+      );
+
+      if (shouldStopSection) {
         currentSectionKey = null;
-      } else if (
-        currentSectionKey === "contact" &&
-        sectionContentMap["contact"].length > 2 &&
-        !isLikelyContactInfo(line) &&
-        !isLikelyHeading(line)
-      ) {
-        // Stop contact section if line doesn't look like contact info or heading after we've collected some contact info
-        currentSectionKey = null;
-      } else {
-        sectionContentMap[currentSectionKey].push(line);
-        sectionPositions[currentSectionKey].endLine = lineIndex;
+        linesSinceLastHeading++;
+        return;
       }
+
+      sectionContentMap[currentSectionKey].push(line);
+      sectionPositions[currentSectionKey].endLine = lineIndex;
+      linesSinceLastHeading = 0;
     } else {
-      // No section started yet - check if this might be contact info at the top
-      if (lineIndex < 15 && (isLikelyContactInfo(line) || isLikelyHeading(line))) {
-        // Auto-start contact section for content at the beginning that looks like contact info or could be a heading
-        if (!sectionContentMap["contact"]) {
+      // No section started yet - more conservative contact detection
+      if (lineIndex < 8 && isLikelyContactInfo(line) && !isLikelyHeading(line)) {
+        // Only auto-start contact section if we have strong contact indicators
+        if (
+          !sectionContentMap["contact"] &&
+          hasStrongContactIndicators(lines.slice(0, lineIndex + 1))
+        ) {
           sectionContentMap["contact"] = [];
           sectionOrder.push("contact");
           sectionPositions["contact"] = {
             startLine: lineIndex,
             endLine: lineIndex,
           };
+          currentSectionKey = "contact";
+          currentSectionStartLine = lineIndex;
+          sectionContentMap["contact"].push(line);
+          sectionPositions["contact"].endLine = lineIndex;
+          linesSinceLastHeading = 0;
         }
-        currentSectionKey = "contact";
-        currentSectionStartLine = lineIndex;
-        sectionContentMap["contact"].push(line);
-        sectionPositions["contact"].endLine = lineIndex;
+      } else {
+        linesSinceLastHeading++;
       }
     }
   });
