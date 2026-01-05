@@ -646,8 +646,9 @@ function findSectionContentByKeywords(lines, sectionConfig) {
 
   for (const line of lines) {
     const lineLower = line.toLowerCase();
-    // Check if line contains keywords relevant to this section
-    if (sectionKeywords.some((keyword) => lineLower.includes(keyword))) {
+    // Check if line contains at least two keywords relevant to this section
+    const matchingKeywords = sectionKeywords.filter((keyword) => lineLower.includes(keyword));
+    if (matchingKeywords.length >= 2) {
       contentLines.push(line);
     }
   }

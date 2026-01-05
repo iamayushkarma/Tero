@@ -1,11 +1,13 @@
 import axios from "axios";
 import { Upload, CircleCheck, File } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../../utils/contants.ts";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import type { TextItem } from "pdfjs-dist/types/src/display/api";
 import SearchBox from "./SearchBox.tsx";
+import { useResumeAnalysis } from "../../hooks/useResumeAnalysis.tsx";
 
 // Set worker from imported URL
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -15,9 +17,10 @@ function FileUploader() {
   const [jobRole, setJobRole] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [aiVerdict, setAiVerdict] = useState<string | null>(null);
   const isFormValid = Boolean(file);
+  const { setResult, startAnalysis } = useResumeAnalysis();
 
+  const navigate = useNavigate();
   // Validate file
   const validateFile = (file: File): string | null => {
     const allowedTypes = [
@@ -177,7 +180,7 @@ function FileUploader() {
           jobRole,
         });
         const analysisData = uploadResponse.data.data;
-        setAiVerdict(analysisData.aiVerdict);
+        setResult(analysisData, jobRole);
         console.log("Backend response:", uploadResponse.data);
         console.log("AI Verdict from state:", analysisData.aiVerdict);
       } else if (
@@ -193,7 +196,7 @@ function FileUploader() {
         });
         console.log("Backend response:", uploadResponse.data);
         const analysisData = uploadResponse.data.data;
-        // setAiVerdict(analysisData.aiVerdict);
+        setResult(analysisData, jobRole);
         console.log("Backend response:", uploadResponse.data);
         console.log("AI Verdict from state:", analysisData.aiVerdict);
       }
@@ -214,6 +217,8 @@ function FileUploader() {
   const handleAnalyze = async () => {
     if (!file) return;
 
+    startAnalysis();
+    navigate("/resume-analysis");
     await handleUpload(file);
   };
 
