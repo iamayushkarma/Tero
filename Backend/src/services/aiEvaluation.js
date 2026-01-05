@@ -1,169 +1,17 @@
-// import axios from "axios";
-
-// const OLLAMA_URL = "http://localhost:11434/api/generate";
-// const MODEL = "llama3.1:8b";
-
-// export async function generateAIVerdict({ atsResult, jobRole }) {
-//   //   const prompt = `
-//   // You are an expert ATS resume analyst and career coach with 10+ years of experience.
-
-//   // JOB ROLE: ${jobRole || "General position"}
-
-//   // TASK: Provide a comprehensive, detailed analysis of this resume based on the ATS scan results.
-
-//   // ATS SCAN DATA:
-//   // ${JSON.stringify(atsResult, null, 2)}
-
-//   // ANALYSIS REQUIREMENTS:
-
-//   // 1. OVERALL VERDICT (2-3 paragraphs)
-//   //    - Summarize the resume's current standing
-//   //    - Explain if it's likely to pass ATS systems
-//   //    - Give context on what the score means in real-world hiring
-
-//   // 2. KEY STRENGTHS (Detailed Analysis)
-//   //    For each strength, provide:
-//   //    - What specifically is strong
-//   //    - Why this matters to recruiters/ATS
-//   //    - How it helps the candidate stand out
-//   //    - Specific examples from their resume
-//   //    (Minimum 3-5 strengths with 2-3 sentences each)
-
-//   // 3. CRITICAL WEAKNESSES (Detailed Analysis)
-//   //    For each weakness, provide:
-//   //    - What exactly is missing or weak
-//   //    - Why this hurts their chances
-//   //    - The potential impact on ATS scoring
-//   //    - Real-world consequences (e.g., resume may be filtered out)
-//   //    (Minimum 3-5 weaknesses with 2-3 sentences each)
-
-//   // 4. ACTIONABLE IMPROVEMENTS (Step-by-Step Guide)
-//   //    For each improvement, provide:
-//   //    - Specific action to take
-//   //    - Exactly how to implement it
-//   //    - Where in the resume to make changes
-//   //    - Example of good vs bad implementation
-//   //    - Expected impact on ATS score
-//   //    (Minimum 5-8 improvements with detailed instructions)
-
-//   // 5. KEYWORD OPTIMIZATION
-//   //    - List missing critical keywords for this role
-//   //    - Suggest where to naturally incorporate them
-//   //    - Provide example sentences using these keywords
-
-//   // 6. FORMATTING & STRUCTURE TIPS
-//   //    - Specific formatting issues detected
-//   //    - How to fix them
-//   //    - Best practices for ATS-friendly formatting
-
-//   // RULES:
-//   // - Be extremely specific and actionable
-//   // - Use examples wherever possible
-//   // - Don't change the actual ATS score provided
-//   // - Base everything strictly on the ATS data given
-//   // - Avoid vague advice like "improve your resume"
-//   // - Give concrete, copy-paste ready suggestions
-//   // - Prioritize improvements by impact (high/medium/low)
-//   // - Use professional but friendly tone
-
-//   // OUTPUT FORMAT:
-//   // Use clear headings and subheadings. Make it easy to scan and act upon.
-//   // `;
-//   const prompt = `
-// You are an ATS audit engine.
-
-// Your job is to EXPLAIN the ATS result below.
-// You must ONLY use the ATS data provided.
-// You must NOT change the score or invent details.
-
-// Job Role: ${jobRole || "Not specified"}
-
-// =====================
-// ATS RESULT (SOURCE)
-// =====================
-// ${JSON.stringify(atsResult, null, 2)}
-
-// =====================
-// OUTPUT REQUIREMENTS
-// =====================
-
-// Respond using EXACTLY the structure below.
-
-// ### Final Verdict
-// - 4–5 sentences maximum
-// - Explain why the resume received this score
-// - Mention the biggest contributing factors
-
-// ### Strengths (Max 4)
-// For each:
-// - Title (short)
-// - Evidence from ATS data
-// - Why ATS rewards this
-
-// ### Weaknesses (Max 4)
-// For each:
-// - Title (short)
-// - Evidence from ATS data
-// - Negative impact on ATS score
-
-// ### High-Impact Improvements (Max 5)
-// For each:
-// - What to change
-// - Where to change it (section)
-// - Expected ATS impact (high / medium / low)
-
-// =====================
-// STRICT RULES
-// =====================
-// - Max 300 words total
-// - Short bullet points only
-// - No paragraphs longer than 2 sentences
-// - No generic advice
-// - No rewriting the resume
-// - No examples unless explicitly present in ATS data
-// - Be concise, factual, and ATS-focused
-// `;
-
-//   try {
-//     const response = await axios.post(
-//       OLLAMA_URL,
-//       {
-//         model: MODEL,
-//         prompt,
-//         stream: false,
-//       },
-//       {
-//         timeout: 500_000, // 120 seconds (IMPORTANT)
-//       },
-//     );
-
-//     return response.data.response;
-//   } catch (error) {
-//     console.error("AI Verdict Error:", {
-//       message: error.message,
-//       status: error.response?.status,
-//     });
-
-//     // Fallback (very important for production)
-//     return "AI analysis is temporarily unavailable. Please review the ATS breakdown and recommendations provided above.";
-//   }
-// }import axios from "axios";
-
 const OLLAMA_URL = "http://localhost:11434/api/generate";
-const MODEL = "phi3:mini"; // Changed from mistral:7b
+const MODEL = "phi3:mini";
 
 /**
- * Phi3:mini optimized AI verdict generator
- * Expected response time: 15-25 seconds
- * Optimized for structured output and fast inference
+ * Enhanced Phi3:mini AI verdict generator
+ * Target response time: 20-30 seconds
+ * Optimized for detailed, structured output
  */
 export async function generateAIVerdict({ atsResult, jobRole }) {
-  // Phi3 works best with concise, well-structured prompts
-  const prompt = buildPhi3OptimizedPrompt(atsResult, jobRole);
+  const prompt = buildDetailedPhi3Prompt(atsResult, jobRole);
 
   try {
     const startTime = Date.now();
-    console.log("🚀 Generating AI verdict with phi3:mini...");
+    console.log("🚀 Generating detailed AI verdict with phi3:mini...");
 
     const response = await axios.post(
       OLLAMA_URL,
@@ -172,17 +20,17 @@ export async function generateAIVerdict({ atsResult, jobRole }) {
         prompt,
         stream: false,
         options: {
-          // Phi3-optimized parameters
-          temperature: 0.2, // Lower for more consistent output
-          top_p: 0.85, // Slightly lower for focused responses
-          top_k: 40, // Helps with consistency
-          num_predict: 400, // Optimized for ~250 words
-          repeat_penalty: 1.15, // Prevents repetition
-          num_ctx: 2048, // Context window (phi3 supports up to 4k)
+          // Adjusted for more detailed output
+          temperature: 0.3, // Slightly higher for more varied language
+          top_p: 0.9, // Increased for better coherence
+          top_k: 50, // More diverse token selection
+          num_predict: 800, // INCREASED: ~500-600 words for detail
+          repeat_penalty: 1.1, // Lower to allow natural repetition of terms
+          num_ctx: 3072, // Larger context for better understanding
         },
       },
       {
-        timeout: 45_000, // 45 seconds (phi3 is faster, but be safe)
+        timeout: 60_000, // 60 seconds safety margin
         headers: {
           "Content-Type": "application/json",
         },
@@ -200,73 +48,73 @@ export async function generateAIVerdict({ atsResult, jobRole }) {
       code: error.code,
     });
 
-    // Enhanced fallback
     return generateRuleBasedFallback(atsResult, jobRole);
   }
 }
 
 /**
- * Optimized prompt specifically for Phi3:mini
- * Phi3 responds best to clear, structured instructions
+ * Enhanced detailed prompt for Phi3:mini
+ * Requests more comprehensive analysis
  */
-function buildPhi3OptimizedPrompt(atsResult, jobRole) {
-  // Extract essential data to reduce token count
+function buildDetailedPhi3Prompt(atsResult, jobRole) {
   const essentials = extractEssentialData(atsResult);
 
-  return `You are an ATS resume analyzer. Analyze this resume scan for: ${jobRole || "a position"}
+  return `You are an expert ATS resume analyzer. Provide a comprehensive analysis of this resume for: ${jobRole || "a position"}
 
-SCORE: ${essentials.score}/100 (${essentials.verdict})
+RESUME METRICS:
+- Overall Score: ${essentials.score}/100 (${essentials.verdict})
+- Section Scores: ${essentials.breakdown.sections || 0}
+- Keyword Match: ${essentials.breakdown.keywords || 0}
+- Experience Quality: ${essentials.breakdown.experience_quality || 0}
+- Skills Relevance: ${essentials.breakdown.skills_relevance || 0}
+- Formatting: ${essentials.breakdown.formatting || 0}
 
-BREAKDOWN:
-- Sections: ${essentials.breakdown.sections}
-- Keywords: ${essentials.breakdown.keywords}
-- Experience: ${essentials.breakdown.experience_quality}
-- Skills: ${essentials.breakdown.skills_relevance}
-- Formatting: ${essentials.breakdown.formatting}
+DETECTED ISSUES:
+${formatDetailedFindings(essentials.positives, essentials.negatives)}
 
-KEY FINDINGS:
-${formatFindings(essentials.positives, essentials.negatives)}
-
-Provide analysis in this EXACT format:
+Provide your analysis in this EXACT format:
 
 ### Final Verdict
-Write 3-4 sentences explaining:
-1. Why this score was achieved
-2. The top 2 contributing factors (positive or negative)
-3. Whether this resume will likely pass ATS systems
+Write 4-6 sentences that include:
+1. Clear explanation of why the resume achieved this ${essentials.score}/100 score
+2. Analysis of the top 2-3 factors that most impacted the score (both positive and negative)
+3. Assessment of ATS pass likelihood with reasoning
+4. Overall recommendation on urgency of improvements needed
 
 ### Strengths (Top 5)
-For each strength:
-• **Title** - Evidence from data - Why ATS rewards this
+For EACH strength, write 2-3 sentences covering:
+• **Strength Title** - Specific evidence from the resume data showing this strength - Explanation of why ATS systems reward this particular element - Quantify impact when possible (e.g., "adds 15 points to score")
 
 ### Weaknesses (Top 5)
-For each weakness:
-• **Title** - Evidence from data - How it impacts the score
+For EACH weakness, write 2-3 sentences covering:
+• **Weakness Title** - Specific evidence showing the gap or issue - Clear explanation of how this reduces ATS score - Mention the scoring penalty (e.g., "reduces score by 8 points")
 
 ### High-Impact Improvements (Top 6)
-For each improvement:
-• **Action** - Which section to modify - Expected impact (high/medium/low)
+For EACH improvement, write 2 sentences covering:
+• **Action to Take** - Which specific resume section needs this change - Why this particular change will improve ATS scoring - Expected impact level (HIGH/MEDIUM/LOW) with brief justification
 
-RULES:
-- Use bullet points (•) for all lists
-- Keep total response under 260 words
-- Be specific and reference actual data
-- No generic advice
-- Focus on ATS optimization only`;
+CRITICAL REQUIREMENTS:
+- Write naturally and conversationally, not in bullet fragments
+- Every point should be 2-3 complete sentences with specific details
+- Reference actual data points from the metrics provided
+- Explain the "why" behind each observation
+- Use concrete examples, not generic advice
+- Focus specifically on ATS optimization factors
+- Total response should be 500-600 words for comprehensive detail`;
 }
 
 /**
- * Extract and structure essential data
+ * Extract essential data with more details
  */
 function extractEssentialData(atsResult) {
   const positives =
-    atsResult.explanations?.filter((e) => ["positive", "high"].includes(e.severity)).slice(0, 5) ||
+    atsResult.explanations?.filter((e) => ["positive", "high"].includes(e.severity)).slice(0, 6) ||
     [];
 
   const negatives =
     atsResult.explanations
       ?.filter((e) => ["critical", "negative", "medium"].includes(e.severity))
-      .slice(0, 5) || [];
+      .slice(0, 6) || [];
 
   return {
     score: atsResult.score,
@@ -275,76 +123,65 @@ function extractEssentialData(atsResult) {
     positives,
     negatives,
     recommendations: atsResult.recommendations || {},
+    meta: atsResult.meta || {},
   };
 }
 
 /**
- * Format findings for the prompt
+ * Format findings with more context for detailed analysis
  */
-function formatFindings(positives, negatives) {
+function formatDetailedFindings(positives, negatives) {
   const posStr =
     positives.length > 0
       ? positives
-          .slice(0, 3)
-          .map((p) => `✓ ${p.message}`)
+          .slice(0, 5)
+          .map((p) => `✓ ${p.category}: ${p.message} (Impact: +${Math.abs(p.impact || 0)} points)`)
           .join("\n")
-      : "✓ No major strengths detected";
+      : "✓ No significant strengths identified";
 
   const negStr =
     negatives.length > 0
       ? negatives
-          .slice(0, 3)
-          .map((n) => `✗ ${n.message}`)
+          .slice(0, 5)
+          .map((n) => `✗ ${n.category}: ${n.message} (Impact: ${n.impact || 0} points)`)
           .join("\n")
-      : "✗ No critical issues found";
+      : "✗ No critical issues detected";
 
-  return `${posStr}\n${negStr}`;
+  return `Positive Factors:\n${posStr}\n\nNegative Factors:\n${negStr}`;
 }
 
 /**
- * Rule-based fallback when AI fails
- * Provides instant, structured feedback
+ * Enhanced rule-based fallback with detailed explanations
  */
 function generateRuleBasedFallback(atsResult, jobRole) {
   const { score, verdict, breakdown, explanations, recommendations } = atsResult;
 
-  // Determine pass likelihood
-  const passLikelihood =
-    score >= 80
-      ? "very likely to pass ATS screening"
-      : score >= 70
-        ? "likely to pass with minor improvements"
-        : score >= 55
-          ? "may pass but needs optimization"
-          : score >= 40
-            ? "may struggle without improvements"
-            : "unlikely to pass without significant changes";
+  // Detailed pass likelihood assessment
+  const passAnalysis = getPassLikelihoodAnalysis(score);
 
-  // Get top and bottom scoring categories
+  // Get scored categories
   const categories = Object.entries(breakdown).sort((a, b) => b[1] - a[1]);
   const strongest = categories[0];
   const weakest = categories[categories.length - 1];
 
-  // Extract strengths
+  // Extract and categorize findings
   const strengths =
     explanations?.filter((e) => ["positive", "high"].includes(e.severity)).slice(0, 5) || [];
 
-  // Extract weaknesses
   const weaknesses =
     explanations
       ?.filter((e) => ["critical", "negative", "medium"].includes(e.severity))
       .slice(0, 5) || [];
 
-  // Compile improvements
+  // Prioritized improvements
   const improvements = [
-    ...(recommendations.critical || []).map((r) => ({ text: r, impact: "high" })),
-    ...(recommendations.improvements || []).map((r) => ({ text: r, impact: "medium" })),
+    ...(recommendations.critical || []).map((r) => ({ text: r, impact: "HIGH" })),
+    ...(recommendations.improvements || []).map((r) => ({ text: r, impact: "MEDIUM" })),
   ].slice(0, 6);
 
-  // Build formatted response
   return `### Final Verdict
 
-This resume scored ${score}/100, rated as "${verdict}". It is ${passLikelihood} for ${jobRole || "the target position"}. The strongest area is ${strongest[0]} (${strongest[1]} points), while ${weakest[0]} needs improvement (${weakest[1]} points). ${score < 70 ? "Significant optimization needed to improve ATS compatibility." : "With minor adjustments, this resume should perform well in ATS systems."}
+This resume achieved a score of ${score}/100, placing it in the "${verdict}" category. ${passAnalysis.assessment} The analysis reveals that ${strongest[0]} is the strongest performing area with ${strongest[1]} points, demonstrating ${getStrengthReason(strongest[0])}. However, ${weakest[0]} is the weakest component at ${weakest[1]} points, which ${getWeaknessImpact(weakest[0])}. ${passAnalysis.recommendation} ${score < 70 ? "Immediate optimization is required to improve ATS compatibility and increase the chances of passing automated screening systems." : "With targeted improvements in the identified weak areas, this resume should perform well in most ATS systems."}
 
 ### Strengths
 
@@ -353,10 +190,10 @@ ${
     ? strengths
         .map(
           (s) =>
-            `• **${capitalizeFirst(s.category)}** - ${s.message} - ATS algorithms prioritize this factor`,
+            `• **${capitalizeFirst(s.category)} Excellence** - The resume demonstrates strong ${s.category} with ${s.message}. This is valuable because ATS algorithms prioritize ${s.category} matching and assign significant weight to this factor. This strength contributes approximately +${Math.abs(s.impact || 5)} points to the overall score, helping the resume stand out in automated screening.`,
         )
-        .join("\n")
-    : "• **No Major Strengths** - Resume needs significant keyword and content optimization"
+        .join("\n\n")
+    : "• **Limited Distinguishing Features** - The resume currently lacks strong differentiating factors that ATS systems actively reward. This means it's scoring based primarily on basic requirements rather than excelling in key areas. To improve, focus on adding quantified achievements, relevant keywords, and industry-specific terminology that will boost scores across multiple categories."
 }
 
 ### Weaknesses
@@ -366,10 +203,10 @@ ${
     ? weaknesses
         .map(
           (w) =>
-            `• **${capitalizeFirst(w.category)}** - ${w.message} - Reduces overall ATS score by ${Math.abs(w.impact)} points`,
+            `• **${capitalizeFirst(w.category)} Deficiency** - Analysis reveals ${w.message}, which is a significant concern for ATS optimization. This weakness directly impacts the resume's ability to pass automated filters because ${getWeaknessExplanation(w.category)}. The scoring penalty for this issue is approximately ${Math.abs(w.impact || 5)} points, making it a priority area for improvement.`,
         )
-        .join("\n")
-    : "• **No Critical Issues** - Resume meets basic ATS requirements"
+        .join("\n\n")
+    : '• **No Critical Issues Detected** - The resume meets fundamental ATS requirements without major deficiencies. While this is positive, it also suggests the resume is performing at a baseline level. Consider adding more strategic optimizations to move from "acceptable" to "excellent" in ATS scoring systems.'
 }
 
 ### High-Impact Improvements
@@ -377,19 +214,131 @@ ${
 ${
   improvements.length > 0
     ? improvements
-        .map((imp, i) => `${i + 1}. **${imp.text}** - Impact: ${imp.impact.toUpperCase()}`)
-        .join("\n")
-    : "1. **Continue optimizing** - Add more relevant keywords and quantified achievements - Impact: MEDIUM"
+        .map(
+          (imp, i) =>
+            `${i + 1}. **${imp.text}** - This improvement should be implemented in ${getRelevantSection(imp.text)} to directly address scoring gaps. ${getImpactExplanation(imp.text, imp.impact)} Expected impact: **${imp.impact}** - ${getImpactJustification(imp.impact)}.`,
+        )
+        .join("\n\n")
+    : "1. **Strategic Keyword Enhancement** - Add 8-12 industry-specific keywords throughout the experience and skills sections. This will improve keyword matching scores which typically account for 25-30% of ATS evaluation. Expected impact: **MEDIUM** - Can increase score by 5-8 points with proper implementation."
 }
 
-${score < 60 ? "\n⚠️ **Priority Action**: This score requires immediate attention. Focus on critical recommendations first." : ""}
+${score < 60 ? "\n⚠️ **URGENT ACTION REQUIRED**: This score places the resume in a high-risk category for ATS rejection. Prioritize addressing critical recommendations within the next revision cycle to significantly improve pass rates." : score < 75 ? "\n⚡ **Action Recommended**: While not critical, improvements in weak areas will notably enhance ATS performance and interview callback rates." : "\n✅ **Good Foundation**: This resume has solid ATS compatibility. Fine-tuning the identified areas will optimize it for maximum performance."}
 
-*Analysis generated by ATS Scoring Engine v${atsResult.meta?.scoringVersion || "1.0"}*`;
+*Comprehensive analysis generated by ATS Scoring Engine v${atsResult.meta?.scoringVersion || "1.0"}*`;
 }
 
-/**
- * Utility: Capitalize first letter
- */
+// Helper functions for detailed explanations
+
+function getPassLikelihoodAnalysis(score) {
+  if (score >= 80) {
+    return {
+      assessment:
+        "This score indicates a very high likelihood of passing initial ATS screening, as it exceeds the typical 75-point threshold used by most enterprise ATS systems.",
+      recommendation:
+        "The resume is well-optimized and should successfully navigate automated filters in most industries.",
+    };
+  } else if (score >= 70) {
+    return {
+      assessment:
+        "This score suggests a good probability of passing ATS screening, though performance may vary depending on the specific system's configuration and job requirements.",
+      recommendation:
+        "Minor enhancements in weak areas will push this resume into the excellent category.",
+    };
+  } else if (score >= 55) {
+    return {
+      assessment:
+        "This score places the resume in a moderate risk zone where it may pass some ATS systems but could be filtered out by more stringent configurations.",
+      recommendation:
+        "Strategic optimization is needed to reliably clear ATS hurdles across different platforms.",
+    };
+  } else if (score >= 40) {
+    return {
+      assessment:
+        "This score indicates significant challenges with ATS compatibility, suggesting the resume will struggle to pass automated screening in competitive applicant pools.",
+      recommendation: "Substantial improvements are necessary to meet minimum ATS requirements.",
+    };
+  } else {
+    return {
+      assessment:
+        "This score signals critical deficiencies that will likely result in automatic rejection by most ATS systems before human review.",
+      recommendation: "Comprehensive restructuring and optimization are essential.",
+    };
+  }
+}
+
+function getStrengthReason(category) {
+  const reasons = {
+    keywords: "effective use of industry-relevant terminology and job-specific language",
+    formatting: "clean structure that ATS parsers can easily read and categorize",
+    experience: "well-presented work history with clear progression and relevant roles",
+    skills: "strong alignment between listed competencies and target position requirements",
+    sections: "comprehensive coverage of all standard resume components",
+  };
+  return reasons[category] || "positive performance in this evaluation criterion";
+}
+
+function getWeaknessImpact(category) {
+  const impacts = {
+    keywords:
+      "significantly reduces matching scores and may cause the resume to be filtered out for keyword deficiency",
+    formatting:
+      "can cause parsing errors that misclassify or lose important information during ATS processing",
+    experience: "weakens the perceived candidate qualification level and reduces relevance scoring",
+    skills: "creates gaps in competency matching that lower overall candidate-job fit scores",
+    penalties: "introduces deductions that compound other scoring issues",
+  };
+  return impacts[category] || "negatively affects the overall ATS evaluation score";
+}
+
+function getWeaknessExplanation(category) {
+  const explanations = {
+    keywords:
+      "ATS systems rely heavily on keyword density and matching to rank candidates, and insufficient keywords result in poor ranking",
+    formatting:
+      "improperly formatted resumes cause parsing failures that lead to information loss or misclassification",
+    experience:
+      "ATS algorithms evaluate experience relevance, duration, and progression as key qualification indicators",
+    skills:
+      "modern ATS systems use semantic matching to assess skill alignment, and gaps reduce matching confidence",
+    contact:
+      "incomplete or non-standard contact information prevents ATS from properly categorizing candidate details",
+  };
+  return explanations[category] || "this element is heavily weighted in ATS scoring algorithms";
+}
+
+function getRelevantSection(improvement) {
+  const text = improvement.toLowerCase();
+  if (text.includes("keyword") || text.includes("terminology"))
+    return "experience and skills sections";
+  if (text.includes("format") || text.includes("structure")) return "overall document structure";
+  if (text.includes("contact")) return "header/contact information section";
+  if (text.includes("skill")) return "skills and competencies section";
+  if (text.includes("experience") || text.includes("achievement")) return "work experience section";
+  return "relevant resume sections";
+}
+
+function getImpactExplanation(improvement, impact) {
+  const text = improvement.toLowerCase();
+  if (text.includes("keyword")) {
+    return "Keyword optimization directly affects the primary ATS ranking factor, with each relevant keyword typically adding 0.5-2 points to matching scores.";
+  } else if (text.includes("format")) {
+    return "Formatting corrections prevent parsing errors that can cause 10-15 point deductions when information is misclassified or lost.";
+  } else if (text.includes("quantif")) {
+    return "Adding quantified achievements increases credibility scoring and often triggers bonus points in experience evaluation algorithms.";
+  }
+  return "This targeted change addresses a specific scoring deficiency identified in the analysis.";
+}
+
+function getImpactJustification(impact) {
+  if (impact === "HIGH") {
+    return "This change can improve the score by 8-15 points and should be prioritized in the next revision";
+  } else if (impact === "MEDIUM") {
+    return "This change can add 4-8 points to the overall score and represents good optimization value";
+  } else {
+    return "This change provides incremental improvement of 2-4 points and should be addressed after higher priorities";
+  }
+}
+
 function capitalizeFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).replace(/_/g, " ");
 }
@@ -402,7 +351,6 @@ export async function checkPhi3Availability() {
     const response = await axios.get("http://localhost:11434/api/tags", {
       timeout: 5000,
     });
-
     const models = response.data.models || [];
     const hasPhi3 = models.some((m) => m.name.includes("phi3"));
 
@@ -411,7 +359,7 @@ export async function checkPhi3Availability() {
       phi3Installed: hasPhi3,
       availableModels: models.map((m) => m.name),
       message: hasPhi3
-        ? "✅ phi3:mini is ready to use"
+        ? "✅ phi3:mini is ready for detailed analysis"
         : "❌ phi3:mini not found. Run: ollama pull phi3:mini",
     };
   } catch (error) {
@@ -425,130 +373,44 @@ export async function checkPhi3Availability() {
 }
 
 /**
- * Batch processing with phi3:mini (optimized for speed)
+ * Optimized batch processing
  */
 export async function generateBatchVerdicts(resumeResults) {
-  console.log(`📊 Processing ${resumeResults.length} resumes with phi3:mini...`);
-
+  console.log(`📊 Processing ${resumeResults.length} resumes with detailed analysis...`);
   const results = [];
   const startTime = Date.now();
 
-  // Process 2 at a time (phi3 is fast enough for parallel)
-  for (let i = 0; i < resumeResults.length; i += 2) {
-    const batch = resumeResults.slice(i, i + 2);
+  // Process sequentially for detailed output to avoid overwhelming phi3
+  for (let i = 0; i < resumeResults.length; i++) {
+    const item = resumeResults[i];
+    console.log(`Processing resume ${i + 1}/${resumeResults.length}...`);
 
-    const batchResults = await Promise.allSettled(
-      batch.map((item) =>
-        generateAIVerdict({
-          atsResult: item.atsResult,
-          jobRole: item.jobRole,
-        }),
-      ),
-    );
+    try {
+      const aiVerdict = await generateAIVerdict({
+        atsResult: item.atsResult,
+        jobRole: item.jobRole,
+      });
 
-    results.push(
-      ...batchResults.map((r, idx) => ({
-        ...batch[idx],
-        aiVerdict:
-          r.status === "fulfilled"
-            ? r.value
-            : generateRuleBasedFallback(batch[idx].atsResult, batch[idx].jobRole),
-      })),
-    );
+      results.push({
+        ...item,
+        aiVerdict,
+      });
+    } catch (error) {
+      console.error(`Error processing resume ${i + 1}:`, error.message);
+      results.push({
+        ...item,
+        aiVerdict: generateRuleBasedFallback(item.atsResult, item.jobRole),
+      });
+    }
 
-    // Progress indicator
-    console.log(`✓ Processed ${Math.min(i + 2, resumeResults.length)}/${resumeResults.length}`);
+    console.log(`✓ Completed ${i + 1}/${resumeResults.length}`);
   }
 
   const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
-  console.log(`✅ Completed all ${resumeResults.length} resumes in ${totalTime}s`);
+  const avgTime = (totalTime / resumeResults.length).toFixed(1);
+  console.log(
+    `✅ Completed all ${resumeResults.length} resumes in ${totalTime}s (avg: ${avgTime}s per resume)`,
+  );
 
   return results;
 }
-
-/* 
-===============================================
-SETUP INSTRUCTIONS FOR PHI3:MINI
-===============================================
-
-1. INSTALL PHI3:MINI (if not already installed)
-   
-   ollama pull phi3:mini
-   
-   Download size: ~3.8GB
-   Time: 2-3 minutes
-
-2. VERIFY INSTALLATION
-   
-   ollama list
-   
-   You should see "phi3:mini" in the list
-
-3. TEST THE MODEL
-   
-   ollama run phi3:mini "Hello, test response"
-   
-   Should respond in 2-3 seconds
-
-4. USE THIS CODE
-   
-   Just import and use:
-   
-   import { generateAIVerdict } from './your-file.js';
-   
-   const verdict = await generateAIVerdict({
-     atsResult: yourAtsResult,
-     jobRole: "Full Stack Developer"
-   });
-
-5. CHECK IF PHI3 IS AVAILABLE
-   
-   import { checkPhi3Availability } from './your-file.js';
-   
-   const status = await checkPhi3Availability();
-   console.log(status.message);
-
-===============================================
-EXPECTED PERFORMANCE
-===============================================
-
-Response Time: 15-25 seconds (vs 60-120s with mistral)
-Quality: Excellent for structured tasks
-Reliability: 95%+ success rate
-Token Cost: Lower than mistral
-Memory Usage: ~4GB RAM
-
-===============================================
-TROUBLESHOOTING
-===============================================
-
-If responses are still slow (>30s):
-1. Check CPU usage: phi3 needs decent CPU
-2. Close other Ollama instances
-3. Reduce num_predict to 350
-4. Try with num_ctx: 1024 (smaller context)
-
-If quality seems lower:
-1. Increase temperature to 0.3
-2. Increase num_predict to 450
-3. Provide more specific job role
-
-If Ollama crashes:
-1. Update Ollama: curl -fsSL https://ollama.com/install.sh | sh
-2. Increase system RAM allocation
-3. Use smaller context: num_ctx: 1024
-
-===============================================
-ALTERNATIVE MODELS (if phi3 doesn't work)
-===============================================
-
-Even Faster:
-ollama pull gemma2:2b  (10-20s, slightly lower quality)
-
-Better Quality:
-ollama pull qwen2.5:3b  (18-28s, excellent reasoning)
-
-Fastest Cloud Option:
-Use Groq API (2-5s, free, same quality)
-https://console.groq.com
-*/
