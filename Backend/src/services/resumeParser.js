@@ -76,9 +76,17 @@ export const resumeParser = ({ text, source }) => {
   const normalizedText = cleanText.toLowerCase();
 
   //- 8. Tokenization
+  const STOP_TOKENS = new Set(["ba", "ma", "ms", "bs", "js", "ts", "py", "r", "c"]);
+
   const tokens = normalizedText
     .split(/[\s\n\r\t,;.!?()[\]{}]+/)
-    .filter((t) => t.length > 1 && /[a-z]/.test(t));
+    .map((t) => t.trim())
+    .filter((t) => {
+      if (t.length < 3) return false; // minimum semantic length
+      if (STOP_TOKENS.has(t)) return false; // remove ATS-noise abbreviations
+      if (!/[a-z]/.test(t)) return false; // must contain letters
+      return true;
+    });
 
   //- 9 Statistics
   const uppercaseLetters = cleanText.replace(/[^A-Z]/g, "").length;

@@ -433,6 +433,10 @@ function detectKeywordStuffing(repetitionMap, penalties) {
   const threshold = penalties.keywordStuffing.repeatThreshold;
 
   Object.entries(repetitionMap).forEach(([keyword, count]) => {
+    // Skip short keywords (<=2 chars) as they often match as substrings in longer words
+    if (keyword.length <= 2) {
+      return;
+    }
     if (count > threshold) {
       stuffingSignals.push({
         keyword,
