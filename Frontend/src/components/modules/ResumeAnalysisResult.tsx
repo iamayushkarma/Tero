@@ -1,46 +1,58 @@
 import { useResumeAnalysis } from "../../hooks/useResumeAnalysis";
+import ResumePreviewPanel from "../common/ResumePreviewPanel";
 import ResumeLoading from "../ui/ResumeLoading";
+
 function ResumeAnalysisResult() {
-  const { status, analysis, jobRole, error } = useResumeAnalysis();
+  const { status, analysis, jobRole, error, file } = useResumeAnalysis();
 
-  if (status === "idle") return null;
-
-  if (status === "analyzing") {
-    return <ResumeLoading />;
+  switch (status) {
+    case "idle":
+      return null;
+    case "analyzing":
+      return <ResumeLoading />;
+    case "error":
+      return (
+        <div className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4">
+          <p className="text-red-600">{error}</p>
+        </div>
+      );
+    default:
+      break;
   }
-
-  if (status === "error") {
-    return (
-      <div className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4">
-        <p className="text-red-600">{error}</p>
-      </div>
-    );
-  }
-
   if (!analysis) return null;
 
   return (
-    <section className="mt-6 rounded-lg border p-5">
-      <h2 className="text-xl font-semibold">Resume Analysis</h2>
+    <section className="mt-15 rounded-lg border p-5">
+      <div className="grid h-screen grid-cols-2 gap-4">
+        {/* PDF Preview Column */}
+        <div className="overflow-auto border-r pr-4">
+          <ResumePreviewPanel file={file} />
+        </div>
 
-      {jobRole && (
-        <p className="mt-1 text-sm text-gray-600">
-          Target Role: <strong>{jobRole}</strong>
-        </p>
-      )}
+        {/* Analysis Results Column */}
+        <div className="overflow-auto">
+          <h2 className="text-xl font-semibold">Resume Analysis</h2>
 
-      {/* Score */}
-      <div className="mt-4 flex items-center gap-4">
-        <div className="text-3xl font-bold">{Math.round(analysis.score)}%</div>
-        <div className="text-gray-700 capitalize">{analysis.verdict}</div>
-      </div>
+          {jobRole && (
+            <p className="mt-1 text-sm text-gray-600">
+              Target Role: <strong>{jobRole}</strong>
+            </p>
+          )}
 
-      {/* AI Verdict */}
-      <div className="mt-5">
-        <h3 className="mb-2 font-semibold">AI Evaluation</h3>
-        <pre className="text-sm leading-relaxed whitespace-pre-wrap text-gray-800">
-          {analysis.aiVerdict}
-        </pre>
+          {/* Score */}
+          <div className="mt-4 flex items-center gap-4">
+            <div className="text-3xl font-bold">{Math.round(analysis.score)}</div>
+            <div className="text-gray-700 capitalize">{analysis.verdict}</div>
+          </div>
+
+          {/* AI Verdict */}
+          <div className="mt-5">
+            <h3 className="mb-2 font-semibold">AI Evaluation</h3>
+            <pre className="text-sm leading-relaxed whitespace-pre-wrap text-gray-800">
+              {analysis.aiVerdict}
+            </pre>
+          </div>
+        </div>
       </div>
     </section>
   );

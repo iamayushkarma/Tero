@@ -180,7 +180,7 @@ function FileUploader() {
           jobRole,
         });
         const analysisData = uploadResponse.data.data;
-        setResult(analysisData, jobRole);
+        setResult(analysisData, jobRole, file);
         console.log("Backend response:", uploadResponse.data);
         console.log("AI Verdict from state:", analysisData.aiVerdict);
       } else if (
@@ -196,7 +196,7 @@ function FileUploader() {
         });
         console.log("Backend response:", uploadResponse.data);
         const analysisData = uploadResponse.data.data;
-        setResult(analysisData, jobRole);
+        setResult(analysisData, jobRole, file);
         console.log("Backend response:", uploadResponse.data);
         console.log("AI Verdict from state:", analysisData.aiVerdict);
       }
@@ -217,7 +217,7 @@ function FileUploader() {
   const handleAnalyze = async () => {
     if (!file) return;
 
-    startAnalysis();
+    startAnalysis(file);
     navigate("/resume-analysis");
     await handleUpload(file);
   };

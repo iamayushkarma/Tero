@@ -11,15 +11,17 @@ type ResumeAnalysisState = {
   status: "idle" | "analyzing" | "done" | "error";
   analysis: ResumeAnalysis | null;
   jobRole: string | null;
+  file: File | null;
   error: string | null;
 };
 
 type ResumeAnalysisContextType = ResumeAnalysisState & {
-  startAnalysis: () => void;
-  setResult: (data: ResumeAnalysis, jobRole?: string | null) => void;
+  startAnalysis: (file?: File | null) => void;
+  setResult: (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => void;
   setAnalysisError: (message: string) => void;
   reset: () => void;
 };
+
 export const ResumeAnalysisContext = createContext<ResumeAnalysisContextType | null>(null);
 
 export function ResumeAnalysisProvider({ children }: { children: React.ReactNode }) {
@@ -27,23 +29,26 @@ export function ResumeAnalysisProvider({ children }: { children: React.ReactNode
     status: "idle",
     analysis: null,
     jobRole: null,
+    file: null,
     error: null,
   });
 
-  const startAnalysis = () => {
+  const startAnalysis = (file?: File | null) => {
     setState({
       status: "analyzing",
       analysis: null,
       jobRole: null,
+      file: file || null,
       error: null,
     });
   };
 
-  const setResult = (data: ResumeAnalysis, jobRole?: string | null) => {
+  const setResult = (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => {
     setState({
       status: "done",
       analysis: data,
       jobRole: jobRole || null,
+      file: file || null,
       error: null,
     });
   };
@@ -53,6 +58,7 @@ export function ResumeAnalysisProvider({ children }: { children: React.ReactNode
       status: "error",
       analysis: null,
       jobRole: null,
+      file: null,
       error: message,
     });
   };
@@ -62,6 +68,7 @@ export function ResumeAnalysisProvider({ children }: { children: React.ReactNode
       status: "idle",
       analysis: null,
       jobRole: null,
+      file: null,
       error: null,
     });
   };

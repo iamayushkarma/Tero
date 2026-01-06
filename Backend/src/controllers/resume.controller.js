@@ -71,7 +71,6 @@ const uploadResumeText = asyncHandler(async (req, res) => {
     return res.status(500).json(new ApiResponse(500, null, `Analysis failed: ${error.message}`));
   }
 });
-
 // DOCX File Upload
 const uploadResumeFile = asyncHandler(async (req, res) => {
   const { jobRole } = req.body;
@@ -80,52 +79,58 @@ const uploadResumeFile = asyncHandler(async (req, res) => {
     return res.status(400).json(new ApiResponse(400, null, "Resume file is required"));
   }
 
-  let result;
+  const docxPath = req.file.path;
+
+  let extractedText = "";
   try {
-    result = await mammoth.extractRawText({
+    const result = await mammoth.extractRawText({
       buffer: req.file.buffer,
     });
+
+    extractedText = result.value;
   } catch (error) {
     console.error("DOCX extraction error:", error);
     return res.status(400).json(new ApiResponse(400, null, "Failed to read DOCX file"));
   }
 
-  if (!result.value || result.value.trim().length === 0) {
+  if (!extractedText || extractedText.trim().length === 0) {
     return res.status(400).json(new ApiResponse(400, null, "No readable text found in DOCX"));
   }
 
   try {
-    // 1. Parse resume
+    // 3. Parse resume
     const parsedResume = resumeParser({
-      text: result.value,
+      text: extractedText,
       source: "docx",
     });
 
-    // 2. Detect sections
+    // 4. Detect sections
     const sectionData = sectionDetector({
       lines: parsedResume.lines,
     });
 
-    // 3. Match keywords
+    // 5. Match keywords
     const keywordData = keywordMatcher({
       parsedResume,
       sectionData,
     });
 
-    // 4. Analyze formatting
+    // 6. Analyze formatting
     const formattingData = formattingAnalyzer({
       parsedResume,
     });
 
-    // 5. Final ATS score
+    // 7. Final ATS score
     const atsResult = atsScoring({
       sectionData,
       keywordData,
       formattingData,
     });
 
+    // 8. AI verdict
     const aiVerdict = await generateAIVerdict({ atsResult, jobRole });
 
+    // 9. Return result + PDF preview URL
     return res.status(200).json(
       new ApiResponse(
         200,
