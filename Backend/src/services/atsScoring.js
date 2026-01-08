@@ -68,7 +68,7 @@ const SCORING_MULTIPLIERS = Object.freeze({
 
 const SCORE_LIMITS = Object.freeze({
   MIN: 5,
-  MAX: 95,
+  MAX: 90,
 });
 
 // Cache for scoring rules
@@ -293,7 +293,7 @@ class SectionsScoreCalculator extends ScoreCalculator {
     this.applyCoverageBonus(foundSections, sectionData.sections.length, maxScore);
     this.applyMultipleMissingPenalty(missingRequiredCount);
 
-    // return this.clamp(score, 0, maxScore);
+    // return this.clamp(score, 0, maxScore * 1.2);
     const finalScore = this.clamp(score, 0, maxScore);
     return {
       score: finalScore,
@@ -370,15 +370,15 @@ class KeywordsScoreCalculator extends ScoreCalculator {
     score += this.applyLowCoveragePenalty(totalKeywords, maxScore);
 
     // return this.clamp(score, 0, maxScore * 1.2);
-    const finalScore = this.clamp(score, 0, maxScore * 1.2);
+    const finalScore = this.clamp(score, 0, maxScore);
 
     return {
       score: finalScore,
-      maxScore: maxScore * 1.2,
+      maxScore: maxScore,
       totalKeywords: totalKeywords,
       highImpactCount: highImpactCount,
       veryHighImpactCount: veryHighImpactCount,
-      percentage: Math.round((finalScore / (maxScore * 1.2)) * 100),
+      percentage: Math.round((finalScore / maxScore) * 100),
     };
   }
 
@@ -622,15 +622,15 @@ class SkillsScoreCalculator extends ScoreCalculator {
     score += this.calculateTechnicalBonus(matchedSkills, maxScore);
 
     // return this.clamp(score, 0, maxScore * 1.1);
-    const finalScore = this.clamp(score, 0, maxScore * 1.1);
+    const finalScore = this.clamp(score, 0, maxScore);
 
     return {
       score: finalScore,
-      maxScore: maxScore * 1.1,
+      maxScore: maxScore,
       matchedSkills: matchedSkills.length,
       totalSkills: totalSkills,
       matchRatio: skillMatchRatio,
-      percentage: Math.round((finalScore / (maxScore * 1.1)) * 100),
+      percentage: Math.round((finalScore / maxScore) * 100),
     };
   }
 
