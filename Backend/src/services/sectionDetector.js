@@ -129,7 +129,7 @@ let cachedSectionRules = null;
  */
 const NORMALIZATION_CONFIG = {
   // Characters to remove during normalization
-  charactersToRemove: /[:\-–—_•*#]/g,
+  charactersToRemove: /[:\-–—_•*#()\d]/g,
   // Whitespace normalization
   whitespacePattern: /\s+/g,
   // Maximum heading length to consider (longer lines are likely content)
@@ -327,15 +327,12 @@ function matchSectionHeading(line, sectionConfigs) {
     return null;
   }
 
-  // Quick heuristic check before expensive matching
-  if (!isLikelyHeading(line)) {
-    return null;
-  }
-
-  // Check against all section configurations (exact match first)
+  // Check against all section configurations
   for (const section of sectionConfigs) {
-    if (section.headingSet.has(normalized)) {
-      return section.key;
+    for (const h of section.headingSet) {
+      if (normalized === h || normalized.startsWith(h + " ")) {
+        return section.key;
+      }
     }
   }
 

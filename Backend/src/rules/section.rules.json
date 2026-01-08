@@ -234,26 +234,6 @@
       ]
     },
     {
-      "key": "publications",
-      "displayName": "Publications & Research",
-      "headings": [
-        "publications",
-        "research papers",
-        "papers",
-        "published work",
-        "research publications",
-        "research"
-      ],
-      "required": false,
-      "validation": {
-        "minWords": 20,
-        "expectCitation": true,
-        "expectDOI": false
-      },
-      "importance": "medium",
-      "notes": "Important for research engineers, ML engineers, and academic roles"
-    },
-    {
       "key": "patents",
       "displayName": "Patents",
       "headings": ["patents", "patent applications", "intellectual property"],

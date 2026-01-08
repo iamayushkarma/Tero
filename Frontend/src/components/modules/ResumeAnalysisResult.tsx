@@ -32,11 +32,6 @@ function ResumeAnalysisResult() {
       {file ? (
         // Two-column layout when file is available
         <div className="grid h-screen grid-cols-2 gap-4">
-          {/* PDF Preview Column */}
-          <div className="overflow-auto border-r pr-4">
-            <ResumePreviewPanel file={file} />
-          </div>
-
           {/* Analysis Results Column */}
           <div className="overflow-auto">
             <h2 className="text-xl font-semibold">Resume Analysis</h2>
@@ -60,6 +55,10 @@ function ResumeAnalysisResult() {
                 {analysis.aiVerdict}
               </pre>
             </div>
+          </div>
+          {/* PDF Preview Column */}
+          <div className="overflow-auto border-r pr-4">
+            <ResumePreviewPanel file={file} />
           </div>
         </div>
       ) : (

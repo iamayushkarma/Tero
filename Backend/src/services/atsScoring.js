@@ -293,7 +293,16 @@ class SectionsScoreCalculator extends ScoreCalculator {
     this.applyCoverageBonus(foundSections, sectionData.sections.length, maxScore);
     this.applyMultipleMissingPenalty(missingRequiredCount);
 
-    return this.clamp(score, 0, maxScore);
+    // return this.clamp(score, 0, maxScore);
+    const finalScore = this.clamp(score, 0, maxScore);
+    return {
+      score: finalScore,
+      maxScore: maxScore,
+      foundSections: foundSections,
+      totalSections: sectionData.sections.length,
+      missingRequired: missingRequiredCount,
+      percentage: Math.round((finalScore / maxScore) * 100),
+    };
   }
 
   applyCoverageBonus(foundSections, totalSections, maxScore) {
@@ -360,7 +369,17 @@ class KeywordsScoreCalculator extends ScoreCalculator {
     score += this.applyHighImpactBonus(highImpactCount, veryHighImpactCount, maxScore);
     score += this.applyLowCoveragePenalty(totalKeywords, maxScore);
 
-    return this.clamp(score, 0, maxScore * 1.2);
+    // return this.clamp(score, 0, maxScore * 1.2);
+    const finalScore = this.clamp(score, 0, maxScore * 1.2);
+
+    return {
+      score: finalScore,
+      maxScore: maxScore * 1.2,
+      totalKeywords: totalKeywords,
+      highImpactCount: highImpactCount,
+      veryHighImpactCount: veryHighImpactCount,
+      percentage: Math.round((finalScore / (maxScore * 1.2)) * 100),
+    };
   }
 
   applyDiversityBonus(keywordData, maxScore) {
@@ -453,7 +472,16 @@ class FormattingScoreCalculator extends ScoreCalculator {
     const maxPenalty = this.scoringRules.caps?.maxFormattingPenalty || -6;
     penalty = Math.max(penalty, maxPenalty);
 
-    return this.clamp(maxScore + penalty, 0, maxScore);
+    // return this.clamp(maxScore + penalty, 0, maxScore);
+    const finalScore = this.clamp(maxScore + penalty, 0, maxScore);
+
+    return {
+      score: finalScore,
+      maxScore: maxScore,
+      issuesFound: formattingData.ruleFindings.length,
+      totalPenalty: penalty,
+      percentage: Math.round((finalScore / maxScore) * 100),
+    };
   }
 }
 
@@ -476,7 +504,15 @@ class PenaltiesCalculator extends ScoreCalculator {
       );
     });
 
-    return Math.max(penalty, maxPenalty);
+    // return Math.max(penalty, maxPenalty);
+    const finalPenalty = Math.max(penalty, maxPenalty);
+
+    return {
+      score: finalPenalty,
+      maxPenalty: maxPenalty,
+      stuffingCount: stuffingSignals.length,
+      totalPenalty: penalty,
+    };
   }
 }
 
@@ -505,7 +541,18 @@ class ExperienceScoreCalculator extends ScoreCalculator {
       );
     }
 
-    return this.clamp(totalScore, 0, maxScore);
+    // return this.clamp(totalScore, 0, maxScore);
+    const finalScore = this.clamp(totalScore, 0, maxScore);
+
+    return {
+      score: finalScore,
+      maxScore: maxScore,
+      actionVerbCount: actionVerbCount,
+      quantifiedCount: quantifiedAchievements.length,
+      actionVerbScore: actionVerbScore,
+      quantifiedScore: quantifiedScore,
+      percentage: Math.round((finalScore / maxScore) * 100),
+    };
   }
 
   calculateActionVerbScore(count) {
@@ -574,7 +621,17 @@ class SkillsScoreCalculator extends ScoreCalculator {
     let score = this.calculateBaseSkillScore(skillMatchRatio, maxScore);
     score += this.calculateTechnicalBonus(matchedSkills, maxScore);
 
-    return this.clamp(score, 0, maxScore * 1.1);
+    // return this.clamp(score, 0, maxScore * 1.1);
+    const finalScore = this.clamp(score, 0, maxScore * 1.1);
+
+    return {
+      score: finalScore,
+      maxScore: maxScore * 1.1,
+      matchedSkills: matchedSkills.length,
+      totalSkills: totalSkills,
+      matchRatio: skillMatchRatio,
+      percentage: Math.round((finalScore / (maxScore * 1.1)) * 100),
+    };
   }
 
   calculateBaseSkillScore(ratio, maxScore) {
@@ -723,38 +780,33 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
     const explanations = [];
 
     // Calculate component scores
-    const sectionsScore = new SectionsScoreCalculator(scoringRules, explanations).calculate(
+    const sectionsResult = new SectionsScoreCalculator(scoringRules, explanations).calculate(
       sectionData,
     );
-
-    const keywordsScore = new KeywordsScoreCalculator(scoringRules, explanations).calculate(
+    const keywordsResult = new KeywordsScoreCalculator(scoringRules, explanations).calculate(
       keywordData,
     );
-
-    const formattingScore = new FormattingScoreCalculator(scoringRules, explanations).calculate(
+    const formattingResult = new FormattingScoreCalculator(scoringRules, explanations).calculate(
       formattingData,
     );
-
-    const penaltiesScore = new PenaltiesCalculator(scoringRules, explanations).calculate(
+    const penaltiesResult = new PenaltiesCalculator(scoringRules, explanations).calculate(
       keywordData,
     );
-
-    const experienceScore = new ExperienceScoreCalculator(scoringRules, explanations).calculate(
+    const experienceResult = new ExperienceScoreCalculator(scoringRules, explanations).calculate(
       keywordData,
     );
-
-    const skillsScore = new SkillsScoreCalculator(scoringRules, explanations).calculate(
+    const skillsResult = new SkillsScoreCalculator(scoringRules, explanations).calculate(
       keywordData,
     );
 
     // Calculate final score
     const totalScore =
-      sectionsScore +
-      keywordsScore +
-      formattingScore +
-      penaltiesScore +
-      experienceScore +
-      skillsScore;
+      sectionsResult.score +
+      keywordsResult.score +
+      formattingResult.score +
+      penaltiesResult.score +
+      experienceResult.score +
+      skillsResult.score;
 
     const finalScore = Math.max(SCORE_LIMITS.MIN, Math.min(SCORE_LIMITS.MAX, totalScore));
 
@@ -770,13 +822,14 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
       score: finalScore,
       verdict,
       breakdown: {
-        sections: sectionsScore,
-        keywords: keywordsScore,
-        formatting: formattingScore,
-        experience_quality: experienceScore,
-        skills_relevance: skillsScore,
-        penalties: penaltiesScore,
+        sections: sectionsResult,
+        keywords: keywordsResult,
+        formatting: formattingResult,
+        experience_quality: experienceResult,
+        skills_relevance: skillsResult,
+        penalties: penaltiesResult,
       },
+
       explanations,
       recommendations,
       meta: {

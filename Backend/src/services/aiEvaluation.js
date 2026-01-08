@@ -40,23 +40,23 @@ ${JSON.stringify(compactATS)}
 
 OUTPUT FORMAT (STRICT):
 
-### Final Verdict
+Final Verdict
 - 3–4 short sentences
 - Speak directly to the user (use "you" and "your resume")
 - Clearly explain why this score was achieved
 - Keep the tone honest but encouraging
 
-### Strengths (Max 6)
+Strengths (Max 6)
 - Bullet points
 - Phrase each point as a positive observation about the user’s resume
 - Each point must be backed by ATS data
 
-### Weaknesses (Max 6)
+Weaknesses (Max 6)
 - Bullet points
 - Only list weaknesses explicitly present in ATS data
 - Phrase gently and constructively (no harsh language)
 
-### How You Can Improve (Max 5)
+How You Can Improve (Max 5)
 - Actionable steps
 - Mention which section to update
 - Mention expected ATS impact (high / medium / low)

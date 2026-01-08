@@ -46,11 +46,104 @@ export const resumeParser = ({ text, source }) => {
   // ("Software Engineer\n");
   // "Python Developer\n".trim(); // trim document edges
 
-  //- 6. Line Structuring
+  //- 6. Insert line breaks before potential headings
+  // Potential section headings to insert line breaks before
+  const potentialHeadingsInsert = new Set([
+    "contact",
+    "summary",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "certifications",
+    "awards",
+    "languages",
+    "interests",
+    "work experience",
+    "professional experience",
+    "academic background",
+    "technical skills",
+    "personal projects",
+    "professional certifications",
+    "internships",
+    "publications",
+    "research",
+    "volunteer",
+    "community",
+    "hackathons",
+    "competitions",
+    "patents",
+    "conferences",
+    "speaking",
+    "employment",
+    "employment history",
+    "career",
+    "career history",
+    "work history",
+    "professional background",
+    "positions",
+    "roles",
+    "jobs",
+    "educational qualifications",
+    "academic qualifications",
+    "educational background",
+  ]);
 
-  const rawLines = cleanText.split("\n"); // Split text into array of lines
+  let processedText = cleanText;
+  for (const heading of potentialHeadingsInsert) {
+    // Escape special regex chars
+    const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`\\b${escapedHeading}\\b`, "gi");
+    processedText = processedText.replace(regex, "\n" + heading + "\n");
+  }
+
+  //- 7. Line Structuring
+
+  const rawLines = processedText.split("\n"); // Split text into array of lines
   const lines = [];
   let buffer = ""; // Temporary storage for merging
+
+  // Potential section headings to prevent merging
+  const potentialHeadings = new Set([
+    "contact",
+    "summary",
+    "experience",
+    "education",
+    "skills",
+    "projects",
+    "certifications",
+    "awards",
+    "languages",
+    "interests",
+    "work experience",
+    "professional experience",
+    "academic background",
+    "technical skills",
+    "personal projects",
+    "professional certifications",
+    "internships",
+    "publications",
+    "research",
+    "volunteer",
+    "community",
+    "hackathons",
+    "competitions",
+    "patents",
+    "conferences",
+    "speaking",
+    "employment",
+    "employment history",
+    "career",
+    "career history",
+    "work history",
+    "professional background",
+    "positions",
+    "roles",
+    "jobs",
+    "educational qualifications",
+    "academic qualifications",
+    "educational background",
+  ]);
 
   for (const line of rawLines) {
     const trimmed = line.trim();
@@ -62,8 +155,16 @@ export const resumeParser = ({ text, source }) => {
     const isHeading =
       trimmed === trimmed.toUpperCase() && trimmed.length <= 50 && /^[A-Z\s&]+$/.test(trimmed); // Examples: "WORK EXPERIENCE", "EDUCATION"
     const endsSentence = /[.!?:]$/.test(trimmed);
+    const isPotentialHeading = potentialHeadings.has(trimmed.toLowerCase());
 
-    if (buffer && !isBullet && !isHeading && trimmed.length < 60 && !endsSentence) {
+    if (
+      buffer &&
+      !isBullet &&
+      !isHeading &&
+      !isPotentialHeading &&
+      trimmed.length < 60 &&
+      !endsSentence
+    ) {
       buffer += " " + trimmed;
     } else {
       if (buffer) lines.push(buffer);
