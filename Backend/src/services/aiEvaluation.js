@@ -85,7 +85,7 @@ RULES:
         },
       },
       {
-        timeout: 45_000, // realistic CPU timeout
+        timeout: 60_000, // realistic CPU timeout
       },
     );
 
