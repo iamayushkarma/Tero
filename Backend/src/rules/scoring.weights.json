@@ -1,59 +1,162 @@
 {
   "meta": {
-    "version": "1.0",
-    "description": "ATS scoring weights and penalty mappings"
+    "version": "2.0",
+    "description": "Corrected ATS scoring weights with balanced distribution"
   },
-
   "scoreScale": {
-    "min": 0,
-    "max": 100
+    "min": 5,
+    "max": 90
   },
-
   "baseWeights": {
     "sections": 20,
-    "keywords": 25,
+    "keywords": 30,
+    "formatting": 10,
     "experience_quality": 20,
-    "skills_relevance": 20,
-    "formatting": 10
+    "skills_relevance": 20
   },
-
   "sectionWeights": {
-    "contact": 2,
-    "experience": 6,
-    "skills": 5,
+    "contact": 3,
+    "experience": 5,
+    "skills": 4,
     "projects": 3,
-    "education": 2,
+    "education": 3,
     "summary": 2
   },
-
   "keywordWeights": {
-    "very_high": 1.4,
-    "high": 1.1,
+    "very_high": 2.0,
+    "high": 1.5,
     "medium": 1.0,
     "low": 0.5
   },
-
   "formattingPenaltyMap": {
-    "multiColumnLayout": -3,
-    "tablesUsed": -3,
-    "imagesOrIconsUsed": -2,
-    "tooManyPages": -2,
-    "nonStandardFonts": -1
+    "multiColumnLayout": -4,
+    "tablesUsed": -4,
+    "imagesOrIconsUsed": -3,
+    "tooManyPages": -3,
+    "nonStandardFonts": -2
   },
-
   "missingSectionPenalty": {
-    "required": -3,
-    "optional": -1
+    "required": -5,
+    "optional": -2
   },
-
   "experienceSignals": {
-    "quantifiedAchievements": 5,
-    "actionVerbsUsed": 5,
-    "consistentTimeline": 5
+    "actionVerbThresholds": {
+      "outstanding": 20,
+      "excellent": 15,
+      "good": 10,
+      "adequate": 7,
+      "few": 4,
+      "minimal": 0
+    },
+    "quantifiedThresholds": {
+      "outstanding": 8,
+      "excellent": 6,
+      "good": 4,
+      "adequate": 3,
+      "few": 1,
+      "none": 0
+    },
+    "actionVerbMaxScore": 10,
+    "quantifiedMaxScore": 8,
+    "bonusForExceptional": 2
   },
-
+  "bonusConfig": {
+    "sectionCoverage": {
+      "enabled": true,
+      "threshold": 0.95,
+      "maxBonus": 2
+    },
+    "keywordDiversity": {
+      "enabled": true,
+      "excellent": {
+        "minGroups": 6,
+        "bonus": 3
+      },
+      "good": {
+        "minGroups": 4,
+        "bonus": 1.5
+      }
+    },
+    "highImpactKeywords": {
+      "enabled": true,
+      "outstanding": {
+        "minCount": 15,
+        "bonus": 3
+      },
+      "strong": {
+        "minCount": 10,
+        "bonus": 1.5
+      }
+    },
+    "technicalSkills": {
+      "enabled": true,
+      "outstanding": {
+        "minCount": 8,
+        "bonus": 3
+      },
+      "strong": {
+        "minCount": 5,
+        "bonus": 1.5
+      }
+    }
+  },
+  "penaltyConfig": {
+    "lowKeywordCoverage": {
+      "enabled": true,
+      "critical": {
+        "maxKeywords": 5,
+        "penalty": -6
+      },
+      "low": {
+        "maxKeywords": 8,
+        "penalty": -3
+      }
+    },
+    "keywordStuffing": {
+      "enabled": true,
+      "perViolation": -2
+    },
+    "multipleMissingSections": {
+      "enabled": true,
+      "perSection": -2
+    }
+  },
   "caps": {
-    "maxFormattingPenalty": -10,
-    "maxKeywordPenalty": -10
+    "maxFormattingPenalty": -15,
+    "maxKeywordPenalty": -15,
+    "maxSectionBonus": 3,
+    "maxKeywordBonus": 5,
+    "maxExperienceBonus": 2,
+    "maxSkillsBonus": 4
+  },
+  "skillsConfig": {
+    "minExpectedSkills": 25,
+    "maxSkillsPerCategory": 8,
+    "matchRatioTiers": {
+      "excellent": {
+        "minRatio": 0.7,
+        "multiplier": 1.0
+      },
+      "veryGood": {
+        "minRatio": 0.5,
+        "multiplier": 0.85
+      },
+      "good": {
+        "minRatio": 0.35,
+        "multiplier": 0.7
+      },
+      "moderate": {
+        "minRatio": 0.2,
+        "multiplier": 0.5
+      },
+      "limited": {
+        "minRatio": 0.1,
+        "multiplier": 0.3
+      },
+      "poor": {
+        "minRatio": 0,
+        "multiplier": 0.1
+      }
+    }
   }
 }

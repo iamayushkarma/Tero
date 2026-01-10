@@ -1,185 +1,3 @@
-// import fs from "fs";
-// import path from "path";
-// import { fileURLToPath } from "url";
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// const keywordRules = JSON.parse(
-//   fs.readFileSync(path.join(__dirname, "../rules/keyword.rules.json"), "utf-8"),
-// );
-
-// export const keywordMatcher = ({ parsedResume, sectionData }) => {
-//   if (!parsedResume?.normalizedText) {
-//     throw new Error("keywordMatcher: normalizedText is required");
-//   }
-
-//   if (!Array.isArray(sectionData?.sections)) {
-//     throw new Error("keywordMatcher: section data required");
-//   }
-
-//   const text = parsedResume.normalizedText;
-//   const tokens = parsedResume.tokens || [];
-
-//   // 1. Prepare Keyword Groups
-//   const groups = keywordRules.keywordGroups.map((group) => {
-//     const keywordSet = new Set();
-
-//     group.keywords.forEach((k) => keywordSet.add(k.toLowerCase()));
-
-//     if (group.synonyms && keywordRules.matchingConfig.enableSynonyms) {
-//       Object.values(group.synonyms).forEach((synList) => {
-//         synList.forEach((s) => keywordSet.add(s.toLowerCase()));
-//       });
-//     }
-
-//     return {
-//       group: group.group,
-//       roleCategory: group.roleCategory,
-//       subcategory: group.subcategory,
-//       importance: group.importance,
-//       weight: group.weight,
-//       required: group.required,
-//       keywords: [...keywordSet],
-//     };
-//   });
-
-//   //  2. Global Keyword Matching
-//   const globalMatches = {};
-//   const repetitionMap = {};
-
-//   groups.forEach((group) => {
-//     globalMatches[group.group] = {
-//       matched: [],
-//       totalCount: 0,
-//       uniqueCount: 0,
-//     };
-
-//     group.keywords.forEach((keyword) => {
-//       const regex = buildRegex(keyword, keywordRules.matchingConfig);
-//       const matches = text.match(regex);
-
-//       if (matches) {
-//         globalMatches[group.group].matched.push(keyword);
-//         globalMatches[group.group].totalCount += matches.length;
-//         repetitionMap[keyword] = matches.length;
-//       }
-//     });
-
-//     globalMatches[group.group].uniqueCount = globalMatches[group.group].matched.length;
-//   });
-
-//   // 3. Section-wise Matching
-//   const sectionMatches = {};
-
-//   sectionData.sections.forEach((section) => {
-//     const sectionText = section.content.join(" ").toLowerCase();
-//     sectionMatches[section.key] = {};
-
-//     groups.forEach((group) => {
-//       let count = 0;
-//       const matched = [];
-
-//       group.keywords.forEach((keyword) => {
-//         const regex = buildRegex(keyword, keywordRules.matchingConfig);
-//         const matches = sectionText.match(regex);
-
-//         if (matches) {
-//           matched.push(keyword);
-//           count += matches.length;
-//         }
-//       });
-
-//       if (count > 0) {
-//         sectionMatches[section.key][group.group] = {
-//           matched,
-//           count,
-//         };
-//       }
-//     });
-//   });
-
-//   //  4. Keyword Density
-//   const density = {};
-
-//   Object.keys(globalMatches).forEach((group) => {
-//     const count = globalMatches[group].totalCount;
-//     density[group] = tokens.length ? count / tokens.length : 0;
-//   });
-
-//   // 5. Action Verb Detection
-//   const actionVerbGroup = groups.find((g) => g.group === "action_verbs");
-//   const actionVerbsFound = [];
-
-//   if (actionVerbGroup) {
-//     actionVerbGroup.keywords.forEach((verb) => {
-//       const regex = new RegExp(`\\b${escape(verb)}\\b`, "gi");
-//       if (text.match(regex)) actionVerbsFound.push(verb);
-//     });
-//   }
-
-//   // 6. Quantified Achievements
-//   const quantifiedPatterns = keywordRules.bonuses?.quantifiedAchievements?.patterns || [];
-
-//   const quantifiedAchievements = quantifiedPatterns.filter((pattern) =>
-//     new RegExp(pattern).test(text),
-//   );
-
-//   // 7. Keyword Stuffing Signals
-//   const stuffingSignals = [];
-
-//   if (keywordRules.penalties.keywordStuffing.enabled) {
-//     const threshold = keywordRules.penalties.keywordStuffing.repeatThreshold;
-
-//     Object.entries(repetitionMap).forEach(([keyword, count]) => {
-//       if (count > threshold) {
-//         stuffingSignals.push({
-//           keyword,
-//           count,
-//           threshold,
-//         });
-//       }
-//     });
-//   }
-
-//   // Final Output
-
-//   return {
-//     globalMatches,
-//     sectionMatches,
-//     keywordDensity: density,
-//     actionVerbs: {
-//       count: actionVerbsFound.length,
-//       verbs: actionVerbsFound,
-//     },
-//     quantifiedAchievements,
-//     stuffingSignals,
-//     meta: {
-//       rulesVersion: keywordRules.meta.version,
-//       matchingConfig: keywordRules.matchingConfig,
-//     },
-//   };
-// };
-
-// // Helpers
-// function buildRegex(keyword, config) {
-//   const escaped = escape(keyword);
-
-//   if (config.enablePhraseMatching && keyword.includes(" ")) {
-//     return new RegExp(escaped, "gi");
-//   }
-
-//   if (config.allowPartialMatches) {
-//     return new RegExp(escaped, "gi");
-//   }
-
-//   return new RegExp(`\\b${escaped}\\b`, "gi");
-// }
-
-// function escape(str) {
-//   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// }
-
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -189,6 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let cachedKeywordRules = null;
+
 function loadKeywordRules(rulesPath, forceReload = false) {
   if (cachedKeywordRules && !forceReload) {
     return cachedKeywordRules;
@@ -197,10 +16,7 @@ function loadKeywordRules(rulesPath, forceReload = false) {
   try {
     const rulesContent = fs.readFileSync(rulesPath, "utf-8");
     const rules = JSON.parse(rulesContent);
-
-    // Validate required structure
     validateRulesStructure(rules);
-
     cachedKeywordRules = rules;
     return rules;
   } catch (error) {
@@ -264,6 +80,7 @@ function validateInput(parsedResume, sectionData) {
     }
   }
 }
+
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -285,21 +102,18 @@ function buildKeywordRegex(keyword, config) {
   // For exact word boundary matches
   return new RegExp(`\\b${escaped}\\b`, flags);
 }
+
+// prepareKeywordGroups
 function prepareKeywordGroups(keywordGroups, matchingConfig) {
   return keywordGroups.map((group) => {
-    const keywordSet = new Set();
+    // Only store PRIMARY keywords (not synonyms yet)
+    const primaryKeywords = group.keywords.map((k) => k.toLowerCase());
 
-    // Add primary keywords
-    group.keywords.forEach((keyword) => {
-      keywordSet.add(keyword.toLowerCase());
-    });
-
-    // Add synonyms if enabled
+    // Store synonyms separately for later matching
+    const synonymMap = {};
     if (group.synonyms && matchingConfig.enableSynonyms) {
-      Object.values(group.synonyms).forEach((synList) => {
-        synList.forEach((synonym) => {
-          keywordSet.add(synonym.toLowerCase());
-        });
+      Object.entries(group.synonyms).forEach(([primary, synList]) => {
+        synonymMap[primary.toLowerCase()] = synList.map((s) => s.toLowerCase());
       });
     }
 
@@ -310,10 +124,13 @@ function prepareKeywordGroups(keywordGroups, matchingConfig) {
       importance: group.importance,
       weight: group.weight,
       required: group.required || false,
-      keywords: Array.from(keywordSet),
+      keywords: primaryKeywords,
+      synonyms: synonymMap,
     };
   });
 }
+
+// performGlobalMatching
 function performGlobalMatching(text, groups, matchingConfig) {
   const globalMatches = {};
   const repetitionMap = {};
@@ -326,22 +143,45 @@ function performGlobalMatching(text, groups, matchingConfig) {
       importance: group.importance,
     };
 
-    group.keywords.forEach((keyword) => {
-      const regex = buildKeywordRegex(keyword, matchingConfig);
-      const matches = text.match(regex);
+    const matchedConcepts = new Set(); // Track unique concepts
 
-      if (matches && matches.length > 0) {
-        globalMatches[group.group].matched.push(keyword);
-        globalMatches[group.group].totalCount += matches.length;
-        repetitionMap[keyword] = (repetitionMap[keyword] || 0) + matches.length;
+    // For each primary keyword
+    group.keywords.forEach((primaryKeyword) => {
+      // Build list of variations to search (primary + synonyms)
+      const variations = [primaryKeyword];
+
+      if (group.synonyms && group.synonyms[primaryKeyword]) {
+        variations.push(...group.synonyms[primaryKeyword]);
+      }
+
+      let conceptMatched = false;
+      let conceptTotalCount = 0;
+
+      // Search for any variation
+      variations.forEach((variation) => {
+        const regex = buildKeywordRegex(variation, matchingConfig);
+        const matches = text.match(regex);
+
+        if (matches && matches.length > 0) {
+          conceptMatched = true;
+          conceptTotalCount += matches.length;
+          repetitionMap[variation] = (repetitionMap[variation] || 0) + matches.length;
+        }
+      });
+
+      // Only count the CONCEPT once (not each synonym)
+      if (conceptMatched && !matchedConcepts.has(primaryKeyword)) {
+        matchedConcepts.add(primaryKeyword);
+        globalMatches[group.group].matched.push(primaryKeyword);
+        globalMatches[group.group].uniqueCount++;
+        globalMatches[group.group].totalCount += conceptTotalCount;
       }
     });
-
-    globalMatches[group.group].uniqueCount = globalMatches[group.group].matched.length;
   });
 
   return { matches: globalMatches, repetitions: repetitionMap };
 }
+
 function performSectionMatching(sections, groups, matchingConfig) {
   const sectionMatches = {};
 
@@ -352,14 +192,35 @@ function performSectionMatching(sections, groups, matchingConfig) {
     groups.forEach((group) => {
       const matched = [];
       let count = 0;
+      const matchedConcepts = new Set();
 
-      group.keywords.forEach((keyword) => {
-        const regex = buildKeywordRegex(keyword, matchingConfig);
-        const matches = sectionText.match(regex);
+      // For each primary keyword
+      group.keywords.forEach((primaryKeyword) => {
+        // Build list of variations
+        const variations = [primaryKeyword];
+        if (group.synonyms && group.synonyms[primaryKeyword]) {
+          variations.push(...group.synonyms[primaryKeyword]);
+        }
 
-        if (matches && matches.length > 0) {
-          matched.push(keyword);
-          count += matches.length;
+        let conceptMatched = false;
+        let conceptCount = 0;
+
+        // Search for any variation
+        variations.forEach((variation) => {
+          const regex = buildKeywordRegex(variation, matchingConfig);
+          const matches = sectionText.match(regex);
+
+          if (matches && matches.length > 0) {
+            conceptMatched = true;
+            conceptCount += matches.length;
+          }
+        });
+
+        // Only count concept once
+        if (conceptMatched && !matchedConcepts.has(primaryKeyword)) {
+          matchedConcepts.add(primaryKeyword);
+          matched.push(primaryKeyword);
+          count += conceptCount;
         }
       });
 
@@ -409,6 +270,7 @@ function detectActionVerbs(text, groups, matchingConfig) {
     verbs,
   };
 }
+
 function detectQuantifiedAchievements(text, patterns) {
   if (!patterns || patterns.length === 0) {
     return [];
@@ -423,6 +285,7 @@ function detectQuantifiedAchievements(text, patterns) {
     }
   });
 }
+
 function detectKeywordStuffing(repetitionMap, penalties) {
   const stuffingSignals = [];
 
@@ -433,7 +296,7 @@ function detectKeywordStuffing(repetitionMap, penalties) {
   const threshold = penalties.keywordStuffing.repeatThreshold;
 
   Object.entries(repetitionMap).forEach(([keyword, count]) => {
-    // Skip short keywords (<=2 chars) as they often match as substrings in longer words
+    // Skip short keywords (<=2 chars) as they often match as substrings
     if (keyword.length <= 2) {
       return;
     }
@@ -449,8 +312,8 @@ function detectKeywordStuffing(repetitionMap, penalties) {
   return stuffingSignals;
 }
 
+// calculateSkillsData
 function calculateSkillsData(globalMatches, preparedGroups) {
-  // Define which groups are considered "technical skills"
   const skillGroups = [
     "programming_languages",
     "frontend_frameworks",
@@ -465,73 +328,50 @@ function calculateSkillsData(globalMatches, preparedGroups) {
   ];
 
   const matchedSkills = [];
-  const coreSkillsByCategory = {};
+  let totalExpectedSkills = 0;
 
-  // Group core skills by category
+  // Calculate total expected skills from rules
   preparedGroups.forEach((group) => {
     if (skillGroups.includes(group.group)) {
-      if (!coreSkillsByCategory[group.group]) {
-        coreSkillsByCategory[group.group] = new Set();
-      }
-
-      // Only count primary keywords, not synonyms (limit to first 5-10 per category)
-      const primaryKeywords = group.keywords.slice(0, 8); // Limit to 8 core skills per category
-      primaryKeywords.forEach((keyword) => {
-        const coreSkill = keyword
-          .toLowerCase()
-          .replace(/\..*$/, "") // Remove file extensions
-          .replace(/^.*\//, "") // Remove paths
-          .replace(/\s+/g, "") // Remove spaces
-          .trim();
-
-        if (coreSkill.length > 1) {
-          coreSkillsByCategory[group.group].add(coreSkill);
-        }
-      });
+      // Count primary keywords only (reasonable cap per category)
+      const primarySkills = group.keywords.slice(0, 10);
+      totalExpectedSkills += primarySkills.length;
     }
-  });
-
-  // Count total expected skills (more realistic number)
-  let totalSkills = 0;
-  Object.values(coreSkillsByCategory).forEach((skillSet) => {
-    totalSkills += Math.min(skillSet.size, 5); // Max 5 skills per category
   });
 
   // Count matched skills
   Object.entries(globalMatches).forEach(([groupName, groupData]) => {
     if (skillGroups.includes(groupName) && groupData.uniqueCount > 0) {
       groupData.matched.forEach((skill) => {
-        const coreSkill = skill
-          .toLowerCase()
-          .replace(/\..*$/, "")
-          .replace(/^.*\//, "")
-          .replace(/\s+/g, "")
-          .trim();
-
         matchedSkills.push({
           name: skill,
           category: groupName,
           group: groupName,
-          coreSkill: coreSkill,
         });
       });
     }
   });
 
-  // Remove duplicates based on core skill name
+  // Remove duplicates based on normalized skill name
   const uniqueMatchedSkills = [];
   const seen = new Set();
 
   matchedSkills.forEach((skill) => {
-    if (!seen.has(skill.coreSkill)) {
-      seen.add(skill.coreSkill);
+    const normalized = skill.name
+      .toLowerCase()
+      .replace(/\..*$/, "") // Remove extensions
+      .replace(/^.*\//, "") // Remove paths
+      .replace(/[^a-z0-9]/g, ""); // Remove special chars
+
+    if (!seen.has(normalized) && normalized.length > 1) {
+      seen.add(normalized);
       uniqueMatchedSkills.push(skill);
     }
   });
 
   return {
     matchedSkills: uniqueMatchedSkills,
-    totalSkills: Math.max(totalSkills, 10), // Minimum 10 expected skills
+    totalSkills: Math.max(totalExpectedSkills, 25), // Realistic minimum
   };
 }
 
@@ -548,13 +388,13 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
   const text = parsedResume.normalizedText.toLowerCase();
   const tokens = parsedResume.tokens || [];
 
-  // Prepare keyword groups
+  // Prepare keyword groups (with synonyms stored separately)
   const preparedGroups = prepareKeywordGroups(
     keywordRules.keywordGroups,
     keywordRules.matchingConfig,
   );
 
-  // Perform global matching
+  // Perform global matching (counts concepts, not synonym variations)
   const { matches: globalMatches, repetitions: repetitionMap } = performGlobalMatching(
     text,
     preparedGroups,
@@ -605,17 +445,9 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
     },
   };
 };
-
-/**
- * Clears the cached keyword rules (useful for testing or rule updates)
- */
 export function clearRulesCache() {
   cachedKeywordRules = null;
 }
-
-/**
- * Export helper functions for testing purposes
- */
 export const testHelpers = {
   loadKeywordRules,
   validateInput,
@@ -629,5 +461,6 @@ export const testHelpers = {
   detectActionVerbs,
   detectQuantifiedAchievements,
   detectKeywordStuffing,
+  calculateSkillsData,
   clearRulesCache,
 };

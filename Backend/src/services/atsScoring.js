@@ -5,45 +5,14 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * @typedef {Object} SectionData
- * @property {Array<{key: string, displayName: string, found: boolean, required: boolean}>} sections
- * @property {string[]} missingRequiredSections
- */
-
-/**
- * @typedef {Object} KeywordData
- * @property {Object.<string, {uniqueCount: number, importance: string}>} globalMatches
- * @property {Array<{keyword: string}>} stuffingSignals
- * @property {{count: number}} actionVerbs
- * @property {Array} quantifiedAchievements
- * @property {Array<{category: string}>} matchedSkills
- * @property {number} totalSkills
- */
-
-/**
- * @typedef {Object} FormattingData
- * @property {string[]} ruleFindings
- */
-
-/**
- * @typedef {Object} ScoringResult
- * @property {number} score
- * @property {string} verdict
- * @property {Object} breakdown
- * @property {Array} explanations
- * @property {Object} recommendations
- * @property {Object} meta
- */
-
 // Constants
 const VERDICT_THRESHOLDS = Object.freeze({
-  EXCELLENT: 85,
-  VERY_GOOD: 75,
-  GOOD: 65,
-  AVERAGE: 55,
-  BELOW_AVERAGE: 45,
-  POOR: 35,
+  EXCELLENT: 80,
+  VERY_GOOD: 70,
+  GOOD: 60,
+  AVERAGE: 50,
+  BELOW_AVERAGE: 40,
+  POOR: 30,
   VERY_POOR: 0,
 });
 
@@ -57,15 +26,6 @@ const SEVERITY = Object.freeze({
   NEGATIVE: "negative",
 });
 
-const SCORING_MULTIPLIERS = Object.freeze({
-  SECTION_COMPLETENESS: 1.2,
-  KEYWORD_RELEVANCE: 1.5,
-  EXPERIENCE_DEPTH: 1.3,
-  FORMATTING_QUALITY: 1.1,
-  SKILLS_ALIGNMENT: 1.4,
-  PENALTY_MULTIPLIER: 0.8,
-});
-
 const SCORE_LIMITS = Object.freeze({
   MIN: 5,
   MAX: 90,
@@ -74,9 +34,6 @@ const SCORE_LIMITS = Object.freeze({
 // Cache for scoring rules
 let cachedScoringRules = null;
 
-/**
- * Custom error class for ATS scoring errors
- */
 class ATSScoringError extends Error {
   constructor(message, code = "ATS_ERROR") {
     super(message);
@@ -85,17 +42,7 @@ class ATSScoringError extends Error {
   }
 }
 
-/**
- * RulesLoader - Handles loading and validation of scoring rules
- */
 class RulesLoader {
-  /**
-   * Loads scoring rules from JSON file with caching
-   * @param {string} rulesPath - Path to scoring rules file
-   * @param {boolean} forceReload - Force reload even if cached
-   * @returns {Object} Scoring rules configuration
-   * @throws {ATSScoringError}
-   */
   static load(rulesPath, forceReload = false) {
     if (cachedScoringRules && !forceReload) {
       return cachedScoringRules;
@@ -104,24 +51,16 @@ class RulesLoader {
     try {
       const rulesContent = fs.readFileSync(rulesPath, "utf-8");
       const rules = JSON.parse(rulesContent);
-
       this.validate(rules);
       cachedScoringRules = rules;
-
       return rules;
     } catch (error) {
       this.handleLoadError(error, rulesPath);
     }
   }
 
-  /**
-   * Validates scoring rules structure
-   * @param {Object} rules - Rules to validate
-   * @throws {ATSScoringError}
-   */
   static validate(rules) {
     const requiredFields = ["baseWeights", "scoreScale"];
-
     for (const field of requiredFields) {
       if (!rules[field]) {
         throw new ATSScoringError(
@@ -132,62 +71,33 @@ class RulesLoader {
     }
 
     const { min, max } = rules.scoreScale;
-
-    if (typeof min !== "number" || typeof max !== "number") {
+    if (typeof min !== "number" || typeof max !== "number" || min >= max) {
       throw new ATSScoringError(
-        "Invalid rules structure: scoreScale must have numeric min and max",
-        "INVALID_SCORE_SCALE",
-      );
-    }
-
-    if (min >= max) {
-      throw new ATSScoringError(
-        "Invalid rules structure: scoreScale.min must be less than max",
+        "Invalid rules structure: scoreScale must have valid numeric min and max",
         "INVALID_SCORE_SCALE",
       );
     }
   }
 
-  /**
-   * Handles loading errors with appropriate error messages
-   * @param {Error} error - Original error
-   * @param {string} rulesPath - Path that failed to load
-   * @throws {ATSScoringError}
-   */
   static handleLoadError(error, rulesPath) {
     if (error.code === "ENOENT") {
       throw new ATSScoringError(`Scoring rules file not found: ${rulesPath}`, "FILE_NOT_FOUND");
     }
-
     if (error instanceof SyntaxError) {
       throw new ATSScoringError(
         `Invalid JSON in scoring rules file: ${error.message}`,
         "INVALID_JSON",
       );
     }
-
     throw new ATSScoringError(`Failed to load scoring rules: ${error.message}`, "LOAD_ERROR");
   }
 
-  /**
-   * Clears the cached scoring rules
-   */
   static clearCache() {
     cachedScoringRules = null;
   }
 }
 
-/**
- * InputValidator - Validates input data for scoring
- */
 class InputValidator {
-  /**
-   * Validates all required input data
-   * @param {SectionData} sectionData
-   * @param {KeywordData} keywordData
-   * @param {FormattingData} formattingData
-   * @throws {ATSScoringError}
-   */
   static validate(sectionData, keywordData, formattingData) {
     this.validateSectionData(sectionData);
     this.validateKeywordData(keywordData);
@@ -222,41 +132,22 @@ class InputValidator {
   }
 }
 
-/**
- * ScoreCalculator - Base class for score calculations
- */
 class ScoreCalculator {
   constructor(scoringRules, explanations) {
     this.scoringRules = scoringRules;
     this.explanations = explanations;
   }
 
-  /**
-   * Adds an explanation entry
-   * @param {string} category
-   * @param {string} message
-   * @param {number} impact
-   * @param {string} severity
-   */
   addExplanation(category, message, impact, severity) {
     this.explanations.push({ category, message, impact, severity });
   }
 
-  /**
-   * Clamps score within min and max bounds
-   * @param {number} score
-   * @param {number} min
-   * @param {number} max
-   * @returns {number}
-   */
   clamp(score, min, max) {
     return Math.max(min, Math.min(max, score));
   }
 }
 
-/**
- * SectionsScoreCalculator - Calculates sections score
- */
+// SectionsScoreCalculator
 class SectionsScoreCalculator extends ScoreCalculator {
   calculate(sectionData) {
     const maxScore = this.scoringRules.baseWeights.sections;
@@ -264,21 +155,27 @@ class SectionsScoreCalculator extends ScoreCalculator {
     let foundSections = 0;
     let missingRequiredCount = 0;
 
-    // Calculate base score from sections
+    // Calculate total weight to normalize scores
+    const sectionWeights = this.scoringRules.sectionWeights || {};
+    const totalWeight = Object.values(sectionWeights).reduce((a, b) => a + b, 0);
+
+    // Calculate base score from sections (normalized)
     sectionData.sections.forEach((section) => {
       if (section.found) {
         foundSections++;
-        const weight = this.scoringRules.sectionWeights?.[section.key] || 1;
-        score += weight;
+        const weight = sectionWeights[section.key] || 1;
+        const normalizedScore = (weight / totalWeight) * maxScore;
+        score += normalizedScore;
+
         this.addExplanation(
           "section",
           `Section '${section.displayName}' found`,
-          weight,
+          Math.round(normalizedScore * 10) / 10,
           SEVERITY.POSITIVE,
         );
       } else if (section.required) {
         missingRequiredCount++;
-        const penalty = this.scoringRules.missingSectionPenalty?.required || -2;
+        const penalty = this.scoringRules.missingSectionPenalty?.required || -3;
         score += penalty;
         this.addExplanation(
           "section",
@@ -289,11 +186,33 @@ class SectionsScoreCalculator extends ScoreCalculator {
       }
     });
 
-    // Apply bonuses and penalties
-    this.applyCoverageBonus(foundSections, sectionData.sections.length, maxScore);
-    this.applyMultipleMissingPenalty(missingRequiredCount);
+    // Apply coverage bonus (capped)
+    const coverageRatio = foundSections / sectionData.sections.length;
+    const bonusConfig = this.scoringRules.bonusConfig?.sectionCoverage;
 
-    // return this.clamp(score, 0, maxScore * 1.2);
+    if (bonusConfig?.enabled && coverageRatio >= (bonusConfig.threshold || 0.95)) {
+      const maxBonus = bonusConfig.maxBonus || 2;
+      const bonus = Math.min(maxBonus, maxScore - score);
+      if (bonus > 0) {
+        score += bonus;
+        this.addExplanation(
+          "section",
+          `Excellent section coverage (${Math.round(coverageRatio * 100)}%)`,
+          bonus,
+          SEVERITY.POSITIVE,
+        );
+      }
+    }
+
+    // Multiple missing penalty
+    const multiMissingConfig = this.scoringRules.penaltyConfig?.multipleMissingSections;
+    if (multiMissingConfig?.enabled && missingRequiredCount > 1) {
+      const penaltyPerSection = multiMissingConfig.perSection || -2;
+      const penalty = missingRequiredCount * penaltyPerSection;
+      score += penalty;
+      this.addExplanation("section", "Multiple missing required sections", penalty, SEVERITY.HIGH);
+    }
+
     const finalScore = this.clamp(score, 0, maxScore);
     return {
       score: finalScore,
@@ -304,40 +223,14 @@ class SectionsScoreCalculator extends ScoreCalculator {
       percentage: Math.round((finalScore / maxScore) * 100),
     };
   }
-
-  applyCoverageBonus(foundSections, totalSections, maxScore) {
-    const coverageRatio = foundSections / totalSections;
-
-    if (coverageRatio >= 0.9) {
-      const bonus = Math.round(maxScore * 0.1);
-      this.addExplanation(
-        "section",
-        `Excellent section coverage (${Math.round(coverageRatio * 100)}%)`,
-        bonus,
-        SEVERITY.POSITIVE,
-      );
-      return bonus;
-    }
-    return 0;
-  }
-
-  applyMultipleMissingPenalty(missingCount) {
-    if (missingCount > 1) {
-      const penalty = missingCount * -1;
-      this.addExplanation("section", "Multiple missing required sections", penalty, SEVERITY.HIGH);
-      return penalty;
-    }
-    return 0;
-  }
 }
 
-/**
- * KeywordsScoreCalculator - Calculates keywords score
- */
+// KeywordsScoreCalculator
+
 class KeywordsScoreCalculator extends ScoreCalculator {
   calculate(keywordData) {
     const maxScore = this.scoringRules.baseWeights.keywords;
-    let score = 0;
+    let baseScore = 0;
     let totalKeywords = 0;
     let highImpactCount = 0;
     let veryHighImpactCount = 0;
@@ -349,7 +242,7 @@ class KeywordsScoreCalculator extends ScoreCalculator {
         const weight = this.scoringRules.keywordWeights?.[importance] || 1.0;
         const groupScore = weight * groupData.uniqueCount;
 
-        score += groupScore;
+        baseScore += groupScore;
         totalKeywords += groupData.uniqueCount;
 
         if (importance === "very_high") veryHighImpactCount += groupData.uniqueCount;
@@ -358,19 +251,99 @@ class KeywordsScoreCalculator extends ScoreCalculator {
         this.addExplanation(
           "keyword",
           `${groupData.uniqueCount} ${importance} priority keywords in '${groupName}'`,
-          Math.round(groupScore),
+          Math.round(groupScore * 10) / 10,
           importance === "very_high" ? SEVERITY.HIGH : SEVERITY.POSITIVE,
         );
       }
     });
 
-    // Apply bonuses and penalties
-    score += this.applyDiversityBonus(keywordData, maxScore);
-    score += this.applyHighImpactBonus(highImpactCount, veryHighImpactCount, maxScore);
-    score += this.applyLowCoveragePenalty(totalKeywords, maxScore);
+    // Normalize base score to maxScore range
+    const maxPossibleBase = maxScore * 0.85; // Reserve 15% for bonuses
+    baseScore = Math.min(baseScore, maxPossibleBase);
 
-    // return this.clamp(score, 0, maxScore * 1.2);
-    const finalScore = this.clamp(score, 0, maxScore);
+    // Apply bonuses (with caps)
+    let bonusPoints = 0;
+    const uniqueGroups = Object.keys(keywordData.globalMatches || {}).length;
+
+    // Diversity bonus
+    const diversityConfig = this.scoringRules.bonusConfig?.keywordDiversity;
+    if (diversityConfig?.enabled) {
+      if (uniqueGroups >= (diversityConfig.excellent?.minGroups || 6)) {
+        const bonus = diversityConfig.excellent?.bonus || 3;
+        bonusPoints += bonus;
+        this.addExplanation(
+          "keyword",
+          `Excellent keyword diversity (${uniqueGroups} categories)`,
+          bonus,
+          SEVERITY.POSITIVE,
+        );
+      } else if (uniqueGroups >= (diversityConfig.good?.minGroups || 4)) {
+        const bonus = diversityConfig.good?.bonus || 1.5;
+        bonusPoints += bonus;
+        this.addExplanation(
+          "keyword",
+          `Good keyword diversity (${uniqueGroups} categories)`,
+          bonus,
+          SEVERITY.POSITIVE,
+        );
+      }
+    }
+
+    // High impact bonus
+    const highImpactConfig = this.scoringRules.bonusConfig?.highImpactKeywords;
+    const totalHighImpact = highImpactCount + veryHighImpactCount;
+
+    if (highImpactConfig?.enabled) {
+      if (totalHighImpact >= (highImpactConfig.outstanding?.minCount || 15)) {
+        const bonus = highImpactConfig.outstanding?.bonus || 3;
+        bonusPoints += bonus;
+        this.addExplanation(
+          "keyword",
+          `Outstanding high-impact keywords (${totalHighImpact} found)`,
+          bonus,
+          SEVERITY.HIGH,
+        );
+      } else if (totalHighImpact >= (highImpactConfig.strong?.minCount || 10)) {
+        const bonus = highImpactConfig.strong?.bonus || 1.5;
+        bonusPoints += bonus;
+        this.addExplanation(
+          "keyword",
+          `Strong high-impact keywords (${totalHighImpact} found)`,
+          bonus,
+          SEVERITY.HIGH,
+        );
+      }
+    }
+
+    // Low coverage penalty
+    const lowCoverageConfig = this.scoringRules.penaltyConfig?.lowKeywordCoverage;
+    if (lowCoverageConfig?.enabled) {
+      if (totalKeywords < (lowCoverageConfig.critical?.maxKeywords || 5)) {
+        const penalty = lowCoverageConfig.critical?.penalty || -6;
+        bonusPoints += penalty;
+        this.addExplanation(
+          "keyword",
+          `Critical: Very limited keyword coverage (${totalKeywords} total)`,
+          penalty,
+          SEVERITY.CRITICAL,
+        );
+      } else if (totalKeywords < (lowCoverageConfig.low?.maxKeywords || 8)) {
+        const penalty = lowCoverageConfig.low?.penalty || -3;
+        bonusPoints += penalty;
+        this.addExplanation(
+          "keyword",
+          `Limited keyword coverage (${totalKeywords} total)`,
+          penalty,
+          SEVERITY.MEDIUM,
+        );
+      }
+    }
+
+    // Cap bonus points
+    const maxBonus = this.scoringRules.caps?.maxKeywordBonus || 5;
+    bonusPoints = this.clamp(bonusPoints, -10, maxBonus);
+
+    const finalScore = this.clamp(baseScore + bonusPoints, 0, maxScore);
 
     return {
       score: finalScore,
@@ -381,75 +354,9 @@ class KeywordsScoreCalculator extends ScoreCalculator {
       percentage: Math.round((finalScore / maxScore) * 100),
     };
   }
-
-  applyDiversityBonus(keywordData, maxScore) {
-    const uniqueGroups = Object.keys(keywordData.globalMatches || {}).length;
-
-    if (uniqueGroups >= 4) {
-      const bonus = Math.round(maxScore * 0.15);
-      this.addExplanation(
-        "keyword",
-        `Excellent keyword diversity (${uniqueGroups} categories)`,
-        bonus,
-        SEVERITY.POSITIVE,
-      );
-      return bonus;
-    } else if (uniqueGroups >= 3) {
-      const bonus = Math.round(maxScore * 0.1);
-      this.addExplanation(
-        "keyword",
-        `Good keyword diversity (${uniqueGroups} categories)`,
-        bonus,
-        SEVERITY.POSITIVE,
-      );
-      return bonus;
-    }
-    return 0;
-  }
-
-  applyHighImpactBonus(highCount, veryHighCount, maxScore) {
-    const totalHighImpact = highCount + veryHighCount;
-
-    if (totalHighImpact >= 12) {
-      const bonus = Math.round(maxScore * 0.15);
-      this.addExplanation(
-        "keyword",
-        `Outstanding high-impact keywords (${totalHighImpact} found)`,
-        bonus,
-        SEVERITY.HIGH,
-      );
-      return bonus;
-    } else if (totalHighImpact >= 8) {
-      const bonus = Math.round(maxScore * 0.1);
-      this.addExplanation(
-        "keyword",
-        `Strong high-impact keywords (${totalHighImpact} found)`,
-        bonus,
-        SEVERITY.HIGH,
-      );
-      return bonus;
-    }
-    return 0;
-  }
-
-  applyLowCoveragePenalty(totalKeywords, maxScore) {
-    if (totalKeywords < 5) {
-      const penalty = Math.round(maxScore * -0.3);
-      this.addExplanation(
-        "keyword",
-        `Limited keyword coverage (${totalKeywords} total)`,
-        penalty,
-        SEVERITY.MEDIUM,
-      );
-      return penalty;
-    }
-    return 0;
-  }
 }
 
-/**
- * FormattingScoreCalculator - Calculates formatting score
- */
+// FormattingScoreCalculator
 class FormattingScoreCalculator extends ScoreCalculator {
   calculate(formattingData) {
     const maxScore = this.scoringRules.baseWeights.formatting;
@@ -469,10 +376,9 @@ class FormattingScoreCalculator extends ScoreCalculator {
       }
     });
 
-    const maxPenalty = this.scoringRules.caps?.maxFormattingPenalty || -6;
+    const maxPenalty = this.scoringRules.caps?.maxFormattingPenalty || -10;
     penalty = Math.max(penalty, maxPenalty);
 
-    // return this.clamp(maxScore + penalty, 0, maxScore);
     const finalScore = this.clamp(maxScore + penalty, 0, maxScore);
 
     return {
@@ -485,26 +391,27 @@ class FormattingScoreCalculator extends ScoreCalculator {
   }
 }
 
-/**
- * PenaltiesCalculator - Calculates penalties
- */
+// PenaltiesCalculator
 class PenaltiesCalculator extends ScoreCalculator {
   calculate(keywordData) {
     let penalty = 0;
     const stuffingSignals = keywordData.stuffingSignals || [];
-    const maxPenalty = this.scoringRules.caps?.maxKeywordPenalty || -5;
+    const penaltyConfig = this.scoringRules.penaltyConfig?.keywordStuffing;
 
-    stuffingSignals.forEach((signal) => {
-      penalty += -1;
-      this.addExplanation(
-        "penalty",
-        `Keyword stuffing: '${signal.keyword}'`,
-        -1,
-        SEVERITY.NEGATIVE,
-      );
-    });
+    if (penaltyConfig?.enabled) {
+      const penaltyPerViolation = penaltyConfig.perViolation || -2;
+      stuffingSignals.forEach((signal) => {
+        penalty += penaltyPerViolation;
+        this.addExplanation(
+          "penalty",
+          `Keyword stuffing: '${signal.keyword}'`,
+          penaltyPerViolation,
+          SEVERITY.NEGATIVE,
+        );
+      });
+    }
 
-    // return Math.max(penalty, maxPenalty);
+    const maxPenalty = this.scoringRules.caps?.maxKeywordPenalty || -10;
     const finalPenalty = Math.max(penalty, maxPenalty);
 
     return {
@@ -516,9 +423,7 @@ class PenaltiesCalculator extends ScoreCalculator {
   }
 }
 
-/**
- * ExperienceScoreCalculator - Calculates experience quality score
- */
+// ExperienceScoreCalculator
 class ExperienceScoreCalculator extends ScoreCalculator {
   calculate(keywordData) {
     const maxScore = this.scoringRules.baseWeights.experience_quality;
@@ -531,17 +436,19 @@ class ExperienceScoreCalculator extends ScoreCalculator {
     let totalScore = actionVerbScore + quantifiedScore;
 
     // Exceptional quality bonus
-    if (actionVerbScore >= 7 && quantifiedScore >= 5) {
-      totalScore += 1;
+    const expSignals = this.scoringRules.experienceSignals;
+    const bonusThreshold = expSignals?.bonusForExceptional || 2;
+
+    if (actionVerbScore >= 8 && quantifiedScore >= 6) {
+      totalScore += bonusThreshold;
       this.addExplanation(
         "experience",
         "Exceptional experience quality demonstrated",
-        1,
+        bonusThreshold,
         SEVERITY.HIGH,
       );
     }
 
-    // return this.clamp(totalScore, 0, maxScore);
     const finalScore = this.clamp(totalScore, 0, maxScore);
 
     return {
@@ -556,13 +463,23 @@ class ExperienceScoreCalculator extends ScoreCalculator {
   }
 
   calculateActionVerbScore(count) {
+    const thresholds = this.scoringRules.experienceSignals?.actionVerbThresholds || {
+      outstanding: 20,
+      excellent: 15,
+      good: 10,
+      adequate: 7,
+      few: 4,
+      minimal: 0,
+    };
+    const maxScore = this.scoringRules.experienceSignals?.actionVerbMaxScore || 10;
+
     const tiers = [
-      { min: 15, score: 10, label: "Outstanding" },
-      { min: 12, score: 9, label: "Excellent" },
-      { min: 8, score: 7, label: "Good" },
-      { min: 5, score: 5, label: "Some" },
-      { min: 2, score: 3, label: "Few" },
-      { min: 0, score: 1, label: "Minimal" },
+      { min: thresholds.outstanding, score: maxScore, label: "Outstanding" },
+      { min: thresholds.excellent, score: Math.round(maxScore * 0.8), label: "Excellent" },
+      { min: thresholds.good, score: Math.round(maxScore * 0.6), label: "Good" },
+      { min: thresholds.adequate, score: Math.round(maxScore * 0.4), label: "Adequate" },
+      { min: thresholds.few, score: Math.round(maxScore * 0.2), label: "Few" },
+      { min: thresholds.minimal, score: 0, label: "Minimal" },
     ];
 
     for (const tier of tiers) {
@@ -571,24 +488,33 @@ class ExperienceScoreCalculator extends ScoreCalculator {
           "experience",
           `${tier.label} action verbs (${count} found)`,
           tier.score,
-          tier.score >= 5 ? SEVERITY.HIGH : SEVERITY.POSITIVE,
+          tier.score >= maxScore * 0.6 ? SEVERITY.HIGH : SEVERITY.POSITIVE,
         );
         return tier.score;
       }
     }
 
-    this.addExplanation("experience", "No action verbs found", 0, SEVERITY.MEDIUM);
     return 0;
   }
 
   calculateQuantifiedScore(count) {
+    const thresholds = this.scoringRules.experienceSignals?.quantifiedThresholds || {
+      outstanding: 8,
+      excellent: 6,
+      good: 4,
+      adequate: 3,
+      few: 1,
+      none: 0,
+    };
+    const maxScore = this.scoringRules.experienceSignals?.quantifiedMaxScore || 8;
+
     const tiers = [
-      { min: 6, score: 8, label: "Outstanding" },
-      { min: 4, score: 7, label: "Excellent" },
-      { min: 3, score: 6, label: "Strong" },
-      { min: 2, score: 4, label: "Some" },
-      { min: 1, score: 2, label: "Few" },
-      { min: 0, score: 0, label: "None" },
+      { min: thresholds.outstanding, score: maxScore, label: "Outstanding" },
+      { min: thresholds.excellent, score: Math.round(maxScore * 0.75), label: "Excellent" },
+      { min: thresholds.good, score: Math.round(maxScore * 0.6), label: "Good" },
+      { min: thresholds.adequate, score: Math.round(maxScore * 0.4), label: "Adequate" },
+      { min: thresholds.few, score: Math.round(maxScore * 0.15), label: "Few" },
+      { min: thresholds.none, score: 0, label: "None" },
     ];
 
     for (const tier of tiers) {
@@ -597,20 +523,17 @@ class ExperienceScoreCalculator extends ScoreCalculator {
           "experience",
           `${tier.label} quantified achievements (${count} found)`,
           tier.score,
-          tier.score >= 5 ? SEVERITY.HIGH : SEVERITY.POSITIVE,
+          tier.score >= maxScore * 0.6 ? SEVERITY.HIGH : SEVERITY.POSITIVE,
         );
         return tier.score;
       }
     }
 
-    this.addExplanation("experience", "No quantified achievements found", 0, SEVERITY.MEDIUM);
     return 0;
   }
 }
 
-/**
- * SkillsScoreCalculator - Calculates skills relevance score
- */
+// SkillsScoreCalculator
 class SkillsScoreCalculator extends ScoreCalculator {
   calculate(keywordData) {
     const maxScore = this.scoringRules.baseWeights.skills_relevance;
@@ -618,11 +541,14 @@ class SkillsScoreCalculator extends ScoreCalculator {
     const totalSkills = keywordData.totalSkills || 1;
     const skillMatchRatio = matchedSkills.length / totalSkills;
 
-    let score = this.calculateBaseSkillScore(skillMatchRatio, maxScore);
-    score += this.calculateTechnicalBonus(matchedSkills, maxScore);
+    let baseScore = this.calculateBaseSkillScore(skillMatchRatio, maxScore);
+    let bonusScore = this.calculateTechnicalBonus(matchedSkills, maxScore);
 
-    // return this.clamp(score, 0, maxScore * 1.1);
-    const finalScore = this.clamp(score, 0, maxScore);
+    // Cap bonus
+    const maxBonus = this.scoringRules.caps?.maxSkillsBonus || 4;
+    bonusScore = Math.min(bonusScore, maxBonus);
+
+    const finalScore = this.clamp(baseScore + bonusScore, 0, maxScore);
 
     return {
       score: finalScore,
@@ -635,18 +561,27 @@ class SkillsScoreCalculator extends ScoreCalculator {
   }
 
   calculateBaseSkillScore(ratio, maxScore) {
-    const tiers = [
-      { min: 0.9, multiplier: 1.0, label: "Excellent" },
-      { min: 0.7, multiplier: 0.9, label: "Very good" },
-      { min: 0.5, multiplier: 0.8, label: "Good" },
-      { min: 0.3, multiplier: 0.6, label: "Moderate" },
-      { min: 0.1, multiplier: 0.4, label: "Limited" },
-      { min: 0, multiplier: 0.2, label: "Poor" },
+    const tiers = this.scoringRules.skillsConfig?.matchRatioTiers || {
+      excellent: { minRatio: 0.7, multiplier: 1.0 },
+      veryGood: { minRatio: 0.5, multiplier: 0.85 },
+      good: { minRatio: 0.35, multiplier: 0.7 },
+      moderate: { minRatio: 0.2, multiplier: 0.5 },
+      limited: { minRatio: 0.1, multiplier: 0.3 },
+      poor: { minRatio: 0, multiplier: 0.1 },
+    };
+
+    const orderedTiers = [
+      { ...tiers.excellent, label: "Excellent" },
+      { ...tiers.veryGood, label: "Very good" },
+      { ...tiers.good, label: "Good" },
+      { ...tiers.moderate, label: "Moderate" },
+      { ...tiers.limited, label: "Limited" },
+      { ...tiers.poor, label: "Poor" },
     ];
 
-    for (const tier of tiers) {
-      if (ratio >= tier.min) {
-        const score = Math.round(maxScore * tier.multiplier);
+    for (const tier of orderedTiers) {
+      if (ratio >= tier.minRatio) {
+        const score = Math.round(maxScore * tier.multiplier * 0.85); // Reserve 15% for bonuses
         const percentage = Math.round(ratio * 100);
         this.addExplanation(
           "skills",
@@ -662,34 +597,43 @@ class SkillsScoreCalculator extends ScoreCalculator {
   }
 
   calculateTechnicalBonus(matchedSkills, maxScore) {
-    const technicalCount = matchedSkills.filter((s) => s.category === "technical").length;
+    const technicalCount = matchedSkills.filter(
+      (s) =>
+        s.category === "technical" ||
+        s.category?.includes("programming") ||
+        s.category?.includes("framework") ||
+        s.category?.includes("database"),
+    ).length;
 
-    const tiers = [
-      { min: 6, multiplier: 0.2, label: "Outstanding" },
-      { min: 4, multiplier: 0.15, label: "Strong" },
-      { min: 2, multiplier: 0.1, label: "Good" },
-    ];
+    const techConfig = this.scoringRules.bonusConfig?.technicalSkills;
 
-    for (const tier of tiers) {
-      if (technicalCount >= tier.min) {
-        const bonus = Math.round(maxScore * tier.multiplier);
-        this.addExplanation(
-          "skills",
-          `${tier.label} technical skills (${technicalCount} matched)`,
-          bonus,
-          tier.multiplier >= 0.15 ? SEVERITY.HIGH : SEVERITY.POSITIVE,
-        );
-        return bonus;
-      }
+    if (!techConfig?.enabled) return 0;
+
+    if (technicalCount >= (techConfig.outstanding?.minCount || 8)) {
+      const bonus = techConfig.outstanding?.bonus || 3;
+      this.addExplanation(
+        "skills",
+        `Outstanding technical skills (${technicalCount} matched)`,
+        bonus,
+        SEVERITY.HIGH,
+      );
+      return bonus;
+    } else if (technicalCount >= (techConfig.strong?.minCount || 5)) {
+      const bonus = techConfig.strong?.bonus || 1.5;
+      this.addExplanation(
+        "skills",
+        `Strong technical skills (${technicalCount} matched)`,
+        bonus,
+        SEVERITY.POSITIVE,
+      );
+      return bonus;
     }
 
     return 0;
   }
 }
 
-/**
- * VerdictEngine - Determines verdict and generates recommendations
- */
+// VerdictEngine
 class VerdictEngine {
   static determineVerdict(score) {
     if (score >= VERDICT_THRESHOLDS.EXCELLENT) return "excellent";
@@ -705,13 +649,11 @@ class VerdictEngine {
     const critical = [];
     const improvements = [];
 
-    // Missing sections
     const missingRequired = sectionData.missingRequiredSections || [];
     if (missingRequired.length > 0) {
       critical.push(`Add missing required sections: ${missingRequired.join(", ")}`);
     }
 
-    // Formatting issues
     if (formattingData.ruleFindings.length > 0) {
       const majorIssues = formattingData.ruleFindings.filter((issue) =>
         ["multiColumnLayout", "tablesUsed", "tooManyPages"].includes(issue),
@@ -724,7 +666,6 @@ class VerdictEngine {
       }
     }
 
-    // Keyword stuffing
     const stuffingSignals = keywordData.stuffingSignals || [];
     if (stuffingSignals.length > 0) {
       critical.push(
@@ -732,22 +673,19 @@ class VerdictEngine {
       );
     }
 
-    // Action verbs
     const actionVerbCount = keywordData.actionVerbs?.count || 0;
-    if (actionVerbCount < 5) {
-      improvements.push(`Add more action verbs (currently ${actionVerbCount}, aim for 5+)`);
+    if (actionVerbCount < 10) {
+      improvements.push(`Add more action verbs (currently ${actionVerbCount}, aim for 10+)`);
     }
 
-    // Quantified achievements
     const achievements = keywordData.quantifiedAchievements || [];
-    if (achievements.length === 0) {
-      improvements.push("Include quantified achievements (numbers, percentages, metrics)");
+    if (achievements.length < 3) {
+      improvements.push("Include more quantified achievements (numbers, percentages, metrics)");
     }
 
-    // Score-based recommendations
-    if (score < 50) {
+    if (score < 40) {
       critical.push("Overall score is low - consider a comprehensive resume rewrite");
-    } else if (score < 70) {
+    } else if (score < 60) {
       improvements.push(
         "Score is average - focus on adding relevant keywords and quantified results",
       );
@@ -757,29 +695,17 @@ class VerdictEngine {
   }
 }
 
-/**
- * Main ATS Scoring function
- * @param {Object} params
- * @param {SectionData} params.sectionData
- * @param {KeywordData} params.keywordData
- * @param {FormattingData} params.formattingData
- * @param {string} [params.rulesPath]
- * @returns {ScoringResult}
- * @throws {ATSScoringError}
- */
+// Main ATS Scoring function
 export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath }) => {
   try {
-    // Validate input
     InputValidator.validate(sectionData, keywordData, formattingData);
 
-    // Load scoring rules
     const defaultRulesPath = path.join(__dirname, "../rules/scoring.weights.json");
     const effectiveRulesPath = rulesPath || defaultRulesPath;
     const scoringRules = RulesLoader.load(effectiveRulesPath);
 
     const explanations = [];
 
-    // Calculate component scores
     const sectionsResult = new SectionsScoreCalculator(scoringRules, explanations).calculate(
       sectionData,
     );
@@ -799,7 +725,6 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
       keywordData,
     );
 
-    // Calculate final score
     const totalScore =
       sectionsResult.score +
       keywordsResult.score +
@@ -829,7 +754,6 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
         skills_relevance: skillsResult,
         penalties: penaltiesResult,
       },
-
       explanations,
       recommendations,
       meta: {
@@ -847,7 +771,6 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
   }
 };
 
-// Exports
 export const clearRulesCache = () => RulesLoader.clearCache();
 
 export const testHelpers = {
@@ -862,7 +785,6 @@ export const testHelpers = {
   VerdictEngine,
   VERDICT_THRESHOLDS,
   SEVERITY,
-  SCORING_MULTIPLIERS,
   SCORE_LIMITS,
   ATSScoringError,
 };
