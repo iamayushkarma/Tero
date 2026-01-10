@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "axios": "^1.13.2",
     "docx-preview": "^0.3.7",
+    "ldrs": "^1.1.9",
     "lucide-react": "^0.555.0",
     "pdfjs-dist": "^5.4.296",
     "react": "^19.2.0",

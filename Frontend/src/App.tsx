@@ -4,7 +4,9 @@ import Home from "./pages/Home/Home";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ResumeAnalysisProvider } from "./context/ResumeAnalysisContext";
 import ResumeAnalysisResult from "./components/modules/ResumeAnalysisResult";
+import { helix } from "ldrs";
 
+helix.register();
 const router = createBrowserRouter([
   {
     element: <MainLayout />,

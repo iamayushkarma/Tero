@@ -4,6 +4,7 @@ import Features from "../../components/modules/Features";
 import HeroSection from "../../components/modules/HeroSection";
 import StartResumeScan from "../../components/modules/StartResumeScan";
 import WhyTeroStandsOut from "../../components/modules/WhyTeroStandsOut";
+import ResumeLoading from "../../components/ui/ResumeLoading";
 function Home() {
   return (
     <div className="mt-16">

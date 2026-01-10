@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Check, Loader2 } from "lucide-react";
 
+import { Ring } from "ldrs/react";
+import "ldrs/react/Ring.css";
 const ResumeLoading: React.FC = () => {
   const [visibleSteps, setVisibleSteps] = useState<
     Array<{
@@ -85,11 +87,11 @@ const ResumeLoading: React.FC = () => {
             >
               <div className="flex h-5 w-5 shrink-0 items-center justify-center sm:h-6 sm:w-6">
                 {showIcon && step.completed ? (
-                  <div className="animate-in fade-in zoom-in flex h-4 w-4 items-center justify-center rounded-full bg-green-500 duration-300">
-                    <Check className="h-2 w-2 text-white sm:h-4 sm:w-4" strokeWidth={2} />
+                  <div className="animate-in fade-in zoom-in flex h-5 w-5 items-center justify-center rounded-full bg-green-500 duration-300">
+                    <Check className="h-3 w-3 text-white sm:h-4 sm:w-4" strokeWidth={2} />
                   </div>
                 ) : showIcon && step.index === 5 ? (
-                  <Loader2 className="h-5 w-5 animate-spin text-white sm:h-6 sm:w-6" />
+                  <Ring size="19" stroke="2" bgOpacity="0" speed="2" color="#364140" />
                 ) : null}
               </div>
 
