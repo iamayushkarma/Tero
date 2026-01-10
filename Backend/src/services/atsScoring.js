@@ -637,12 +637,12 @@ class SkillsScoreCalculator extends ScoreCalculator {
 class VerdictEngine {
   static determineVerdict(score) {
     if (score >= VERDICT_THRESHOLDS.EXCELLENT) return "excellent";
-    if (score >= VERDICT_THRESHOLDS.VERY_GOOD) return "very_good";
+    if (score >= VERDICT_THRESHOLDS.VERY_GOOD) return "very good";
     if (score >= VERDICT_THRESHOLDS.GOOD) return "good";
     if (score >= VERDICT_THRESHOLDS.AVERAGE) return "average";
-    if (score >= VERDICT_THRESHOLDS.BELOW_AVERAGE) return "below_average";
+    if (score >= VERDICT_THRESHOLDS.BELOW_AVERAGE) return "below average";
     if (score >= VERDICT_THRESHOLDS.POOR) return "poor";
-    return "very_poor";
+    return "very poor";
   }
 
   static generateRecommendations(sectionData, keywordData, formattingData, score) {
