@@ -18,7 +18,7 @@ function FileUploader() {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isFormValid = Boolean(file);
-  const { setResult, startAnalysis } = useResumeAnalysis();
+  const { setResult, startAnalysis, setAnalysisError } = useResumeAnalysis();
 
   const navigate = useNavigate();
   // Validate file
@@ -202,24 +202,27 @@ function FileUploader() {
       }
     } catch (err: any) {
       console.error("Upload error:", err);
+      let errorMessage = "Upload failed. Please try again.";
       if (err.response) {
         // Server responded with error
-        setError(err.response.data?.message || `Server error: ${err.response.status}`);
+        errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
       } else if (err.request) {
         // Request made but no response
-        setError("No response from server. Please check your connection.");
+        errorMessage = "No response from server. Please check your connection.";
       } else {
         // Something else happened
-        setError(err.message || "Upload failed. Please try again.");
+        errorMessage = err.message || "Upload failed. Please try again.";
       }
+      setError(errorMessage);
+      setAnalysisError(errorMessage);
     }
   };
   const handleAnalyze = async () => {
     if (!file) return;
 
     startAnalysis(file);
-    navigate("/resume-analysis");
     await handleUpload(file);
+    navigate("/resume-analysis");
   };
 
   return (

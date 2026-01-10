@@ -1,6 +1,25 @@
 import FileUploder from "../ui/FileUploder";
 import "./Modules.css";
+import { useResumeAnalysis } from "../../hooks/useResumeAnalysis";
+import ResumeLoading from "../ui/ResumeLoading";
+
 function StartResumeScan() {
+  const { status, error } = useResumeAnalysis();
+
+  if (status === "analyzing") {
+    return <ResumeLoading />;
+  }
+
+  if (status === "error") {
+    return (
+      <div className="relative flex flex-col items-center justify-start p-10">
+        <div className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4">
+          <p className="text-red-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex flex-col items-center justify-start p-10">
       <div className="StartResumeScan pointer-events-none absolute inset-0 overflow-hidden"></div>
