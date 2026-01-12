@@ -19,7 +19,7 @@ function ProgressBar({ percentage, color, type, delay = 0 }: ProgressBarProps) {
       <div className="mb-4 flex justify-between md:mb-1">
         <span className="text-gray-12 dark:text-gray-3 font-medium">{type}</span>
         <span style={{ color }} className="font-medium">
-          {percentage}%
+          {Math.round(percentage)}%
         </span>
       </div>
       <div className="border-gray-5 dark:border-gray-11/30 w-full overflow-hidden rounded-md border-2">

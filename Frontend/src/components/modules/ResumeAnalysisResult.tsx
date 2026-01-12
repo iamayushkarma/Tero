@@ -75,7 +75,7 @@ function ResumeAnalysisResult() {
                 Your Score
               </h3>
               <div style={{ color }} className="mt-2 text-[1.3rem] font-semibold md:text-[1.5rem]">
-                {analysis.atsResult.score || 0}
+                {Math.round(analysis.atsResult.score) || 0}
                 <span>/100</span>
               </div>
             </div>

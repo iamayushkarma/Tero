@@ -59,7 +59,7 @@ const ResumeLoading: React.FC = () => {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-9999999 flex min-h-screen items-center justify-center p-4 backdrop-blur-[10px]">
+    <div className="pointer-events-none! fixed inset-0 z-9999999 flex min-h-screen items-center justify-center p-4 backdrop-blur-[10px]">
       <div className="relative flex h-64 w-full max-w-xs flex-col items-center justify-center overflow-hidden sm:h-80 sm:max-w-sm md:h-96 md:max-w-md">
         {visibleSteps.map((step) => {
           const startedCount = visibleSteps.filter((s) => s.started).length;
