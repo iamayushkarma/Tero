@@ -16,8 +16,8 @@ export function DocxPreview({ file }: { file: File | null }) {
   if (!file) return null;
 
   return (
-    <div className="overflow-auto rounded bg-white p-4">
-      <div dangerouslySetInnerHTML={{ __html: html }} />
+    <div className="h-[75vh] overflow-auto rounded-lg bg-white p-4">
+      <div className="docx-preview" dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   );
 }
