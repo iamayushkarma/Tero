@@ -1,4 +1,262 @@
-import { createContext, useState, useEffect } from "react";
+// // import { createContext, useState, useEffect } from "react";
+// // import { clearResumeFile, loadResumeFile, saveResumeFile } from "../utils/resumeFileStore";
+
+// // export type ResumeAnalysis = {
+// //   score: number;
+// //   verdict: string;
+// //   atsResult: any;
+// //   aiVerdict: string;
+// // };
+
+// // type ResumeAnalysisState = {
+// //   status: "idle" | "analyzing" | "done" | "error";
+// //   analysis: ResumeAnalysis | null;
+// //   jobRole: string | null;
+// //   file: File | null;
+// //   error: string | null;
+// // };
+
+// // const STORAGE_KEY = "resumeAnalysisState";
+
+// // type ResumeAnalysisContextType = ResumeAnalysisState & {
+// //   startAnalysis: (file?: File | null) => void;
+// //   setResult: (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => void;
+// //   setAnalysisError: (message: string) => void;
+// //   reset: () => void;
+// // };
+
+// // export const ResumeAnalysisContext = createContext<ResumeAnalysisContextType | null>(null);
+
+// // export function ResumeAnalysisProvider({ children }: { children: React.ReactNode }) {
+// //   // Initialize state from sessionStorage if available
+// //   const [state, setState] = useState<ResumeAnalysisState>(() => {
+// //     try {
+// //       const saved = sessionStorage.getItem(STORAGE_KEY);
+// //       if (saved) {
+// //         const parsed = JSON.parse(saved);
+// //         return { ...parsed };
+// //       }
+// //     } catch (error) {
+// //       console.error("Failed to load saved analysis:", error);
+// //     }
+// //     return {
+// //       status: "idle",
+// //       analysis: null,
+// //       jobRole: null,
+// //       file: null,
+// //       error: null,
+// //     };
+// //   });
+
+// //   // Save state to sessionStorage whenever it changes
+// //   useEffect(() => {
+// //     try {
+// //       // Don't save if status is idle or analyzing
+// //       if (state.status === "done" || state.status === "error") {
+// //         // Exclude file from storage (can't serialize File objects)
+// //         const { file, ...stateToSave } = state;
+// //         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+// //       }
+// //     } catch (error) {
+// //       console.error("Failed to save analysis:", error);
+// //     }
+// //   }, [state]);
+
+// //   const startAnalysis = (file?: File | null) => {
+// //     setState({
+// //       status: "analyzing",
+// //       analysis: null,
+// //       jobRole: null,
+// //       file: file || null,
+// //       error: null,
+// //     });
+// //   };
+
+// //   const setResult = (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => {
+// //     setState({
+// //       status: "done",
+// //       analysis: data,
+// //       jobRole: jobRole || null,
+// //       file: file || null,
+// //       error: null,
+// //     });
+// //   };
+
+// //   const setAnalysisError = (message: string) => {
+// //     setState({
+// //       status: "error",
+// //       analysis: null,
+// //       jobRole: null,
+// //       file: null,
+// //       error: message,
+// //     });
+// //   };
+
+// //   const reset = () => {
+// //     setState({
+// //       status: "idle",
+// //       analysis: null,
+// //       jobRole: null,
+// //       file: null,
+// //       error: null,
+// //     });
+// //     // Clear sessionStorage when resetting
+// //     try {
+// //       sessionStorage.removeItem(STORAGE_KEY);
+// //     } catch (error) {
+// //       console.error("Failed to clear saved analysis:", error);
+// //     }
+// //   };
+
+// //   return (
+// //     <ResumeAnalysisContext.Provider
+// //       value={{
+// //         ...state,
+// //         startAnalysis,
+// //         setResult,
+// //         setAnalysisError,
+// //         reset,
+// //       }}
+// //     >
+// //       {children}
+// //     </ResumeAnalysisContext.Provider>
+// //   );
+// // }
+
+// import React, { createContext, useEffect, useMemo, useState } from "react";
+// import { clearResumeFile, loadResumeFile, saveResumeFile } from "../utils/resumeFileStore";
+
+// export type ResumeAnalysis = {
+//   score: number;
+//   verdict: string;
+//   atsResult: any;
+//   aiVerdict: string;
+// };
+
+// type Status = "idle" | "analyzing" | "done" | "error";
+
+// type ResumeAnalysisState = {
+//   status: Status;
+//   analysis: ResumeAnalysis | null;
+//   jobRole: string | null;
+//   file: File | null;
+//   error: string | null;
+// };
+
+// const STORAGE_KEY = "resumeAnalysisState";
+
+// type ResumeAnalysisContextType = ResumeAnalysisState & {
+//   startAnalysis: (file?: File | null, jobRole?: string | null) => void;
+//   setResult: (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => void;
+//   setAnalysisError: (message: string) => void;
+//   reset: () => void;
+//   setFile: (file: File | null) => void;
+// };
+
+// export const ResumeAnalysisContext = createContext<ResumeAnalysisContextType | null>(null);
+
+// const DEFAULT_STATE: ResumeAnalysisState = {
+//   status: "idle",
+//   analysis: null,
+//   jobRole: null,
+//   file: null,
+//   error: null,
+// };
+
+// export function ResumeAnalysisProvider({ children }: { children: React.ReactNode }) {
+//   const [state, setState] = useState<ResumeAnalysisState>(() => {
+//     try {
+//       const saved = sessionStorage.getItem(STORAGE_KEY);
+//       if (saved) {
+//         const parsed = JSON.parse(saved) as Partial<ResumeAnalysisState>;
+//         return { ...DEFAULT_STATE, ...parsed, file: null }; // file restored from IndexedDB
+//       }
+//     } catch (e) {
+//       console.error("Failed to load saved analysis:", e);
+//     }
+//     return DEFAULT_STATE;
+//   });
+
+//   // ✅ Restore file from IndexedDB after reload
+//   useEffect(() => {
+//     (async () => {
+//       const f = await loadResumeFile();
+//       if (f) setState((prev) => ({ ...prev, file: f }));
+//     })();
+//   }, []);
+
+//   // ✅ Save serializable state to sessionStorage
+//   useEffect(() => {
+//     try {
+//       const { file, ...toSave } = state;
+//       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+//     } catch (e) {
+//       console.error("Failed to save analysis:", e);
+//     }
+//   }, [state.status, state.analysis, state.jobRole, state.error]); // avoid file
+
+//   const setFile = (file: File | null) => {
+//     setState((prev) => ({ ...prev, file }));
+//     if (file) saveResumeFile(file);
+//     else clearResumeFile();
+//   };
+
+//   const startAnalysis = (file?: File | null, jobRole?: string | null) => {
+//     const f = file ?? null;
+//     setState({
+//       status: "analyzing",
+//       analysis: null,
+//       jobRole: jobRole ?? null,
+//       file: f,
+//       error: null,
+//     });
+//     if (f) saveResumeFile(f);
+//   };
+
+//   const setResult = (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => {
+//     const f = file ?? null;
+//     setState({
+//       status: "done",
+//       analysis: data,
+//       jobRole: jobRole ?? null,
+//       file: f,
+//       error: null,
+//     });
+//     if (f) saveResumeFile(f);
+//   };
+
+//   const setAnalysisError = (message: string) => {
+//     setState((prev) => ({
+//       ...prev,
+//       status: "error",
+//       analysis: null,
+//       error: message,
+//     }));
+//   };
+
+//   const reset = () => {
+//     setState(DEFAULT_STATE);
+//     sessionStorage.removeItem(STORAGE_KEY);
+//     clearResumeFile();
+//   };
+
+//   const value = useMemo(
+//     () => ({
+//       ...state,
+//       startAnalysis,
+//       setResult,
+//       setAnalysisError,
+//       reset,
+//       setFile,
+//     }),
+//     [state],
+//   );
+
+//   return <ResumeAnalysisContext.Provider value={value}>{children}</ResumeAnalysisContext.Provider>;
+// }
+
+import React, { createContext, useEffect, useMemo, useState } from "react";
+import { clearResumeFile, loadResumeFile, saveResumeFile } from "../utils/resumeFileStore";
 
 export type ResumeAnalysis = {
   score: number;
@@ -7,8 +265,10 @@ export type ResumeAnalysis = {
   aiVerdict: string;
 };
 
+type Status = "idle" | "analyzing" | "done" | "error";
+
 type ResumeAnalysisState = {
-  status: "idle" | "analyzing" | "done" | "error";
+  status: Status;
   analysis: ResumeAnalysis | null;
   jobRole: string | null;
   file: File | null;
@@ -18,107 +278,111 @@ type ResumeAnalysisState = {
 const STORAGE_KEY = "resumeAnalysisState";
 
 type ResumeAnalysisContextType = ResumeAnalysisState & {
-  startAnalysis: (file?: File | null) => void;
+  startAnalysis: (file?: File | null, jobRole?: string | null) => void;
   setResult: (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => void;
   setAnalysisError: (message: string) => void;
   reset: () => void;
+  setFile: (file: File | null) => void;
 };
 
 export const ResumeAnalysisContext = createContext<ResumeAnalysisContextType | null>(null);
 
+const DEFAULT_STATE: ResumeAnalysisState = {
+  status: "idle",
+  analysis: null,
+  jobRole: null,
+  file: null,
+  error: null,
+};
+
 export function ResumeAnalysisProvider({ children }: { children: React.ReactNode }) {
-  // Initialize state from sessionStorage if available
   const [state, setState] = useState<ResumeAnalysisState>(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
-        // Note: File objects can't be serialized, so we lose the file on refresh
-        return { ...parsed, file: null };
+        const parsed = JSON.parse(saved) as Partial<ResumeAnalysisState>;
+        return { ...DEFAULT_STATE, ...parsed, file: null }; // file restored from IndexedDB
       }
-    } catch (error) {
-      console.error("Failed to load saved analysis:", error);
+    } catch (e) {
+      console.error("Failed to load saved analysis:", e);
     }
-    return {
-      status: "idle",
-      analysis: null,
-      jobRole: null,
-      file: null,
-      error: null,
-    };
+    return DEFAULT_STATE;
   });
 
-  // Save state to sessionStorage whenever it changes
+  // ✅ Restore file from IndexedDB after reload
+  useEffect(() => {
+    (async () => {
+      const f = await loadResumeFile();
+      if (f) setState((prev) => ({ ...prev, file: f }));
+    })();
+  }, []);
+
+  // ✅ Save serializable state to sessionStorage
   useEffect(() => {
     try {
-      // Don't save if status is idle or analyzing
-      if (state.status === "done" || state.status === "error") {
-        // Exclude file from storage (can't serialize File objects)
-        const { file, ...stateToSave } = state;
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
-      }
-    } catch (error) {
-      console.error("Failed to save analysis:", error);
+      const { file, ...toSave } = state;
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    } catch (e) {
+      console.error("Failed to save analysis:", e);
     }
-  }, [state]);
+  }, [state.status, state.analysis, state.jobRole, state.error]); // avoid file
 
-  const startAnalysis = (file?: File | null) => {
+  const setFile = (file: File | null) => {
+    setState((prev) => ({ ...prev, file }));
+    if (file) saveResumeFile(file);
+    else clearResumeFile();
+  };
+
+  const startAnalysis = (file?: File | null, jobRole?: string | null) => {
+    const f = file ?? null;
     setState({
       status: "analyzing",
       analysis: null,
-      jobRole: null,
-      file: file || null,
+      jobRole: jobRole ?? null,
+      file: f,
       error: null,
     });
+    if (f) saveResumeFile(f);
   };
 
   const setResult = (data: ResumeAnalysis, jobRole?: string | null, file?: File | null) => {
+    const f = file ?? null;
     setState({
       status: "done",
       analysis: data,
-      jobRole: jobRole || null,
-      file: file || null,
+      jobRole: jobRole ?? null,
+      file: f,
       error: null,
     });
+    if (f) saveResumeFile(f);
   };
 
   const setAnalysisError = (message: string) => {
-    setState({
+    setState((prev) => ({
+      ...prev,
       status: "error",
       analysis: null,
-      jobRole: null,
-      file: null,
       error: message,
-    });
+    }));
   };
 
   const reset = () => {
-    setState({
-      status: "idle",
-      analysis: null,
-      jobRole: null,
-      file: null,
-      error: null,
-    });
-    // Clear sessionStorage when resetting
-    try {
-      sessionStorage.removeItem(STORAGE_KEY);
-    } catch (error) {
-      console.error("Failed to clear saved analysis:", error);
-    }
+    setState(DEFAULT_STATE);
+    sessionStorage.removeItem(STORAGE_KEY);
+    clearResumeFile();
   };
 
-  return (
-    <ResumeAnalysisContext.Provider
-      value={{
-        ...state,
-        startAnalysis,
-        setResult,
-        setAnalysisError,
-        reset,
-      }}
-    >
-      {children}
-    </ResumeAnalysisContext.Provider>
+  const value = useMemo(
+    () => ({
+      ...state,
+      startAnalysis,
+      setResult,
+      setAnalysisError,
+      reset,
+      setFile,
+    }),
+    [state],
   );
+
+  return <ResumeAnalysisContext.Provider value={value}>{children}</ResumeAnalysisContext.Provider>;
 }

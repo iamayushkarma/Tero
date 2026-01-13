@@ -46,12 +46,12 @@ Final Verdict
 - Clearly explain why this score was achieved
 - Keep the tone honest but encouraging
 
-Strengths (Max 6)
+Strengths (Max 5)
 - Bullet points
 - Phrase each point as a positive observation about the user’s resume
 - Each point must be backed by ATS data
 
-Weaknesses (Max 6)
+Weaknesses (Max 5)
 - Bullet points
 - Only list weaknesses explicitly present in ATS data
 - Phrase gently and constructively (no harsh language)

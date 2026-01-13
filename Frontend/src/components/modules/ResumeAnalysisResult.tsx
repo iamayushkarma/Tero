@@ -4,6 +4,8 @@ import ResumeLoading from "../ui/ResumeLoading";
 import { useTheme } from "../../hooks/useThemeContext";
 import ProgressBar from "../ui/ProgressBar";
 import { useLayoutEffect } from "react";
+import { PdfOnlyPreview } from "../ui/PdfPreview";
+import { DocxPreview } from "../ui/DocxPreview";
 
 type ScoreBreakdownItem = {
   score: number;
@@ -13,9 +15,11 @@ type ScoreBreakdownItem = {
 
 type ScoreBreakdown = Record<string, ScoreBreakdownItem>;
 function ResumeAnalysisResult() {
-  const { status, analysis, jobRole, error } = useResumeAnalysis();
+  const { status, analysis, jobRole, error, file } = useResumeAnalysis();
   const navigate = useNavigate();
   const { theme } = useTheme();
+
+  console.log(file);
 
   // Use useLayoutEffect to scroll immediately before browser paint
   useLayoutEffect(() => {
@@ -25,7 +29,7 @@ function ResumeAnalysisResult() {
   const score = analysis?.atsResult?.score ?? 0;
   function getScoreColor(score: number, isDark: boolean) {
     if (score < 40) return isDark ? "#f87171" : "#dc2626"; // Red
-    if (score < 60) return isDark ? "#fb923c" : "#ea580c"; // Slightly lighter orange
+    if (score < 50) return isDark ? "#fb923c" : "#ea580c"; // Slightly lighter orange
     if (score < 75) return isDark ? "#fde047" : "#facc15"; // Slightly lighter yellow
     if (score < 90) return isDark ? "#4ade80" : "#22c55e"; // Green
     return isDark ? "#22c55e" : "#16a34a"; // Darker green for 90+
@@ -101,7 +105,16 @@ function ResumeAnalysisResult() {
           </div>
         </div>
         {/* review section */}
-        <div className="md:col-span-7"></div>
+        <div className="md:col-span-7">
+          <div>
+            {file?.type === "application/pdf" && <PdfOnlyPreview file={file} />}
+
+            {file?.type ===
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+              <DocxPreview file={file} />
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
