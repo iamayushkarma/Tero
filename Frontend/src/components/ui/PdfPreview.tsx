@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-
+import "../modules/Modules.css";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url,
@@ -27,13 +27,13 @@ export function PdfOnlyPreview({ file }: { file: File | null }) {
 
   return (
     <div ref={wrapRef} className="w-full max-w-full">
-      <div className="h-[75vh] overflow-auto rounded-lg bg-white p-2">
+      <div className="bg-bg-gray-2 dark:bg-gray-12/10 mx-auto h-[75vh] w-fit overflow-auto rounded-lg p-2 dark:hue-rotate-180 dark:invert">
         <Document file={file} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
           {Array.from({ length: numPages }, (_, i) => (
-            <div key={i} className="mb-3 flex justify-center">
+            <div key={i} className="mb-3 flex justify-center rounded-lg">
               <Page
                 pageNumber={i + 1}
-                width={Math.min(containerWidth - 16, 800)}
+                width={Math.min(containerWidth - 16, 500)}
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
               />

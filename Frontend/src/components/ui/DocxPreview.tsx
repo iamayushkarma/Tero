@@ -1,5 +1,6 @@
 import mammoth from "mammoth";
 import { useEffect, useState } from "react";
+import "./common.css";
 
 export function DocxPreview({ file }: { file: File | null }) {
   const [html, setHtml] = useState("");
@@ -16,8 +17,11 @@ export function DocxPreview({ file }: { file: File | null }) {
   if (!file) return null;
 
   return (
-    <div className="h-[75vh] overflow-auto rounded-lg bg-white p-4">
-      <div className="docx-preview" dangerouslySetInnerHTML={{ __html: html }} />
+    <div className="bg-bg-gray-2 dark:bg-gray-12/10 h-[75vh] overflow-auto rounded-lg p-4">
+      <div
+        className="docx-preview text-gray-12 dark:text-gray-3 rounded-lg!"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </div>
   );
 }

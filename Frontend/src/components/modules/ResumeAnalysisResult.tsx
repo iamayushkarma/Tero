@@ -6,6 +6,7 @@ import ProgressBar from "../ui/ProgressBar";
 import { useLayoutEffect } from "react";
 import { PdfOnlyPreview } from "../ui/PdfPreview";
 import { DocxPreview } from "../ui/DocxPreview";
+import "./Modules.css";
 
 type ScoreBreakdownItem = {
   score: number;
@@ -68,11 +69,11 @@ function ResumeAnalysisResult() {
   }
 
   return (
-    <section className="bg bg-gray-3 dark:bg-gray-12/70 min-h-screen p-5 pt-20">
-      <div className="mx-auto grid p-4 md:w-11/12 md:grid-cols-10 md:p-8">
+    <section className="bg-gray-3 dark:bg-gray-12/70 min-h-screen w-full p-5 pt-20 md:mx-auto">
+      <div className="mx-auto grid items-start gap-5 md:w-11/12 md:grid-cols-10 md:p-8">
         {/* score section */}
-        <div className="md:col-span-3">
-          <div className="bg-bg-gray-2 dark:bg-gray-12/5 border-gray-5 dark:border-gray-11/40 flex flex-col items-center justify-center rounded-xl border py-2 md:w-[95%]">
+        <div className="top-[20%] md:sticky md:col-span-3">
+          <div className="bg-bg-gray-1 dark:bg-gray-12/5 border-gray-5 dark:border-gray-11/40 flex flex-col items-center justify-center rounded-xl border py-2 md:w-[95%]">
             {/* actual score */}
             <div className="border-b-gray-4 dark:border-b-gray-11/50 box-border w-11/12 border-b p-5 text-center md:p-8">
               <h3 className="text-gray-12 dark:text-gray-3 text-[1.3rem] font-medium md:text-[1.5rem]">
@@ -105,14 +106,32 @@ function ResumeAnalysisResult() {
           </div>
         </div>
         {/* review section */}
-        <div className="md:col-span-7">
-          <div>
-            {file?.type === "application/pdf" && <PdfOnlyPreview file={file} />}
+        <div className="bg-blue-4 border-gray-5 dark:border-gray-11/40 dark:bg-gray-12/70 text-gray-12/90 dark:text-gray-4 mx-auto mt-5 box-border w-full rounded-xl border p-5 font-medium md:col-span-7 md:mt-0 md:p-8">
+          <div className="bg-bg-gray-1 box-border rounded-xl md:p-5">
+            <h3 className="text-gray-12/90 dark:text-gray-3 p-2 text-[1.2rem] font-semibold md:text-[1.3rem]">
+              ATS Parse Rate
+            </h3>
+            <p className="mt-3 p-2 text-[.9rem] md:text-[1rem]">
+              An <strong>Applicant Tracking System</strong> (ATS) is software recruiters use to scan
+              and sort large numbers of resumes. A high ATS parse rate means your resume is easy for
+              these systems to read, so your skills and experience are captured correctly-making it
+              more likely your resume reaches a recruiter.
+            </p>
+            <div className="no-scrollbar mt-6 rounded-xl">
+              <div className="p-2">Your resume</div>
+              {file?.type === "application/pdf" && <PdfOnlyPreview file={file} />}
 
-            {file?.type ===
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-              <DocxPreview file={file} />
-            )}
+              {file?.type ===
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+                <DocxPreview file={file} />
+              )}
+            </div>
+            <p className="">
+              An <strong>Applicant Tracking System</strong> (ATS) is software recruiters use to scan
+              and sort large numbers of resumes. A high ATS parse rate means your resume is easy for
+              these systems to read, so your skills and experience are captured correctly-making it
+              more likely your resume reaches a recruiter.
+            </p>
           </div>
         </div>
       </div>
