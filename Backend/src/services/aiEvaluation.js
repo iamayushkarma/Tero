@@ -1,22 +1,19 @@
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
 
-/**
- * Generate ATS-based AI explanation using Groq
- * @param {Object} params - Parameters
- * @param {Object} params.atsResult - ATS analysis result
- * @param {string} params.jobRole - Target job role
- * @param {string} params.resumeText - The actual resume content (REQUIRED for strong analysis)
- * @param {string} params.apiKey - Optional: Groq API key (uses env var if not provided)
- * @returns {Promise<string>} - Formatted AI feedback
- */
 export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey }) {
   const startTime = Date.now();
 
   // Validation
   if (!atsResult || typeof atsResult !== "object") {
     console.error("Invalid ATS result provided");
-    return "AI analysis unavailable due to invalid ATS input.";
+    return {
+      error: "AI analysis unavailable due to invalid ATS input.",
+      finalVerdict: "AI analysis unavailable due to invalid ATS input.",
+      working: [],
+      hurting: [],
+      fixPlan: [],
+    };
   }
 
   // Warn if resume text is missing
@@ -28,7 +25,14 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
   const groqApiKey = apiKey || process.env.GROQ_API_KEY;
   if (!groqApiKey) {
     console.error("❌ GROQ_API_KEY not found in environment variables");
-    return "AI analysis unavailable. Please configure Groq API key. Get one free at: https://console.groq.com/keys";
+    return {
+      error: "AI analysis unavailable. Please configure Groq API key.",
+      finalVerdict:
+        "AI analysis unavailable. Please configure Groq API key. Get one free at: https://console.groq.com/keys",
+      working: [],
+      hurting: [],
+      fixPlan: [],
+    };
   }
 
   // Prepare compact data for AI with actual resume content
@@ -43,7 +47,7 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
   };
 
   // Build the prompt
-  const prompt = buildPrompt(compactATS, jobRole);
+  const prompt = buildStructuredPrompt(compactATS, jobRole);
 
   try {
     console.log(`🔄 Calling Groq API for job role: ${jobRole || "unspecified"}`);
@@ -60,7 +64,7 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
           {
             role: "system",
             content:
-              "You are an elite ATS resume consultant. You provide detailed, structured feedback with clear HTML-friendly formatting. Use proper spacing, line breaks, and structure that renders beautifully in web interfaces. Always use bullet points (•), proper paragraph breaks, and clear visual hierarchy.",
+              "You are an elite ATS resume consultant. You MUST respond with valid JSON only. No markdown, no preamble, no explanation - just pure JSON matching the exact schema provided.",
           },
           {
             role: "user",
@@ -68,7 +72,7 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
           },
         ],
         temperature: 0.5,
-        max_tokens: 3000,
+        max_tokens: 3500,
         top_p: 0.9,
         stream: false,
       }),
@@ -92,9 +96,23 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
       });
 
       if (response.status === 401) {
-        return "AI analysis unavailable: Invalid API key. Please check your Groq API key at https://console.groq.com/keys";
+        return {
+          error: "Invalid API key",
+          finalVerdict:
+            "AI analysis unavailable: Invalid API key. Please check your Groq API key at https://console.groq.com/keys",
+          working: [],
+          hurting: [],
+          fixPlan: [],
+        };
       } else if (response.status === 429) {
-        return "AI analysis temporarily unavailable: Rate limit exceeded. Please try again in a moment.";
+        return {
+          error: "Rate limit exceeded",
+          finalVerdict:
+            "AI analysis temporarily unavailable: Rate limit exceeded. Please try again in a moment.",
+          working: [],
+          hurting: [],
+          fixPlan: [],
+        };
       }
 
       throw new Error(errorMessage);
@@ -110,7 +128,13 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
 
     if (!rawResponse || rawResponse.length < 100) {
       console.error("AI response too short or empty:", rawResponse);
-      return "AI analysis returned incomplete results. Please try again.";
+      return {
+        error: "Incomplete response",
+        finalVerdict: "AI analysis returned incomplete results. Please try again.",
+        working: [],
+        hurting: [],
+        fixPlan: [],
+      };
     }
 
     // Log token usage
@@ -120,7 +144,8 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
       );
     }
 
-    return formatResponse(rawResponse);
+    // Parse and validate the JSON response
+    return parseStructuredResponse(rawResponse);
   } catch (error) {
     const responseTime = Date.now() - startTime;
     console.error("❌ AI Verdict Generation Failed:", {
@@ -129,14 +154,21 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
       stack: error.stack,
     });
 
-    return "AI analysis is temporarily unavailable. Please refer to the ATS breakdown above or try again in a moment.";
+    return {
+      error: error.message,
+      finalVerdict:
+        "AI analysis is temporarily unavailable. Please refer to the ATS breakdown above or try again in a moment.",
+      working: [],
+      hurting: [],
+      fixPlan: [],
+    };
   }
 }
 
 /**
- * Build the detailed prompt for Groq with structured output requirements
+ * Build the structured prompt for JSON output
  */
-function buildPrompt(compactATS, jobRole) {
+function buildStructuredPrompt(compactATS, jobRole) {
   const hasResumeText =
     compactATS.resumeText && compactATS.resumeText !== "Resume text not provided";
 
@@ -167,177 +199,141 @@ ${compactATS.resumeText}
 ${compactATS.critical.length > 0 ? compactATS.critical.map((c) => `• ${c}`).join("\n") : "• No critical issues detected"}
 
 **YOUR TASK:**
-Create a comprehensive, well-formatted analysis. Use ONLY the following structure with proper spacing and line breaks.
+Respond with ONLY a valid JSON object. No markdown code blocks, no preamble, no explanation.
 
----
-
-📊 **WHY YOU GOT THIS SCORE**
-
-[Write 5-7 sentences explaining the score. ${hasResumeText ? "Reference specific elements from their actual resume." : "Explain what typically causes this score range."} Use multiple paragraphs with blank lines between them for readability.]
-
----
-
-✅ **WHAT'S WORKING**
-
-Provide 3-5 strength points. Format each as:
-
-**[Strength Title]**
-
-- **What's strong:** [2-3 sentences explaining the element]
-
-- **Why it matters for ATS:** [Technical explanation of ATS behavior]
-
-- **Competitive advantage:** [Quantified benefit]
-
-${hasResumeText ? "• **Specific example:** [Quote from resume]" : ""}
-
-[blank line between each strength point]
-
----
-
-⚠️ **WHAT'S HURTING YOU**
-
-Provide 4-6 problem points. Format each as:
-
-**[Problem Title]**
-
-- **The issue:** [2-3 sentences explaining the problem]
-
-${
-  hasResumeText
-    ? `• **❌ Current:** [Quote their weak content]
-
-- **✅ Better:** [Improved version with metrics]`
-    : `• **❌ Typical mistake:** [Weak example]
-
-- **✅ Better approach:** [Improved version]`
+The JSON structure MUST be:
+{
+  "finalVerdict": "5-7 sentences explaining why they got this score. ${hasResumeText ? "Reference specific elements from their resume." : "Explain what causes this score range."} Be direct and encouraging.",
+  "working": [
+    {
+      "title": "Strength Title",
+      "whatsStrong": "2-3 sentences explaining what's strong",
+      "whyItMatters": "Technical explanation of ATS behavior and why this matters",
+      "advantage": "Quantified competitive advantage this provides"
+    }
+    // 3-5 items total
+  ],
+  "hurting": [
+    {
+      "title": "Problem Title",
+      "issue": "2-3 sentences explaining the problem clearly",
+      "typicalMistake": "${hasResumeText ? "Quote from their resume showing the weak content" : "Example of typical weak content"}",
+      "betterApproach": "Improved version with specific examples and metrics",
+      "atsImpact": "Specific score impact with numbers (e.g., 'Costs 8-12 points')",
+      "difficulty": "EASY, MEDIUM, or HARD with brief explanation"
+    }
+    // 4-6 items total
+  ],
+  "fixPlan": [
+    {
+      "priority": 1,
+      "action": "Clear action title",
+      "howToDoIt": "3-4 sentences with step-by-step instructions",
+      "exampleOld": "${hasResumeText ? "Their current weak version" : "Typical weak example"}",
+      "exampleNew": "Improved version with metrics and impact words",
+      "expectedOutcome": "Score improvement prediction with reasoning",
+      "time": "Realistic time estimate (e.g., '15-30 minutes')",
+      "impactLevel": "HIGH, MEDIUM, or LOW"
+    }
+    // 4-6 items total, ordered by priority
+  ]
 }
 
-- **ATS Impact:** [Specific score impact with numbers]
+**CONTENT REQUIREMENTS:**
+- finalVerdict: 150-200 words
+- Each working item: 100-150 words total across all fields
+- Each hurting item: 120-180 words total across all fields
+- Each fixPlan item: 150-200 words total across all fields
+- Be specific, actionable, and encouraging
+- Use "you" and "your" throughout
+- Include actual numbers and metrics
+- Reference specific resume content when available
 
-- **Fix difficulty:** [EASY/MEDIUM/HARD with explanation]
-
-[blank line between each problem point]
-
----
-
-🔧 **HOW TO FIX IT - PRIORITY ACTION PLAN**
-
-Provide 4-6 action items. Format each as:
-
-**Priority [#]: [Action Title]**
-
-- **What to do:** [1-2 sentence instruction]
-
-- **How to do it:** [3-4 sentence step-by-step]
-
-${hasResumeText ? "• **Your specific fix:**" : "• **Example transformation:**"}
-  
-  ❌ **OLD:** [weak version]
-  
-  ✅ **NEW:** [improved version]
-
-- **Expected outcome:** [Score improvement prediction]
-
-- **Time investment:** [Realistic estimate]
-
-- **Impact level:** 🔥🔥🔥 HIGH / 🔥🔥 MEDIUM / 🔥 LOW
-
-[blank line between each priority]
-
----
-
-**CRITICAL FORMATTING RULES:**
-1. Add TWO line breaks between major sections (use ----)
-2. Add ONE blank line between each point within a section
-3. Add ONE blank line after each sub-bullet
-4. Use bullet points (•) for ALL lists
-5. Use **bold** for headers and emphasis
-6. Put ❌ and ✅ examples on separate lines with blank lines around them
-7. Each bullet should be 2-4 sentences (substantial)
-8. Total length: 600-800 words
-
-**SPACING EXAMPLE:**
-**Problem Title**
-
-- **The issue:** First sentence. Second sentence.
-
-- **❌ Current:** Weak example here
-
-- **✅ Better:** Improved example with lots of details
-
-- **ATS Impact:** Explanation with numbers
-
-- **Fix difficulty:** EASY - explanation
-
-[blank line here before next point]
-
-Be direct, encouraging, and specific. Use "you" throughout.`;
+Respond with ONLY the JSON object. Start with { and end with }. No other text.`;
 }
 
 /**
- * Format the AI response for perfect frontend display
+ * Parse and validate the structured JSON response
  */
-function formatResponse(text) {
-  let formatted = text
-    // Remove any markdown headers and replace with clean format
-    .replace(/#{1,6}\s*/g, "")
+function parseStructuredResponse(rawResponse) {
+  try {
+    // Remove markdown code blocks if present
+    let cleaned = rawResponse.trim();
+    cleaned = cleaned.replace(/^```json\n?/i, "").replace(/\n?```$/i, "");
+    cleaned = cleaned.trim();
 
-    // Ensure main section headers have proper spacing
-    .replace(/📊\s*\*\*WHY YOU GOT THIS SCORE\*\*/gi, "\n\n📊 **WHY YOU GOT THIS SCORE**\n\n")
-    .replace(/✅\s*\*\*WHAT'S WORKING\*\*/gi, "\n\n---\n\n✅ **WHAT'S WORKING**\n\n")
-    .replace(/⚠️\s*\*\*WHAT'S HURTING YOU\*\*/gi, "\n\n---\n\n⚠️ **WHAT'S HURTING YOU**\n\n")
-    .replace(
-      /🔧\s*\*\*HOW TO FIX IT.*?\*\*/gi,
-      "\n\n---\n\n🔧 **HOW TO FIX IT - PRIORITY ACTION PLAN**\n\n",
-    )
+    // Parse JSON
+    const parsed = JSON.parse(cleaned);
 
-    // Ensure subsection headers (point titles) have spacing
-    .replace(/\n\*\*([^*\n]+)\*\*\n/g, "\n\n**$1**\n\n")
+    // Validate structure
+    if (!parsed.finalVerdict || typeof parsed.finalVerdict !== "string") {
+      throw new Error("Missing or invalid finalVerdict");
+    }
 
-    // Ensure bullets have consistent spacing
-    .replace(/\n•/g, "\n\n•")
+    if (!Array.isArray(parsed.working)) {
+      throw new Error("Missing or invalid working array");
+    }
 
-    // Format ❌ and ✅ examples with extra spacing
-    .replace(/•\s*❌\s*([^:]+):/g, "\n• **❌ $1:**")
-    .replace(/•\s*✅\s*([^:]+):/g, "\n• **✅ $1:**")
-    .replace(/❌\s*OLD:/gi, "\n\n❌ **OLD:**")
-    .replace(/✅\s*NEW:/gi, "\n\n✅ **NEW:**")
-    .replace(/❌\s*Current:/gi, "\n\n❌ **Current:**")
-    .replace(/✅\s*Better:/gi, "\n\n✅ **Better:**")
+    if (!Array.isArray(parsed.hurting)) {
+      throw new Error("Missing or invalid hurting array");
+    }
 
-    // Ensure Priority items have spacing
-    .replace(/\*\*Priority\s+(\d+):/g, "\n\n**Priority $1:**")
+    if (!Array.isArray(parsed.fixPlan)) {
+      throw new Error("Missing or invalid fixPlan array");
+    }
 
-    // Clean up common sub-bullets
-    .replace(/•\s*\*\*What's strong:\*\*/g, "\n• **What's strong:**")
-    .replace(/•\s*\*\*Why it matters for ATS:\*\*/g, "\n• **Why it matters for ATS:**")
-    .replace(/•\s*\*\*Competitive advantage:\*\*/g, "\n• **Competitive advantage:**")
-    .replace(/•\s*\*\*Specific example:\*\*/g, "\n• **Specific example:**")
-    .replace(/•\s*\*\*The issue:\*\*/g, "\n• **The issue:**")
-    .replace(/•\s*\*\*ATS Impact:\*\*/g, "\n• **ATS Impact:**")
-    .replace(/•\s*\*\*Fix difficulty:\*\*/g, "\n• **Fix difficulty:**")
-    .replace(/•\s*\*\*What to do:\*\*/g, "\n• **What to do:**")
-    .replace(/•\s*\*\*How to do it:\*\*/g, "\n• **How to do it:**")
-    .replace(/•\s*\*\*Your specific fix:\*\*/g, "\n• **Your specific fix:**")
-    .replace(/•\s*\*\*Example transformation:\*\*/g, "\n• **Example transformation:**")
-    .replace(/•\s*\*\*Expected outcome:\*\*/g, "\n• **Expected outcome:**")
-    .replace(/•\s*\*\*Time investment:\*\*/g, "\n• **Time investment:**")
-    .replace(/•\s*\*\*Impact level:\*\*/g, "\n• **Impact level:**")
+    // Validate working items
+    parsed.working.forEach((item, idx) => {
+      if (!item.title || !item.whatsStrong || !item.whyItMatters || !item.advantage) {
+        throw new Error(`Invalid working item at index ${idx}`);
+      }
+    });
 
-    // Ensure section dividers have proper spacing
-    .replace(/\n---\n/g, "\n\n---\n\n")
+    // Validate hurting items
+    parsed.hurting.forEach((item, idx) => {
+      if (
+        !item.title ||
+        !item.issue ||
+        !item.typicalMistake ||
+        !item.betterApproach ||
+        !item.atsImpact ||
+        !item.difficulty
+      ) {
+        throw new Error(`Invalid hurting item at index ${idx}`);
+      }
+    });
 
-    // Clean up excessive blank lines (but keep intentional double breaks)
-    .replace(/\n{4,}/g, "\n\n\n")
+    // Validate fixPlan items
+    parsed.fixPlan.forEach((item, idx) => {
+      if (
+        !item.priority ||
+        !item.action ||
+        !item.howToDoIt ||
+        !item.exampleOld ||
+        !item.exampleNew ||
+        !item.expectedOutcome ||
+        !item.time ||
+        !item.impactLevel
+      ) {
+        throw new Error(`Invalid fixPlan item at index ${idx}`);
+      }
+    });
 
-    // Ensure paragraphs within sections have spacing
-    .replace(/([.!?])\s+([A-Z])/g, "$1\n\n$2")
+    console.log("✅ Successfully parsed and validated structured response");
+    return parsed;
+  } catch (error) {
+    console.error("❌ Failed to parse AI response as JSON:", error.message);
+    console.error("Raw response:", rawResponse.substring(0, 500));
 
-    // Final cleanup
-    .trim();
-
-  return formatted;
+    // Return fallback structure
+    return {
+      error: "Failed to parse AI response",
+      finalVerdict: "AI analysis generated an invalid response format. Please try again.",
+      working: [],
+      hurting: [],
+      fixPlan: [],
+    };
+  }
 }
 
 /**
