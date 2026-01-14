@@ -106,7 +106,7 @@ function ResumeAnalysisResult() {
           </div>
         </div>
         {/* review section */}
-        <div className="bg-blue-4/50 border-gray-5 dark:border-gray-11/40 dark:bg-blue-12/30 text-gray-12/90 dark:text-gray-4 mx-auto mt-5 box-border w-full rounded-xl border p-5 font-medium md:col-span-7 md:mt-0 md:p-8">
+        <div className="bg-blue-5/50 border-gray-5 dark:border-gray-11/40 dark:bg-blue-12/30 text-gray-12/90 dark:text-gray-4 mx-auto mt-5 box-border w-full rounded-xl border p-5 font-medium md:col-span-7 md:mt-0 md:p-8">
           <div className="bg-bg-gray-1 dark:bg-gray-12 box-border rounded-xl md:p-5">
             <h3 className="text-gray-12/90 dark:text-gray-3 p-2 text-[1.2rem] font-semibold md:text-[1.3rem]">
               ATS Parse Rate
