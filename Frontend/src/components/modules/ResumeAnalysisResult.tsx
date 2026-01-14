@@ -129,6 +129,7 @@ function ResumeAnalysisResult() {
             </div>
           </div>
 
+          {/* display object for testing */}
           <pre>{JSON.stringify(aiBreakdown, null, 2)}</pre>
         </div>
       </div>
