@@ -1,6 +1,15 @@
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
 
+/**
+ * Generate ATS-based AI explanation using Groq
+ * @param {Object} params - Parameters
+ * @param {Object} params.atsResult - ATS analysis result
+ * @param {string} params.jobRole - Target job role
+ * @param {string} params.resumeText - The actual resume content (REQUIRED for strong analysis)
+ * @param {string} params.apiKey - Optional: Groq API key (uses env var if not provided)
+ * @returns {Promise<Object>} - Structured AI feedback object
+ */
 export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey }) {
   const startTime = Date.now();
 
@@ -64,15 +73,15 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
           {
             role: "system",
             content:
-              "You are an elite ATS resume consultant. You MUST respond with valid JSON only. No markdown, no preamble, no explanation - just pure JSON matching the exact schema provided.",
+              "You are an elite ATS resume consultant. You MUST respond with valid JSON only. No markdown, no preamble, no explanation - just pure JSON matching the exact schema provided. Each item must be UNIQUE and SPECIFIC - never repeat the same suggestions, percentages, or advice across different items.",
           },
           {
             role: "user",
             content: prompt,
           },
         ],
-        temperature: 0.5,
-        max_tokens: 3500,
+        temperature: 0.7,
+        max_tokens: 4000,
         top_p: 0.9,
         stream: false,
       }),
@@ -166,7 +175,7 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
 }
 
 /**
- * Build the structured prompt for JSON output
+ * Build the structured prompt for JSON output with emphasis on uniqueness
  */
 function buildStructuredPrompt(compactATS, jobRole) {
   const hasResumeText =
@@ -190,64 +199,86 @@ ${compactATS.resumeText}
 
 **Section Breakdown:**
 - Keywords: ${compactATS.breakdown?.keywords || "N/A"}%
-- Experience: ${compactATS.breakdown?.experience || "N/A"}%
+- Experience: ${compactATS.breakdown?.experience_quality || compactATS.breakdown?.experience || "N/A"}%
 - Education: ${compactATS.breakdown?.education || "N/A"}%
 - Formatting: ${compactATS.breakdown?.formatting || "N/A"}%
-- Skills: ${compactATS.breakdown?.skills || "N/A"}%
+- Skills: ${compactATS.breakdown?.skills_relevance || compactATS.breakdown?.skills || "N/A"}%
+- Sections: ${compactATS.breakdown?.sections || "N/A"}%
 
 **Detected Issues:**
 ${compactATS.critical.length > 0 ? compactATS.critical.map((c) => `• ${c}`).join("\n") : "• No critical issues detected"}
+
+**CRITICAL INSTRUCTIONS FOR UNIQUENESS:**
+- Each "working" item must focus on a DIFFERENT strength (e.g., one about keywords, one about formatting, one about experience depth)
+- Each "hurting" item must identify a DIFFERENT problem (e.g., one about missing sections, one about weak metrics, one about poor keywords)
+- Each "fixPlan" item must provide a DIFFERENT action with DIFFERENT expected outcomes and time estimates
+- NEVER use the same percentage improvement (e.g., "10-15%") more than once
+- NEVER use the same time estimate (e.g., "30-60 minutes") more than once
+- Vary your language - use different phrases and examples for each item
+- Make each advantage/impact SPECIFIC to that particular strength or weakness
 
 **YOUR TASK:**
 Respond with ONLY a valid JSON object. No markdown code blocks, no preamble, no explanation.
 
 The JSON structure MUST be:
 {
-  "finalVerdict": "5-7 sentences explaining why they got this score. ${hasResumeText ? "Reference specific elements from their resume." : "Explain what causes this score range."} Be direct and encouraging.",
+  "finalVerdict": "5-7 sentences explaining why they got this score. ${hasResumeText ? "Reference specific sections and elements from their actual resume (e.g., 'Your experience section shows...', 'Your skills list includes...')." : "Explain what typically causes this score range."} Be direct, specific, and encouraging. Mention the exact score and what it means.",
+  
   "working": [
     {
-      "title": "Strength Title",
-      "whatsStrong": "2-3 sentences explaining what's strong",
-      "whyItMatters": "Technical explanation of ATS behavior and why this matters",
-      "advantage": "Quantified competitive advantage this provides"
+      "title": "UNIQUE Strength Title (e.g., 'Strong Technical Keywords', 'Well-Structured Experience Section', 'Clear Visual Hierarchy')",
+      "whatsStrong": "2-3 sentences explaining what SPECIFICALLY is strong. ${hasResumeText ? "Quote or reference actual content from their resume." : "Be specific about the type of content."} Use varied language.",
+      "whyItMatters": "Explain the SPECIFIC ATS mechanism this affects (e.g., 'ATS algorithms assign higher relevance scores to resumes with industry-standard terminology' or 'Parsers can extract dates 40% more accurately with consistent formatting')",
+      "advantage": "Provide a UNIQUE, specific competitive advantage with concrete numbers (e.g., '23% higher callback rate', '2.5x more likely to pass initial screening', 'Saves recruiters 45 seconds per review'). NEVER repeat the same percentage across items."
     }
-    // 3-5 items total
+    // Include 3-5 items, each focusing on a COMPLETELY DIFFERENT aspect
   ],
+  
   "hurting": [
     {
-      "title": "Problem Title",
-      "issue": "2-3 sentences explaining the problem clearly",
-      "typicalMistake": "${hasResumeText ? "Quote from their resume showing the weak content" : "Example of typical weak content"}",
-      "betterApproach": "Improved version with specific examples and metrics",
-      "atsImpact": "Specific score impact with numbers (e.g., 'Costs 8-12 points')",
-      "difficulty": "EASY, MEDIUM, or HARD with brief explanation"
+      "title": "UNIQUE Problem Title (e.g., 'Missing Quantifiable Achievements', 'Weak Action Verbs', 'Inconsistent Date Formatting', 'Generic Skills List')",
+      "issue": "2-3 sentences explaining the SPECIFIC problem. ${hasResumeText ? "Reference the exact section or content that's problematic." : "Be specific about what's typically missing."} Each problem must be DIFFERENT.",
+      "typicalMistake": "${hasResumeText ? "Quote the EXACT weak phrase from their resume (e.g., 'Responsible for managing team' or 'Worked on various projects')" : "Provide a specific weak example (e.g., 'Managed projects' without metrics)"}",
+      "betterApproach": "Provide a CONCRETE improved version with specific numbers and action verbs (e.g., 'Led 8-person engineering team to deliver 3 products, increasing user engagement by 47% and reducing load time by 2.3s'). Make it detailed and compelling.",
+      "atsImpact": "Specify UNIQUE score impact using DIFFERENT numbers (e.g., 'Reduces score by 6-9 points', 'Costs 12-18 points', 'Loses 3-5 points per instance'). Include WHY (e.g., 'ATS keyword matching fails', 'Section parser errors increase').",
+      "difficulty": "EASY, MEDIUM, or HARD with a SPECIFIC explanation (e.g., 'EASY - Just add numbers to existing bullets, 5 min per item' or 'MEDIUM - Requires researching industry keywords, 45 min total' or 'HARD - Need to reframe entire work history, 2-3 hours')"
     }
-    // 4-6 items total
+    // Include 4-6 items, each addressing a COMPLETELY DIFFERENT weakness
   ],
+  
   "fixPlan": [
     {
       "priority": 1,
-      "action": "Clear action title",
-      "howToDoIt": "3-4 sentences with step-by-step instructions",
-      "exampleOld": "${hasResumeText ? "Their current weak version" : "Typical weak example"}",
-      "exampleNew": "Improved version with metrics and impact words",
-      "expectedOutcome": "Score improvement prediction with reasoning",
-      "time": "Realistic time estimate (e.g., '15-30 minutes')",
-      "impactLevel": "HIGH, MEDIUM, or LOW"
+      "action": "UNIQUE Action Title (e.g., 'Add Quantifiable Metrics to Experience', 'Optimize for ATS Keywords', 'Restructure Education Section', 'Create Skills Matrix')",
+      "howToDoIt": "Provide 3-4 sentences with SPECIFIC, actionable steps. Use exact instructions (e.g., 'Open each bullet point, identify the outcome, then add: revenue impact (%), time saved (hours), team size (#), or scope ($ value). Use formulas like: [Action Verb] + [What] + [Metric] + [Timeframe].')",
+      "exampleOld": "${hasResumeText ? "Their ACTUAL current weak content from resume" : "A SPECIFIC weak example with detail (e.g., 'Managed social media accounts and posted content regularly')"}",
+      "exampleNew": "A DETAILED improved version that's substantially better (e.g., 'Grew Instagram following from 2.3K to 47K followers in 6 months by implementing data-driven content strategy, resulting in 340% increase in engagement rate and $12K in influencer partnerships'). Make it impressive and specific.",
+      "expectedOutcome": "Provide a UNIQUE prediction with SPECIFIC numbers and reasoning (e.g., 'Should increase score from 75 to 82-85 by improving keyword density from 45% to 68% and adding measurable achievements', or 'Expect 8-12 point boost by fixing section parsing errors that currently cost you 6 ranking points'). NEVER repeat the same outcome.",
+      "time": "Provide a UNIQUE, realistic time estimate (e.g., '20-25 minutes', '1.5-2 hours', '45 minutes over 2 sessions', '3-4 hours across a weekend'). NEVER use the same time twice.",
+      "impactLevel": "HIGH, MEDIUM, or LOW with specific reasoning (e.g., 'HIGH - Directly affects 30% of ATS score', 'MEDIUM - Improves recruiter perception but doesn't affect ATS parsing', 'LOW - Minor improvement but easy win')"
     }
-    // 4-6 items total, ordered by priority
+    // Include 4-6 items, ordered by priority, each with COMPLETELY DIFFERENT actions, times, and outcomes
   ]
 }
 
+**UNIQUENESS CHECKLIST - VERIFY BEFORE RESPONDING:**
+✓ Each "working" item discusses a different strength
+✓ Each "hurting" item identifies a different problem  
+✓ Each "fixPlan" item provides a different action
+✓ All percentages and score impacts are DIFFERENT numbers
+✓ All advantages are SPECIFIC and UNIQUE
+✓ All examples are CONCRETE and DETAILED
+✓ No repeated phrases or cookie-cutter language
+
 **CONTENT REQUIREMENTS:**
-- finalVerdict: 150-200 words
-- Each working item: 100-150 words total across all fields
-- Each hurting item: 120-180 words total across all fields
-- Each fixPlan item: 150-200 words total across all fields
-- Be specific, actionable, and encouraging
-- Use "you" and "your" throughout
-- Include actual numbers and metrics
-- Reference specific resume content when available
+- finalVerdict: 150-200 words with SPECIFIC score context
+- Each working item: 100-150 words, highly specific
+- Each hurting item: 120-180 words, concrete examples
+- Each fixPlan item: 150-200 words, actionable steps
+- Use varied vocabulary - don't repeat the same phrases
+- Reference ACTUAL resume content when available
+- Include SPECIFIC numbers, metrics, and percentages
+- Make every item valuable and non-redundant
 
 Respond with ONLY the JSON object. Start with { and end with }. No other text.`;
 }

@@ -39,6 +39,7 @@ function ResumeAnalysisResult() {
   const color = getScoreColor(score, isDark);
 
   const breakdown = analysis?.atsResult?.breakdown as ScoreBreakdown | undefined;
+  const aiBreakdown = analysis?.aiVerdict;
 
   const progressBarConfig = [
     { key: "experience_quality", label: "Experience" },
@@ -126,13 +127,9 @@ function ResumeAnalysisResult() {
                 <DocxPreview file={file} />
               )}
             </div>
-            <p className="">
-              An <strong>Applicant Tracking System</strong> (ATS) is software recruiters use to scan
-              and sort large numbers of resumes. A high ATS parse rate means your resume is easy for
-              these systems to read, so your skills and experience are captured correctly-making it
-              more likely your resume reaches a recruiter.
-            </p>
           </div>
+
+          <pre>{JSON.stringify(aiBreakdown, null, 2)}</pre>
         </div>
       </div>
     </section>
