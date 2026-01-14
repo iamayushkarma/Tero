@@ -1,15 +1,6 @@
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "llama-3.3-70b-versatile";
 
-/**
- * Generate ATS-based AI explanation using Groq
- * @param {Object} params - Parameters
- * @param {Object} params.atsResult - ATS analysis result
- * @param {string} params.jobRole - Target job role
- * @param {string} params.resumeText - The actual resume content (REQUIRED for strong analysis)
- * @param {string} params.apiKey - Optional: Groq API key (uses env var if not provided)
- * @returns {Promise<Object>} - Structured AI feedback object
- */
 export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey }) {
   const startTime = Date.now();
 
