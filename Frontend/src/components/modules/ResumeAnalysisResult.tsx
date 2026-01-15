@@ -406,9 +406,9 @@ function ResumeAnalysisResult() {
 
           {/* AI Analysis Display */}
           {aiBreakdown && (
-            <div className="mt-6">
-              <ResumeAnalysisDisplay data={aiBreakdown} />
-            </div>
+            <ResumeAnalysisDisplay
+              data={typeof aiBreakdown === "string" ? JSON.parse(aiBreakdown) : aiBreakdown}
+            />
           )}
         </div>
       </div>
