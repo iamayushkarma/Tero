@@ -57,7 +57,7 @@ function ResumeAnalysisResult() {
       return <ResumeLoading />;
     case "error":
       return (
-        <div className="mt-6 rounded-lg border border-red-300 bg-red-50 p-4">
+        <div className="mt-20 rounded-lg border border-red-300 bg-red-50 p-4">
           <p className="text-red-600">{error}</p>
         </div>
       );
