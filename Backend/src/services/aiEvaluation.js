@@ -213,7 +213,7 @@ Respond with ONLY a valid JSON object. No markdown code blocks, no preamble, no 
 
 The JSON structure MUST be:
 {
-  "finalVerdict": "5-7 sentences explaining why they got this score. ${hasResumeText ? "Reference specific sections and elements from their actual resume (e.g., 'Your experience section shows...', 'Your skills list includes...')." : "Explain what typically causes this score range."} Be direct, specific, and encouraging. Mention the exact score and what it means.",
+  "finalVerdict": "3 sentences explaining why they got this score. ${hasResumeText ? "Reference specific sections and elements from their actual resume (e.g., 'Your experience section shows...', 'Your skills list includes...')." : "Explain what typically causes this score range."} Be direct, specific, and encouraging. Mention the exact score and what it means.",
   
   "working": [
     {
