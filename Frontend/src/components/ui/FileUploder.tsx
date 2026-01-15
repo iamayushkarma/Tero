@@ -222,7 +222,7 @@ function FileUploader() {
 
     startAnalysis(file);
     await handleUpload(file);
-    navigate("/resume-analysis");
+    navigate("/resume-analysis", { state: { fromUpload: true } });
   };
 
   return (

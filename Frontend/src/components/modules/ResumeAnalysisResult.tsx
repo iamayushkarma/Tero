@@ -9,6 +9,7 @@ import { DocxPreview } from "../ui/DocxPreview";
 import { CheckCircle, FileText } from "lucide-react";
 import ResumeAnalysisDisplay from "../ui/ResumeAnalysisDisplay";
 import "./Modules.css";
+import { Navigate, useLocation } from "react-router-dom";
 
 type ScoreBreakdownItem = {
   score: number;
@@ -21,6 +22,11 @@ function ResumeAnalysisResult() {
   const { status, analysis, jobRole, error, file } = useResumeAnalysis();
   const navigate = useNavigate();
   const { theme } = useTheme();
+
+  const location = useLocation();
+  const allowed = (location.state as any)?.fromUpload;
+
+  if (!allowed) return <Navigate to="/" replace />;
 
   console.log(file);
   useLayoutEffect(() => {
