@@ -283,6 +283,7 @@ import ProgressBar from "../ui/ProgressBar";
 import { useLayoutEffect } from "react";
 import { PdfOnlyPreview } from "../ui/PdfPreview";
 import { DocxPreview } from "../ui/DocxPreview";
+import { CheckCircle, FileText } from "lucide-react";
 import ResumeAnalysisDisplay from "../ui/ResumeAnalysisDisplay"; // Import the new component
 import "./Modules.css";
 
@@ -384,26 +385,65 @@ function ResumeAnalysisResult() {
         </div>
         {/* review section */}
         <div className="bg-blue-5/50 border-gray-5 dark:border-gray-11/40 dark:bg-blue-12/30 text-gray-12/90 dark:text-gray-4 mx-auto mt-5 box-border w-full rounded-xl border p-5 font-medium md:col-span-7 md:mt-0 md:p-8">
-          <div className="bg-bg-gray-1 dark:bg-gray-12 box-border rounded-xl md:p-5">
-            <h3 className="text-gray-12/90 dark:text-gray-3 p-2 text-[1.2rem] font-semibold md:text-[1.3rem]">
-              ATS Parse Rate
-            </h3>
-            <p className="mt-3 p-2 text-justify text-[.9rem] leading-6 md:text-[1rem] md:leading-7">
-              An <strong>Applicant Tracking System</strong> (ATS) is software recruiters use to scan
-              and sort large numbers of resumes. A high ATS parse rate means your resume is easy for
-              these systems to read, so your skills and experience are captured correctly-making it
-              more likely your resume reaches a recruiter.
-            </p>
-            <div className="no-scrollbar mt-6 rounded-xl">
-              <div className="p-2">Your resume</div>
-              {file?.type === "application/pdf" && <PdfOnlyPreview file={file} />}
-              {file?.type ===
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-                <DocxPreview file={file} />
-              )}
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+            {/* Header */}
+            <div className="border-b border-gray-200 px-6 py-5 dark:border-gray-800">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    ATS Compatibility
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    How well your resume works with Applicant Tracking Systems
+                  </p>
+                </div>
+                {analysis?.atsResult?.parseRate && (
+                  <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 dark:border-green-800 dark:bg-green-900/20">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <span className="text-sm font-semibold text-green-700 dark:text-green-300">
+                      {Math.round(analysis.atsResult.parseRate)}% Parsed
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-6 p-6">
+              {/* Description */}
+              <div className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                <p>
+                  Applicant Tracking Systems scan and extract information from your resume before a
+                  recruiter sees it. A high parse rate ensures your qualifications are accurately
+                  captured and matched to job requirements.
+                </p>
+              </div>
+
+              {/* Resume Preview */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Your Resume
+                  </h4>
+                  {file?.name && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <FileText className="h-3.5 w-3.5" />
+                      <span>{file.name}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Resume Preview Container */}
+                <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50">
+                  {file?.type === "application/pdf" && <PdfOnlyPreview file={file} />}
+                  {file?.type ===
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+                    <DocxPreview file={file} />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-
           {/* AI Analysis Display */}
           {aiBreakdown && (
             <ResumeAnalysisDisplay
