@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { CheckCircle, XCircle, AlertCircle, Clock, TrendingUp } from "lucide-react";
+import { CheckCircle, XCircle, AlertCircle, TrendingUp } from "lucide-react";
 
-// Types for the analysis data
 interface WorkingItem {
   title: string;
   whatsStrong: string;
