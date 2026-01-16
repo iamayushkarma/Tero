@@ -855,7 +855,18 @@
       "enabled": true,
       "bonusPerMetric": 3,
       "description": "Reward results with numbers (%, $, metrics)",
-      "patterns": ["\\d+%", "\\$\\d+", "\\d+\\+"]
+      "patterns": [
+        "\\b\\d{1,3}(?:,\\d{3})+(?:\\.\\d+)?\\b",
+        "\\b\\d+(?:\\.\\d+)?%\\b",
+        "\\b\\d{2,}\\b",
+        "(?:\\$|₹|€|£)\\s*\\d+(?:,\\d{3})*(?:\\.\\d+)?\\s*(?:k|m|b|l|cr)?\\b",
+        "\\b\\d+(?:\\.\\d+)?\\s*(?:k|m|b|l|cr)\\b",
+        "\\b\\d+\\+\\b",
+        "\\b\\d+(?:\\.\\d+)?x\\b",
+        "\\b\\d+(?:\\.\\d+)?\\s*(?:ms|s|sec|secs|minutes|min|hours|hr|hrs|days|weeks|months|years)\\b",
+        "\\b(?:users|requests|transactions|records|rows|customers|clients)\\b\\s*:\\s*\\d+(?:,\\d{3})*\\b",
+        "\\b\\d+(?:,\\d{3})*\\s*(?:users|requests|transactions|records|rows|customers|clients)\\b"
+      ]
     },
     "diverseSkillset": {
       "enabled": true,

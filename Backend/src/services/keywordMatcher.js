@@ -272,18 +272,28 @@ function detectActionVerbs(text, groups, matchingConfig) {
 }
 
 function detectQuantifiedAchievements(text, patterns) {
-  if (!patterns || patterns.length === 0) {
-    return [];
+  if (!text || !Array.isArray(patterns) || patterns.length === 0) {
+    return { count: 0, matches: [] };
   }
 
-  return patterns.filter((pattern) => {
+  const matches = [];
+
+  for (const pattern of patterns) {
     try {
-      return new RegExp(pattern).test(text);
-    } catch (error) {
-      console.warn(`Invalid quantified achievement pattern: ${pattern}`);
-      return false;
+      const regex = new RegExp(pattern, "gi");
+      const found = text.match(regex);
+      if (found && found.length) matches.push(...found);
+    } catch {
+      // ignore invalid regex
     }
-  });
+  }
+
+  const uniqueMatches = Array.from(new Set(matches.map((m) => String(m).trim()).filter(Boolean)));
+
+  return {
+    count: uniqueMatches.length,
+    matches: uniqueMatches.slice(0, 50),
+  };
 }
 
 function detectKeywordStuffing(repetitionMap, penalties) {
@@ -407,16 +417,28 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
     preparedGroups,
     keywordRules.matchingConfig,
   );
+  // ✅ Build experience-only text
+  const expSection = sectionData.sections.find((s) => s.key === "experience");
+  const experienceText = expSection?.found ? expSection.content.join(" ").toLowerCase() : "";
+
+  // ✅ Detect experience-only action verbs
+  const experienceActionVerbs = experienceText
+    ? detectActionVerbs(experienceText, preparedGroups, keywordRules.matchingConfig)
+    : { count: 0, verbs: [] };
+
+  // ✅ Detect experience-only quantified metrics
+  const quantifiedPatterns = keywordRules.bonuses?.quantifiedAchievements?.patterns || [];
+  const experienceQuantified = experienceText
+    ? detectQuantifiedAchievements(experienceText, quantifiedPatterns)
+    : { count: 0, matches: [] };
 
   // Calculate keyword density
   const keywordDensity = calculateKeywordDensity(globalMatches, tokens.length);
 
   // Detect action verbs
   const actionVerbs = detectActionVerbs(text, preparedGroups, keywordRules.matchingConfig);
-
-  // Detect quantified achievements
-  const quantifiedPatterns = keywordRules.bonuses?.quantifiedAchievements?.patterns || [];
-  const quantifiedAchievements = detectQuantifiedAchievements(text, quantifiedPatterns);
+  // const quantifiedPatterns = keywordRules.bonuses?.quantifiedAchievements?.patterns || [];
+  const quantified = detectQuantifiedAchievements(text, quantifiedPatterns);
 
   // Detect keyword stuffing
   const stuffingSignals = detectKeywordStuffing(repetitionMap, keywordRules.penalties);
@@ -430,7 +452,12 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
     sectionMatches,
     keywordDensity,
     actionVerbs,
-    quantifiedAchievements,
+    // quantifiedAchievements,
+    experienceActionVerbs,
+    experienceQuantifiedAchievements: experienceQuantified.matches,
+    experienceQuantifiedCount: experienceQuantified.count,
+    quantifiedAchievements: quantified.matches,
+    quantifiedCount: quantified.count,
     stuffingSignals,
     matchedSkills: skillsData.matchedSkills,
     totalSkills: skillsData.totalSkills,
