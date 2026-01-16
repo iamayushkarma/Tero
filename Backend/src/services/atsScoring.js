@@ -733,7 +733,10 @@ export const atsScoring = ({ sectionData, keywordData, formattingData, rulesPath
       experienceResult.score +
       skillsResult.score;
 
-    const finalScore = Math.max(SCORE_LIMITS.MIN, Math.min(SCORE_LIMITS.MAX, totalScore));
+    const finalScore = Math.max(
+      SCORE_LIMITS.MIN,
+      Math.min(SCORE_LIMITS.MAX, Math.round(totalScore)),
+    );
 
     const verdict = VerdictEngine.determineVerdict(finalScore);
     const recommendations = VerdictEngine.generateRecommendations(
