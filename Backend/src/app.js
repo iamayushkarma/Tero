@@ -115,7 +115,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Authorization", "Content-Type", "X-Resume-Token"], // Add token header
+    allowedHeaders: ["Authorization", "Content-Type"], // Add token header
   }),
 );
 

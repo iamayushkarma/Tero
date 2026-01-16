@@ -29,6 +29,6 @@ const router = Router();
 // All routes now require valid token
 router.post("/upload-text", validateToken, uploadResumeText);
 router.post("/upload-pdf", validateToken, upload.single("resume"), uploadResumeText);
-router.post("/upload-file", validateToken, upload.single("resume"), uploadResumeFile);
+router.post("/upload-file", upload.single("resume"), validateToken, uploadResumeFile);
 
 export default router;
