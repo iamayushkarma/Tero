@@ -28,7 +28,7 @@ function Footer() {
         { name: "How It Works", href: "#how-it-works" },
         { name: "ATS Score", href: "#ats-score" },
         { name: "Resume Optimization", href: "/optimize" },
-        { name: "Examples", href: "/examples" },
+        { name: "Features", href: "#tero-features" },
       ],
     },
     {

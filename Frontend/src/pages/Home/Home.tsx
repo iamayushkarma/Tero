@@ -12,7 +12,9 @@ function Home() {
       <section id="how-it-works" className="scroll-mt-12">
         <AIScoringExplanation />
       </section>
-      <Features />
+      <section id="tero-features" className="scroll-mt-12">
+        <Features />
+      </section>
       <section id="ats-score" className="scroll-mt-24">
         <StartResumeScan />
       </section>

@@ -9,6 +9,9 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfService";
 import SupportPage from "./pages/Support";
 import ResumeOptimizationPage from "./pages/ResumeOptimization";
+import ResumeTipsPage from "./pages/ResumeTips";
+import ResumeGuidePage from "./pages/Guide";
+import AboutPage from "./pages/About";
 helix.register();
 const router = createBrowserRouter([
   {
@@ -20,6 +23,9 @@ const router = createBrowserRouter([
       { path: "/terms-of-service", element: <TermsOfServicePage /> },
       { path: "/support", element: <SupportPage /> },
       { path: "/optimize", element: <ResumeOptimizationPage /> },
+      { path: "/tips", element: <ResumeTipsPage /> },
+      { path: "/guides", element: <ResumeGuidePage /> },
+      { path: "/about", element: <AboutPage /> },
     ],
   },
 ]);
