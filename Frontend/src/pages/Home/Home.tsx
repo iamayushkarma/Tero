@@ -9,10 +9,16 @@ function Home() {
     <div className="mt-16">
       <HeroSection />
       <WhyTeroStandsOut />
-      <AIScoringExplanation />
+      <section id="how-it-works" className="scroll-mt-12">
+        <AIScoringExplanation />
+      </section>
       <Features />
-      <StartResumeScan />
-      <FAQSection />
+      <section id="ats-score" className="scroll-mt-24">
+        <StartResumeScan />
+      </section>
+      <section id="faq" className="scroll-mt-24">
+        <FAQSection />
+      </section>
     </div>
   );
 }
