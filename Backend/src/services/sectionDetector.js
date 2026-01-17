@@ -1,116 +1,3 @@
-// import fs from "fs";
-// import path from "path";
-// import { fileURLToPath } from "url";
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// const sectionRules = JSON.parse(
-//   fs.readFileSync(path.join(__dirname, "../rules/section.rules.json"), "utf-8"),
-// );
-
-// export const sectionDetector = ({ lines }) => {
-//   if (!Array.isArray(lines)) {
-//     throw new Error("sectionDetector: lines must be an array");
-//   }
-
-//   // 1. Prepare Section Configs
-//   const sectionConfigs = sectionRules.sections.map((section) => ({
-//     key: section.key,
-//     displayName: section.displayName,
-//     required: section.required,
-//     importance: section.importance,
-//     headingSet: new Set(section.headings.map((h) => h.toLowerCase().trim())),
-//   }));
-//   // 2. Normalize Heading
-//   const normalizeHeading = (line) => {
-//     return line
-//       .toLowerCase()
-//       .trim()
-//       .replace(/[:\-–—_•*]/g, "")
-//       .replace(/\s+/g, " ")
-//       .trim();
-//   };
-
-//   // 3. Match Section Heading
-//   const matchSectionHeading = (line) => {
-//     const normalized = normalizeHeading(line);
-//     if (!normalized) return null;
-
-//     for (const section of sectionConfigs) {
-//       if (section.headingSet.has(normalized)) {
-//         return section.key;
-//       }
-//     }
-//     // example
-//     // matchSectionHeading("EXPERIENCE"); → "experience"
-//     // matchSectionHeading("Work Experience:"); → "experience"
-//     // matchSectionHeading("Employment History"); → "experience"
-//     // matchSectionHeading("EDUCATION")  → "education"
-//     // matchSectionHeading("Random Text"); → null
-//     // matchSectionHeading("Software Engineer"); → null
-
-//     return null;
-//   };
-
-//   // 4. Detection State
-//   const sectionContentMap = {};
-//   const sectionOrder = [];
-//   let currentSectionKey = null;
-
-//   // 5. Line by Line Detection
-//   for (const line of lines) {
-//     const trimmedLine = line.trim();
-//     if (!trimmedLine) continue;
-
-//     const matchedKey = matchSectionHeading(line);
-
-//     if (matchedKey) {
-//       // New section detected
-//       if (!sectionContentMap[matchedKey]) {
-//         sectionContentMap[matchedKey] = [];
-//         sectionOrder.push(matchedKey);
-//       }
-//       currentSectionKey = matchedKey;
-//     } else if (currentSectionKey) {
-//       // Add content to current section
-//       sectionContentMap[currentSectionKey].push(line);
-//     }
-//   }
-
-//   // 6. Build Section Objects
-//   const sections = sectionConfigs.map((config) => {
-//     const content = sectionContentMap[config.key] || [];
-
-//     return {
-//       key: config.key,
-//       displayName: config.displayName,
-//       required: config.required,
-//       importance: config.importance,
-//       found: content.length > 0,
-//       content,
-//     };
-//   });
-
-//   // 7. Identify Missing Required Sections
-//   const detectedSections = sectionOrder;
-//   const missingRequiredSections = sectionConfigs
-//     .filter((config) => config.required && !sectionContentMap[config.key])
-//     .map((config) => config.key);
-
-//   // 8. Return Detection Results
-//   return {
-//     sections,
-//     detectedSections,
-//     missingRequiredSections,
-//     sectionOrder,
-//     meta: {
-//       rulesVersion: sectionRules.meta?.version || "unknown",
-//       targetAudience: sectionRules.meta?.targetAudience || "general",
-//     },
-//   };
-// };
-
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -119,14 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * Cache for loaded section rules to avoid repeated file reads
- */
 let cachedSectionRules = null;
-
-/**
- * Configuration for heading normalization
- */
 const NORMALIZATION_CONFIG = {
   // Characters to remove during normalization
   charactersToRemove: /[:\-–—_•*#()\d]/g,
@@ -365,17 +245,6 @@ function matchSectionHeading(line, sectionConfigs) {
 
   return null;
 }
-
-/**
- * Determines if the current section should be stopped based on content analysis
- * @param {string} sectionKey - Current section key
- * @param {string[]} sectionContent - Current section content
- * @param {string} currentLine - Current line being processed
- * @param {number} lineIndex - Current line index
- * @param {number} sectionStartLine - Line where section started
- * @param {number} linesSinceLastHeading - Lines since last heading
- * @returns {boolean} True if section should be stopped
- */
 function shouldStopCurrentSection(
   sectionKey,
   sectionContent,
@@ -418,11 +287,6 @@ function shouldStopCurrentSection(
   return false;
 }
 
-/**
- * Checks if a group of lines has strong contact information indicators
- * @param {string[]} lines - Lines to check
- * @returns {boolean} True if lines show strong contact indicators
- */
 function hasStrongContactIndicators(lines) {
   let contactScore = 0;
   const contactText = lines.join(" ").toLowerCase();
@@ -766,16 +630,10 @@ export const sectionDetector = ({ lines, rulesPath }) => {
   };
 };
 
-/**
- * Clears the cached section rules (useful for testing or rule updates)
- */
 export function clearRulesCache() {
   cachedSectionRules = null;
 }
 
-/**
- * Export helper functions for testing purposes
- */
 export const testHelpers = {
   loadSectionRules,
   validateInput,

@@ -417,16 +417,16 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
     preparedGroups,
     keywordRules.matchingConfig,
   );
-  // ✅ Build experience-only text
+  //  Build experience-only text
   const expSection = sectionData.sections.find((s) => s.key === "experience");
   const experienceText = expSection?.found ? expSection.content.join(" ").toLowerCase() : "";
 
-  // ✅ Detect experience-only action verbs
+  //  Detect experience-only action verbs
   const experienceActionVerbs = experienceText
     ? detectActionVerbs(experienceText, preparedGroups, keywordRules.matchingConfig)
     : { count: 0, verbs: [] };
 
-  // ✅ Detect experience-only quantified metrics
+  //  Detect experience-only quantified metrics
   const quantifiedPatterns = keywordRules.bonuses?.quantifiedAchievements?.patterns || [];
   const experienceQuantified = experienceText
     ? detectQuantifiedAchievements(experienceText, quantifiedPatterns)
@@ -452,7 +452,6 @@ export const keywordMatcher = ({ parsedResume, sectionData, rulesPath }) => {
     sectionMatches,
     keywordDensity,
     actionVerbs,
-    // quantifiedAchievements,
     experienceActionVerbs,
     experienceQuantifiedAchievements: experienceQuantified.matches,
     experienceQuantifiedCount: experienceQuantified.count,

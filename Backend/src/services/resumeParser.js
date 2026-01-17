@@ -27,24 +27,9 @@ export const resumeParser = ({ text, source }) => {
   let cleanText = sanitizedText
     .replace(/[ ]{2,}/g, " ") // collapse multiple spaces "Software    Engineer"  // 4 spaces -> "Software Engineer"     // 1 space
     .replace(/\n{3,}/g, "\n\n") // max 1 blank line
-    // Before:
-    //"Experience
 
-    //Work History"  // 3 blank lines
-
-    // After:
-    //"Experience
-
-    //Work History"  // 1 blank line (2 newlines)
     .replace(/[ \t]+$/gm, "")
     .trim(); // remove trailing spaces
-  // Before:
-  // ("Software Engineer    \n"); // spaces at end
-  // ("Python Developer\t\t\n"); // tabs at end
-
-  // After:
-  // ("Software Engineer\n");
-  // "Python Developer\n".trim(); // trim document edges
 
   //- 6. Insert line breaks before potential headings
   // Potential section headings to insert line breaks before
