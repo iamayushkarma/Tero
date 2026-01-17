@@ -127,7 +127,10 @@ function Footer() {
           >
             Privacy Policy{" "}
           </button>
-          <button className="hover:text-gray-12 hover:dark:text-bg-gray-2">
+          <button
+            onClick={() => navigate("/terms-of-service")}
+            className="hover:text-gray-12 hover:dark:text-bg-gray-2"
+          >
             Terms of Service{" "}
           </button>
         </div>

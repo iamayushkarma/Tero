@@ -6,6 +6,7 @@ import { ResumeAnalysisProvider } from "./context/ResumeAnalysisContext";
 import ResumeAnalysisResult from "./components/modules/ResumeAnalysisResult";
 import { helix } from "ldrs";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfService";
 
 helix.register();
 const router = createBrowserRouter([
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/resume-analysis", element: <ResumeAnalysisResult /> },
       { path: "/privacy", element: <PrivacyPolicyPage /> },
+      { path: "/terms-of-service", element: <TermsOfServicePage /> },
     ],
   },
 ]);
