@@ -5,6 +5,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { ResumeAnalysisProvider } from "./context/ResumeAnalysisContext";
 import ResumeAnalysisResult from "./components/modules/ResumeAnalysisResult";
 import { helix } from "ldrs";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
 helix.register();
 const router = createBrowserRouter([
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/resume-analysis", element: <ResumeAnalysisResult /> },
+      { path: "/privacy", element: <PrivacyPolicyPage /> },
     ],
   },
 ]);

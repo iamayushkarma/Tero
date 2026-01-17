@@ -3,9 +3,15 @@ import { Link } from "react-router-dom";
 import { useTheme } from "../../../hooks/useThemeContext";
 import TeroLogo from "../../../assets/logos/Tero-icon.png";
 import TeroLogoDark from "../../../assets/logos/Tero-dark.png";
+import { useNavigate } from "react-router-dom";
 
 function Footer() {
   const { theme } = useTheme();
+  const navigate = useNavigate();
+
+  const navigateTOp = () => {
+    navigate("");
+  };
 
   const footerLinks = [
     {
@@ -115,8 +121,15 @@ function Footer() {
           </p>
         </div>
         <div className="mt-4 flex gap-3 text-sm underline max-sm:flex-col md:gap-6">
-          <span className="hover:text-gray-12 hover:dark:text-bg-gray-2">Privacy Policy </span>
-          <span className="hover:text-gray-12 hover:dark:text-bg-gray-2">Terms of Service </span>
+          <button
+            onClick={() => navigate("/privacy")}
+            className="hover:text-gray-12 hover:dark:text-bg-gray-2"
+          >
+            Privacy Policy{" "}
+          </button>
+          <button className="hover:text-gray-12 hover:dark:text-bg-gray-2">
+            Terms of Service{" "}
+          </button>
         </div>
       </div>
     </div>
