@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckCircle, XCircle, AlertCircle, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 interface WorkingItem {
   title: string;
@@ -40,6 +41,48 @@ interface ResumeAnalysisDisplayProps {
   data: AnalysisData;
 }
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const tabContentVariants: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.2,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: {
+      duration: 0.15,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
 const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
   const [activeTab, setActiveTab] = useState<"strengths" | "weaknesses" | "improvements">(
     "strengths",
@@ -62,24 +105,51 @@ const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-3 p-2 sm:space-y-4 sm:p-4 md:space-y-6 md:p-6">
       {/* Final Verdict Section */}
-      <div className="bg-bg-gray-2 dark:bg-dark-bg-gray-2 border-gray-6 dark:border-dark-gray-6 rounded-lg border p-3 shadow-sm sm:rounded-xl sm:p-5 md:p-6">
+      <motion.div
+        className="bg-bg-gray-2 dark:bg-dark-bg-gray-2 border-gray-6 dark:border-dark-gray-6 rounded-lg border p-3 shadow-sm sm:rounded-xl sm:p-5 md:p-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <div className="flex items-start gap-2 sm:gap-3">
-          <AlertCircle className="text-primary dark:text-primary mt-0.5 h-5 w-5 shrink-0 sm:mt-1 sm:h-6 sm:w-6" />
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <AlertCircle className="text-primary dark:text-primary mt-0.5 h-5 w-5 shrink-0 sm:mt-1 sm:h-6 sm:w-6" />
+          </motion.div>
           <div>
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-1.5 text-lg font-semibold sm:mb-2 sm:text-lg md:mb-3 md:text-xl">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-1.5 text-lg font-semibold sm:mb-2 sm:text-lg md:mb-3 md:text-xl"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+            >
               Overall Assessment
-            </h2>
-            <p className="text-gray-11 dark:text-dark-gray-11 text-base leading-relaxed sm:text-base">
+            </motion.h2>
+            <motion.p
+              className="text-gray-11 dark:text-dark-gray-11 text-base leading-relaxed sm:text-base"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
+            >
               {data.finalVerdict}
-            </p>
+            </motion.p>
           </div>
         </div>
-      </div>
+      </motion.div>
+
       {/* Tabs */}
-      <div className="bg-bg-gray-2 dark:bg-dark-bg-gray-2 border-gray-6 dark:border-dark-gray-6 overflow-hidden rounded-lg border shadow-sm sm:rounded-xl">
+      <motion.div
+        className="bg-bg-gray-2 dark:bg-dark-bg-gray-2 border-gray-6 dark:border-dark-gray-6 overflow-hidden rounded-lg border shadow-sm sm:rounded-xl"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <div className="border-gray-6 dark:border-dark-gray-6 border-b">
           <div className="grid grid-cols-3">
-            <button
+            <motion.button
               onClick={() => setActiveTab("strengths")}
               className={`px-2 py-2.5 text-xs font-semibold transition-colors sm:px-4 sm:py-3 sm:text-sm md:px-6 md:py-4 md:text-base ${
                 activeTab === "strengths"
@@ -93,8 +163,9 @@ const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
                 <span className="hidden sm:inline">Strengths</span>
                 <span className="xs:text-xs text-[10px] sm:text-sm">({data.working.length})</span>
               </div>
-            </button>
-            <button
+            </motion.button>
+
+            <motion.button
               onClick={() => setActiveTab("weaknesses")}
               className={`px-2 py-2.5 text-xs font-semibold transition-colors sm:px-4 sm:py-3 sm:text-sm md:px-6 md:py-4 md:text-base ${
                 activeTab === "weaknesses"
@@ -108,8 +179,9 @@ const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
                 <span className="hidden sm:inline">Weaknesses</span>
                 <span className="xs:text-xs text-[10px] sm:text-sm">({data.hurting.length})</span>
               </div>
-            </button>
-            <button
+            </motion.button>
+
+            <motion.button
               onClick={() => setActiveTab("improvements")}
               className={`px-2 py-2.5 text-xs font-semibold transition-colors sm:px-4 sm:py-3 sm:text-sm md:px-6 md:py-4 md:text-base ${
                 activeTab === "improvements"
@@ -123,25 +195,32 @@ const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
                 <span className="hidden sm:inline">Action Plan</span>
                 <span className="xs:text-xs text-[10px] sm:text-sm">({data.fixPlan.length})</span>
               </div>
-            </button>
+            </motion.button>
           </div>
         </div>
+
         <div className="p-3 sm:p-4 md:p-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
+              variants={tabContentVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
               {/* Strengths Tab */}
               {activeTab === "strengths" && (
-                <div className="space-y-3 sm:space-y-4 md:space-y-6">
+                <motion.div
+                  className="space-y-3 sm:space-y-4 md:space-y-6"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
                   {data.working.map((item, index) => (
-                    <div
+                    <motion.div
                       key={index}
                       className="bg-bg-gray-1 dark:bg-dark-bg-gray-1 border-gray-6 dark:border-dark-gray-6 rounded-lg border p-3 sm:p-4 md:p-6"
+                      variants={cardVariants}
                     >
                       <div className="mb-2 flex items-start gap-2 sm:mb-3 sm:gap-3">
                         <CheckCircle className="text-success-text dark:text-success-text/70 mt-0.5 h-4 w-4 shrink-0 sm:mt-1 sm:h-5 sm:w-5 md:h-6 md:w-6" />
@@ -175,18 +254,24 @@ const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
 
               {/* Weaknesses Tab */}
               {activeTab === "weaknesses" && (
-                <div className="space-y-3 sm:space-y-4 md:space-y-6">
+                <motion.div
+                  className="space-y-3 sm:space-y-4 md:space-y-6"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
                   {data.hurting.map((item, index) => (
-                    <div
+                    <motion.div
                       key={index}
                       className="bg-bg-gray-1 dark:bg-dark-bg-gray-1 border-gray-6 dark:border-dark-gray-6 rounded-lg border p-3 sm:p-4 md:p-6"
+                      variants={cardVariants}
                     >
                       <div className="mb-2 flex items-start gap-2 sm:mb-3 sm:gap-3">
                         <XCircle className="text-error dark:text-error/70 mt-0.5 h-4 w-4 shrink-0 sm:mt-1 sm:h-5 sm:w-5 md:h-6 md:w-6" />
@@ -235,23 +320,33 @@ const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
 
               {/* Improvements Tab */}
               {activeTab === "improvements" && (
-                <div className="space-y-3 sm:space-y-4 md:space-y-6">
+                <motion.div
+                  className="space-y-3 sm:space-y-4 md:space-y-6"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
                   {data.fixPlan.map((item, index) => (
-                    <div
+                    <motion.div
                       key={index}
                       className="bg-bg-gray-1 dark:bg-dark-bg-gray-1 border-gray-6 dark:border-dark-gray-6 rounded-lg border p-3 sm:p-4 md:p-6"
+                      variants={cardVariants}
                     >
                       <div className="mb-2 flex items-start gap-2 sm:mb-3 sm:gap-3">
-                        <div className="bg-primary dark:bg-primary/80 text-bg-gray-1 dark:text-dark-gray-12 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold sm:h-7 sm:w-7 sm:text-sm md:h-8 md:w-8 md:text-base">
+                        <motion.div
+                          className="bg-primary dark:bg-primary/80 text-bg-gray-1 dark:text-dark-gray-12 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold sm:h-7 sm:w-7 sm:text-sm md:h-8 md:w-8 md:text-base"
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          transition={{ duration: 0.2 }}
+                        >
                           {item.priority}
-                        </div>
+                        </motion.div>
                         <div className="flex-1">
                           <h3 className="text-gray-12 dark:text-dark-gray-12 mb-1.5 text-base font-semibold sm:mb-2 sm:text-base md:text-lg">
                             {item.action}
@@ -301,14 +396,14 @@ const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </motion.div>
           </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
