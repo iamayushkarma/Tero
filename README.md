@@ -91,7 +91,7 @@ Tero is an AI-powered ATS resume scoring system that goes beyond simple score ca
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/tero.git
+git clone https://github.com/iamayushkarma/Tero
 cd tero
 ```
 
@@ -118,15 +118,14 @@ Create `.env` files in both Frontend and Backend directories:
 
 ```env
 PORT=5000
-LLM_API_KEY=your_llm_api_key
-LLM_API_URL=your_llm_api_endpoint
-NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173,http://192.168.x.x:5173
+GROQ_API_KEY=your_llm_api_key
 ```
 
 **Frontend `.env`:**
 
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_BACKEND_API_PORT=5000
 ```
 
 4. **Run the application**
@@ -411,8 +410,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Ayush Karma**
 
-- GitHub: [@ayushkarma](https://github.com/ayushkarma) <!-- Update with your actual GitHub -->
-- LinkedIn: [Ayush Karma](https://linkedin.com/in/ayushkarma) <!-- Update with your actual LinkedIn -->
+- GitHub: [@iamayushkarma](https://github.com/iamayushkarma)
+- LinkedIn: [Ayush Karma](https://www.linkedin.com/in/iamayushkarma/)
 
 ## 🙏 Acknowledgments
 
@@ -425,8 +424,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you have any questions or need help, please:
 
 - Open an issue on GitHub
-- Contact via email: support@tero.com <!-- Update with actual email -->
-- Check out our [documentation](#) <!-- Add docs link when available -->
+- Contact via email: ayushkarma.dev@gmail.com
 
 ## 🗺️ Roadmap
 
@@ -441,5 +439,3 @@ If you have any questions or need help, please:
 ---
 
 **Made with ❤️ by Ayush Karma**
-
-_Helping job seekers land their dream jobs, one resume at a time._
