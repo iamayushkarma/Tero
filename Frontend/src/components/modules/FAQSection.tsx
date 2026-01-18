@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 interface AccordionItemProp {
   question: string;
   answer: string;
   isOpen: boolean;
   onToggle: () => void;
+  index: number;
 }
+
 export const faqContent = [
   {
     question: "What happens after I upload my resume?",
     answer:
-      "Once uploaded, your resume is analyzed automatically to check formatting, keywords, section structure, and overall compatibility with screening systems. You’ll receive a clear score along with specific insights on what needs improvement.",
+      "Once uploaded, your resume is analyzed automatically to check formatting, keywords, section structure, and overall compatibility with screening systems. You'll receive a clear score along with specific insights on what needs improvement.",
   },
   {
     question: "How long does the resume analysis take?",
@@ -60,31 +64,86 @@ export const faqContent = [
   },
 ];
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const headingVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
 function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
     <div className="mt-50 mb-30 select-none">
       <div className="mx-auto md:w-3/4">
-        <div>
-          <h2 className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.2rem] font-semibold md:w-1/2 lg:text-4xl">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+        >
+          <motion.h2
+            className="text-gray-12 dark:text-gray-3 mx-auto mt-8 text-center text-[1.2rem] font-semibold md:w-1/2 lg:text-4xl"
+            variants={headingVariants}
+          >
             Frequently Asked Questions
-          </h2>
-          <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-[.9rem]">
+          </motion.h2>
+          <motion.p
+            className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-[.9rem]"
+            variants={headingVariants}
+          >
             Quick answers to common questions about uploading, scanning, and improving your resume.
-          </p>
-        </div>
-        <div className="mx-auto mt-12 w-11/12 md:w-[60%]">
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          className="mx-auto mt-12 w-11/12 md:w-[60%]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={containerVariants}
+        >
           {faqContent.map((content, index) => {
             return (
               <AccordionItem
                 onToggle={() => setOpenIndex(openIndex === index ? null : index)}
                 isOpen={openIndex === index}
                 key={index}
+                index={index}
                 {...content}
               />
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -92,27 +151,75 @@ function FAQSection() {
 
 export default FAQSection;
 
-const AccordionItem = ({ question, answer, isOpen, onToggle }: AccordionItemProp) => {
+const AccordionItem = ({ question, answer, isOpen, onToggle, index }: AccordionItemProp) => {
   return (
-    <div
+    <motion.div
       onClick={onToggle}
-      className="border-b-gray-7 dark:border-b-gray-12 hover:bg-gray-3 hover:dark:bg-gray-12/50 w-full border-b p-3 md:py-6"
+      className="border-b-gray-7 dark:border-b-gray-12 hover:bg-gray-3 hover:dark:bg-gray-12/50 w-full cursor-pointer border-b p-3 md:py-6"
+      variants={itemVariants}
+      whileHover={{
+        x: 2,
+        transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
+      }}
     >
       {/* question */}
       <div className="flex items-center justify-between">
         <h3 className="text-gray-12 dark:text-gray-3 font-medium md:text-[1.09rem]">{question}</h3>
-        <button>
-          <ChevronDown
-            className={`text-gray-12 dark:text-gray-3 h-5 w-5 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          />
-        </button>
+        <motion.button
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <ChevronDown className="text-gray-12 dark:text-gray-3 h-5 w-5" />
+        </motion.button>
       </div>
+
       {/* answer */}
-      {isOpen && (
-        <div className="text-gray-11 dark:text-gray-9 mt-2 text-[.9rem] md:text-[.9rem]">
-          {answer}
-        </div>
-      )}
-    </div>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{
+              height: "auto",
+              opacity: 1,
+              transition: {
+                height: {
+                  duration: 0.3,
+                  ease: [0.22, 1, 0.36, 1],
+                },
+                opacity: {
+                  duration: 0.25,
+                  delay: 0.1,
+                  ease: "easeOut",
+                },
+              },
+            }}
+            exit={{
+              height: 0,
+              opacity: 0,
+              transition: {
+                height: {
+                  duration: 0.3,
+                  ease: [0.22, 1, 0.36, 1],
+                },
+                opacity: {
+                  duration: 0.2,
+                  ease: "easeIn",
+                },
+              },
+            }}
+            style={{ overflow: "hidden" }}
+          >
+            <motion.div
+              className="text-gray-11 dark:text-gray-9 mt-2 text-[.9rem] md:text-[.9rem]"
+              initial={{ y: -10 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {answer}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
