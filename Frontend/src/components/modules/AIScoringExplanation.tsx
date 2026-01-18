@@ -1,3 +1,6 @@
+import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
+
 interface ExplanationCardProp {
   className?: string;
   imgSrc: string;
@@ -37,33 +40,92 @@ const explanationCardContent = [
       "Our AI combines all evaluation factors into a single ATS score that shows how likely your resume is to pass screening, along with clear suggestions for improvement.",
   },
 ];
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const headingVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
 function AIScoringExplanation() {
   return (
     <div className="mt-20 flex items-center justify-center pb-20">
       <div className="w-[95%]">
         {/* Heading */}
-        <div className="mx-auto mt-20 flex flex-col items-center justify-center text-center">
-          <h2 className="text-gray-12 dark:text-bg-gray-1 text-lg font-semibold max-sm:w-3/4 md:text-3xl lg:text-4xl">
+        <motion.div
+          className="mx-auto mt-20 flex flex-col items-center justify-center text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+        >
+          <motion.h2
+            className="text-gray-12 dark:text-bg-gray-1 text-lg font-semibold max-sm:w-3/4 md:text-3xl lg:text-4xl"
+            variants={headingVariants}
+          >
             How Our AI Analyzes Your Resume for ATS Compatibility
-          </h2>
-          <p className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-[1.1rem]">
+          </motion.h2>
+          <motion.p
+            variants={headingVariants}
+            className="text-gray-11 dark:text-gray-9 mx-auto mt-4 text-center text-[.9rem] md:w-[40%] lg:text-[1.1rem]"
+          >
             Understand how Tero evaluates your resume to improve its chances of passing automated
             screening systems.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
         <div className="mx-auto mt-20 w-11/12 md:w-3/4">
           {/* Grid layout */}
-          <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <motion.div
+            className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={containerVariants}
+          >
             {explanationCardContent.slice(0, 2).map((card, index) => {
               return <ExplanationCard key={index} {...card} />;
             })}
-          </div>
+          </motion.div>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={containerVariants}
+            className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3"
+          >
             {explanationCardContent.slice(2, 5).map((card, index) => (
               <ExplanationCard key={index} {...card} />
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
@@ -74,12 +136,27 @@ export default AIScoringExplanation;
 
 const ExplanationCard = ({ className, imgSrc, heading, subHeading }: ExplanationCardProp) => {
   return (
-    <div
+    <motion.div
       className={` ${className} bg-bg-gray-1 dark:bg-gray-12/10 border-gray-5 dark:border-gray-12 hover:bg-gray-3/60 dark:hover:bg-gray-12/40 rounded-xl border-2 p-4 md:p-6`}
+      variants={cardVariants}
+      whileHover={{
+        y: -6,
+        transition: {
+          duration: 0.3,
+          ease: [0.22, 1, 0.36, 1],
+        },
+      }}
+      style={{
+        transformStyle: "preserve-3d",
+      }}
     >
-      <div className="flex items-center justify-center p-2 py-10">
+      <motion.div
+        whileHover={{ scale: 1.03 }}
+        transition={{ duration: 0.3 }}
+        className="flex items-center justify-center p-2 py-10"
+      >
         <img className="size-40 md:size-58" src={imgSrc} />
-      </div>
+      </motion.div>
       <div>
         <div className="relative mb-3 dark:hidden">
           <div className="bg-bg-gray-1 dark:bg-gray-12 absolute bottom-5 mx-auto h-15 w-full opacity-70 blur-2xl md:h-25" />
@@ -91,6 +168,6 @@ const ExplanationCard = ({ className, imgSrc, heading, subHeading }: Explanation
           {subHeading}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 };
