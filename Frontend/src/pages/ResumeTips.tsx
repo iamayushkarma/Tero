@@ -1,8 +1,58 @@
 import { useLayoutEffect } from "react";
+import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { CheckCircle2, Lightbulb, Target, Award, BookOpen, Users } from "lucide-react";
 
 type ResumeTipsProps = {
   className?: string;
+};
+
+// Subtle, professional animation variants
+const fadeIn: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const slideIn: Variants = {
+  hidden: { opacity: 0, x: -15 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const scaleOnHover = {
+  scale: 1.01,
+  transition: { duration: 0.2 },
+};
+
+const cardHover = {
+  y: -4,
+  transition: { duration: 0.2 },
 };
 
 export default function ResumeTipsPage({ className = "" }: ResumeTipsProps) {
@@ -189,18 +239,34 @@ export default function ResumeTipsPage({ className = "" }: ResumeTipsProps) {
 
   return (
     <>
-      <div className="relative mt-15 flex h-60 flex-col items-center justify-center p-10 md:h-75">
+      <motion.div
+        className="relative mt-15 flex h-60 flex-col items-center justify-center p-10 md:h-75"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="from-blue-3/50 dark:from-dark-blue-3/50 pointer-events-none absolute inset-0 overflow-hidden bg-gradient-to-b to-transparent"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center text-center">
-          <h1 className="text-gray-12 dark:text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
+        <motion.div
+          className="relative z-10 flex flex-col items-center justify-center text-center"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.h1
+            className="text-gray-12 dark:text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl"
+            variants={fadeInUp}
+          >
             Expert Resume Tips
-          </h1>
-          <p className="text-gray-11 dark:text-dark-gray-11 mt-2 max-w-2xl text-center text-sm">
+          </motion.h1>
+          <motion.p
+            className="text-gray-11 dark:text-dark-gray-11 mt-2 max-w-2xl text-center text-sm"
+            variants={fadeInUp}
+          >
             Professional insights and best practices to create a resume that stands out and gets
             results
-          </p>
-        </div>
-      </div>
+          </motion.p>
+        </motion.div>
+      </motion.div>
 
       <div
         className={[
@@ -212,7 +278,13 @@ export default function ResumeTipsPage({ className = "" }: ResumeTipsProps) {
       >
         <div className="mx-auto w-full max-w-6xl">
           {/* CTA Box */}
-          <div className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-12 rounded-xl border p-6">
+          <motion.div
+            className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-12 rounded-xl border p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={scaleOnHover}
+          >
             <div className="flex flex-col items-center gap-4 text-center md:flex-row md:text-left">
               <div className="flex-1">
                 <h2 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-xl font-semibold">
@@ -223,62 +295,107 @@ export default function ResumeTipsPage({ className = "" }: ResumeTipsProps) {
                   target job.
                 </p>
               </div>
-              <a
+              <motion.a
                 href="/"
                 className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-3 font-medium whitespace-nowrap text-white transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
               >
                 Analyze My Resume
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Core Categories */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
               Essential Resume Writing Tips
-            </h2>
-            <div className="grid gap-6 md:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-6 md:grid-cols-3"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {tipCategories.map((category, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6"
+                  variants={fadeInUp}
+                  whileHover={cardHover}
                 >
-                  <div className="text-primary mb-4">{category.icon}</div>
+                  <motion.div
+                    className="text-primary mb-4"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {category.icon}
+                  </motion.div>
                   <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-lg font-semibold">
                     {category.title}
                   </h3>
                   <p className="text-gray-11 dark:text-dark-gray-11 mb-4 text-sm">
                     {category.description}
                   </p>
-                  <ul className="space-y-2">
+                  <motion.ul
+                    className="space-y-2"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
                     {category.tips.map((tip, tipIndex) => (
-                      <li
+                      <motion.li
                         key={tipIndex}
                         className="text-gray-11 dark:text-dark-gray-11 flex gap-2 text-sm"
+                        variants={slideIn}
                       >
                         <CheckCircle2 className="text-success-text mt-0.5 size-4 flex-shrink-0" />
                         <span>{tip}</span>
-                      </li>
+                      </motion.li>
                     ))}
-                  </ul>
-                </div>
+                  </motion.ul>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Expert Tips */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
               Expert Tips from Career Professionals
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {expertTips.map((item, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-lg border p-5"
+                  variants={fadeInUp}
+                  whileHover={cardHover}
                 >
                   <div className="mb-3 flex items-start gap-3">
-                    {item.icon}
+                    <motion.div whileHover={{ rotate: 15 }} transition={{ duration: 0.2 }}>
+                      {item.icon}
+                    </motion.div>
                     <div>
                       <span className="text-primary mb-1 block text-xs font-semibold uppercase">
                         {item.category}
@@ -289,102 +406,197 @@ export default function ResumeTipsPage({ className = "" }: ResumeTipsProps) {
                     </div>
                   </div>
                   <p className="text-gray-11 dark:text-dark-gray-11 text-sm">{item.explanation}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Section Guidelines */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
               Resume Section Guidelines
-            </h2>
-            <div className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6">
-              <div className="grid gap-6 md:grid-cols-2">
+            </motion.h2>
+            <motion.div
+              className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6"
+              initial={{ opacity: 0, scale: 0.98 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
+              <motion.div
+                className="grid gap-6 md:grid-cols-2"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
                 {sectionGuidelines.map((section, index) => (
-                  <div
+                  <motion.div
                     key={index}
                     className="border-gray-6 dark:border-dark-gray-6 rounded-lg border p-5"
+                    variants={fadeIn}
+                    whileHover={{
+                      scale: 1.02,
+                      transition: { duration: 0.2 },
+                    }}
                   >
                     <h3 className="text-gray-12 dark:text-dark-gray-12 mb-3 text-lg font-semibold">
                       {section.section}
                     </h3>
-                    <ul className="space-y-2">
+                    <motion.ul
+                      className="space-y-2"
+                      variants={staggerContainer}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                    >
                       {section.guidelines.map((guideline, gIndex) => (
-                        <li
+                        <motion.li
                           key={gIndex}
                           className="text-gray-11 dark:text-dark-gray-11 flex gap-2 text-sm"
+                          variants={slideIn}
                         >
                           <CheckCircle2 className="text-success-text mt-0.5 size-4 flex-shrink-0" />
                           <span>{guideline}</span>
-                        </li>
+                        </motion.li>
                       ))}
-                    </ul>
-                  </div>
+                    </motion.ul>
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </section>
 
           {/* Industry-Specific Tips */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
               Industry-Specific Advice
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {industrySpecificTips.map((item, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-lg border p-5"
+                  variants={fadeInUp}
+                  whileHover={cardHover}
                 >
                   <div className="mb-3 flex items-center gap-2">
-                    <Users className="text-primary size-5" />
+                    <motion.div whileHover={{ scale: 1.2 }} transition={{ duration: 0.2 }}>
+                      <Users className="text-primary size-5" />
+                    </motion.div>
                     <h3 className="text-gray-12 dark:text-dark-gray-12 font-semibold">
                       {item.industry}
                     </h3>
                   </div>
                   <p className="text-gray-11 dark:text-dark-gray-11 text-sm">{item.tips}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* FAQ Section */}
           <section className="mb-12">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
               Frequently Asked Questions
-            </h2>
-            <div className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 space-y-4 rounded-xl border p-6">
-              {commonQuestions.map((item, index) => (
-                <div
-                  key={index}
-                  className="border-gray-6 dark:border-dark-gray-6 rounded-lg border p-4"
-                >
-                  <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2 font-semibold">
-                    {item.question}
-                  </h3>
-                  <p className="text-gray-11 dark:text-dark-gray-11 text-sm">{item.answer}</p>
-                </div>
-              ))}
-            </div>
+            </motion.h2>
+            <motion.div
+              className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 space-y-4 rounded-xl border p-6"
+              initial={{ opacity: 0, scale: 0.98 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                {commonQuestions.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    className="border-gray-6 dark:border-dark-gray-6 rounded-lg border p-4"
+                    variants={fadeIn}
+                    whileHover={{
+                      x: 4,
+                      transition: { duration: 0.2 },
+                    }}
+                  >
+                    <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2 font-semibold">
+                      {item.question}
+                    </h3>
+                    <p className="text-gray-11 dark:text-dark-gray-11 text-sm">{item.answer}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
           </section>
 
           {/* Final CTA */}
-          <div className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border p-8 text-center">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-3 text-2xl font-semibold">
+          <motion.div
+            className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border p-8 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            whileHover={scaleOnHover}
+          >
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-3 text-2xl font-semibold"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
               Ready to Create Your Perfect Resume?
-            </h2>
-            <p className="text-gray-11 dark:text-dark-gray-11 mb-6 text-sm">
+            </motion.h2>
+            <motion.p
+              className="text-gray-11 dark:text-dark-gray-11 mb-6 text-sm"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
               Use Tero to apply these tips and get instant feedback on how your resume measures up
               against real job requirements.
-            </p>
-            <a
+            </motion.p>
+            <motion.a
               href="/"
               className="bg-primary hover:bg-primary-hover inline-block rounded-lg px-8 py-3 font-semibold text-white transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.4 }}
             >
               Get Started with Tero
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
         </div>
       </div>
     </>

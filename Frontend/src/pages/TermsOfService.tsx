@@ -1,8 +1,49 @@
 import { useLayoutEffect } from "react";
+import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import "../components/modules/Modules.css";
 
 type TermsOfServiceProps = {
   className?: string;
+};
+
+// Animation variants
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
 };
 
 export default function TermsOfServicePage({ className = "" }: TermsOfServiceProps) {
@@ -296,12 +337,14 @@ export default function TermsOfServicePage({ className = "" }: TermsOfServicePro
       content: (
         <>
           For questions about these Terms of Service, please contact us at:{" "}
-          <a
+          <motion.a
             href="mailto:ayushkarma.dev@gmail.com"
             className="text-blue-11 hover:text-blue-12 dark:text-dark-blue-11 dark:hover:text-dark-blue-12 font-medium"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2 }}
           >
             ayushkarma.dev@gmail.com
-          </a>
+          </motion.a>
           <p className="mt-3">
             For technical support or general inquiries, you may also reach out to the same email
             address.
@@ -313,17 +356,31 @@ export default function TermsOfServicePage({ className = "" }: TermsOfServicePro
 
   return (
     <>
-      <div className="relative mt-18 flex h-60 flex-col items-center justify-center p-10 md:h-75">
+      <motion.div
+        className="relative mt-18 flex h-60 flex-col items-center justify-center p-10 md:h-75"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7 }}
+      >
         <div className="StartResumeScan pointer-events-none absolute inset-0 overflow-hidden"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center text-center">
-          <h1 className="text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
+        <motion.div
+          className="relative z-10 flex flex-col items-center justify-center text-center"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.h1
+            className="text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl"
+            variants={fadeInUp}
+          >
             Terms of Service
-          </h1>
-          <p className="text-gray-3 mt-2 text-center text-sm">
+          </motion.h1>
+          <motion.p className="text-gray-3 mt-2 text-center text-sm" variants={fadeInUp}>
             Last updated: {new Date().toLocaleDateString()}
-          </p>
-        </div>
-      </div>
+          </motion.p>
+        </motion.div>
+      </motion.div>
+
       <div
         className={[
           "min-h-screen px-4 py-10",
@@ -333,11 +390,26 @@ export default function TermsOfServicePage({ className = "" }: TermsOfServicePro
         ].join(" ")}
       >
         <div className="z-99999999 mx-auto w-full max-w-3xl">
-          <div className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border shadow-sm">
+          <motion.div
+            className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border shadow-sm"
+            variants={scaleIn}
+            initial="hidden"
+            animate="visible"
+            whileHover={{
+              boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.1)",
+              transition: { duration: 0.3 },
+            }}
+          >
             <div className="px-6 py-6 sm:px-8">
               <div className="prose prose-slate dark:prose-invert max-w-none">
                 {/* Introduction Box */}
-                <div className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-6 rounded-xl border p-4">
+                <motion.div
+                  className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-6 rounded-xl border p-4"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  whileHover={{ scale: 1.01 }}
+                >
                   <p className="text-gray-11 dark:text-dark-gray-11 m-0 text-sm leading-6">
                     <span className="text-gray-12 dark:text-dark-gray-12 font-semibold">
                       Important Notice:
@@ -346,39 +418,75 @@ export default function TermsOfServicePage({ className = "" }: TermsOfServicePro
                     These terms govern your use of our AI-powered resume scoring service and outline
                     your rights and responsibilities.
                   </p>
-                </div>
+                </motion.div>
 
-                <p className="text-gray-11 dark:text-dark-gray-11">
+                <motion.p
+                  className="text-gray-11 dark:text-dark-gray-11"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.4 }}
+                >
                   Welcome to Tero! These Terms of Service ("Terms") govern your access to and use of
                   the Tero website and services. By using Tero, you acknowledge that you have read,
                   understood, and agree to be bound by these Terms.
-                </p>
+                </motion.p>
 
-                {sections.map((s) => (
-                  <section key={s.title} className="mt-6">
-                    <h2 className="text-gray-12 dark:text-dark-gray-12 text-lg font-semibold">
+                {sections.map((s, index) => (
+                  <motion.section
+                    key={s.title}
+                    className="mt-6"
+                    variants={slideInLeft}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ delay: index * 0.03 }}
+                  >
+                    <motion.h2
+                      className="text-gray-12 dark:text-dark-gray-12 text-lg font-semibold"
+                      whileHover={{ x: 3 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       {s.title}
-                    </h2>
-                    <div className="text-gray-11 dark:text-dark-gray-11 mt-2 text-sm leading-6">
+                    </motion.h2>
+                    <motion.div
+                      className="text-gray-11 dark:text-dark-gray-11 mt-2 text-sm leading-6"
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.1 }}
+                    >
                       {s.content}
-                    </div>
-                  </section>
+                    </motion.div>
+                  </motion.section>
                 ))}
 
                 {/* Footer Note */}
-                <div className="border-gray-6 bg-gray-3 dark:border-dark-gray-6 dark:bg-dark-gray-3 mt-8 rounded-xl border p-4 text-sm">
+                <motion.div
+                  className="border-gray-6 bg-gray-3 dark:border-dark-gray-6 dark:bg-dark-gray-3 mt-8 rounded-xl border p-4 text-sm"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                  whileHover={{ scale: 1.01 }}
+                >
                   <p className="text-gray-11 dark:text-dark-gray-11 m-0">
                     <span className="font-semibold">Note:</span> By continuing to use Tero, you
                     acknowledge that you have read and agree to these Terms of Service. If you do
                     not agree, please discontinue use of the Service immediately.
                   </p>
-                </div>
+                </motion.div>
               </div>
             </div>
-          </div>
-          <p className="text-gray-9 dark:text-dark-gray-9 mt-4 text-center text-xs">
+          </motion.div>
+
+          <motion.p
+            className="text-gray-9 dark:text-dark-gray-9 mt-4 text-center text-xs"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
             © {new Date().getFullYear()} Tero. All rights reserved.
-          </p>
+          </motion.p>
         </div>
       </div>
     </>

@@ -11,9 +11,69 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
+import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 
 type ResumeGuideProps = {
   className?: string;
+};
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const heroVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const stepVariants: Variants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
 };
 
 export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
@@ -272,18 +332,33 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
 
   return (
     <>
-      <div className="relative mt-15 flex h-60 flex-col items-center justify-center p-10 md:h-75">
+      <motion.div
+        className="relative mt-15 flex h-60 flex-col items-center justify-center p-10 md:h-75"
+        initial="hidden"
+        animate="visible"
+        variants={heroVariants}
+      >
         <div className="from-blue-3/50 dark:from-dark-blue-3/50 pointer-events-none absolute inset-0 overflow-hidden bg-gradient-to-b to-transparent"></div>
         <div className="relative z-10 flex flex-col items-center justify-center text-center">
-          <h1 className="text-gray-12 dark:text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
+          <motion.h1
+            className="text-gray-12 dark:text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             Complete Resume Writing Guide
-          </h1>
-          <p className="text-gray-11 dark:text-dark-gray-11 mt-2 max-w-2xl text-center text-sm">
+          </motion.h1>
+          <motion.p
+            className="text-gray-11 dark:text-dark-gray-11 mt-2 max-w-2xl text-center text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
             Your comprehensive roadmap to creating a professional, ATS-friendly resume that lands
             interviews
-          </p>
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
 
       <div
         className={[
@@ -295,7 +370,12 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
       >
         <div className="mx-auto w-full max-w-6xl">
           {/* CTA Box */}
-          <div className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-12 rounded-xl border p-6">
+          <motion.div
+            className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-12 rounded-xl border p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
             <div className="flex flex-col items-center gap-4 text-center md:flex-row md:text-left">
               <div className="flex-1">
                 <h2 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-xl font-semibold">
@@ -306,32 +386,58 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
                   optimized for success.
                 </p>
               </div>
-              <a
+              <motion.a
                 href="/"
                 className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-3 font-medium whitespace-nowrap text-white transition-colors"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
                 Test Your Resume
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Step-by-Step Guide */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               8-Step Resume Creation Process
-            </h2>
-            <div className="space-y-6">
+            </motion.h2>
+            <motion.div
+              className="space-y-6"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={containerVariants}
+            >
               {guideSteps.map((step, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6"
+                  variants={stepVariants}
                 >
                   <div className="flex flex-col gap-4 md:flex-row">
                     <div className="flex items-start gap-4">
-                      <div className="bg-primary flex size-12 flex-shrink-0 items-center justify-center rounded-full text-xl font-bold text-white">
+                      <motion.div
+                        className="bg-primary flex size-12 flex-shrink-0 items-center justify-center rounded-full text-xl font-bold text-white"
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
                         {step.number}
-                      </div>
-                      <div className="text-primary mt-2">{step.icon}</div>
+                      </motion.div>
+                      <motion.div
+                        className="text-primary mt-2"
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {step.icon}
+                      </motion.div>
                     </div>
                     <div className="flex-1">
                       <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-xl font-semibold">
@@ -342,38 +448,56 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
                       </p>
                       <ul className="space-y-2">
                         {step.details.map((detail, dIndex) => (
-                          <li
+                          <motion.li
                             key={dIndex}
                             className="text-gray-11 dark:text-dark-gray-11 flex gap-2 text-sm"
+                            initial={{ opacity: 0, x: -10 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: dIndex * 0.1, duration: 0.3 }}
                           >
                             <ArrowRight className="text-primary mt-0.5 size-4 flex-shrink-0" />
                             <span>{detail}</span>
-                          </li>
+                          </motion.li>
                         ))}
                       </ul>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Resume Sections Overview */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Resume Sections Explained
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2">
+            </motion.h2>
+            <motion.div
+              className="grid gap-4 md:grid-cols-2"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={containerVariants}
+            >
               {resumeSections.map((item, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-lg border p-5"
+                  variants={cardVariants}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <h3 className="text-gray-12 dark:text-dark-gray-12 text-lg font-semibold">
                       {item.section}
                     </h3>
-                    <span
+                    <motion.span
                       className={`rounded-full px-3 py-1 text-xs font-semibold ${
                         item.priority === "Essential"
                           ? "bg-red-3 text-red-11 dark:bg-dark-red-3 dark:text-dark-red-11"
@@ -381,26 +505,44 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
                             ? "bg-blue-3 text-blue-11 dark:bg-dark-blue-3 dark:text-dark-blue-11"
                             : "bg-gray-3 text-gray-11 dark:bg-dark-gray-3 dark:text-dark-gray-11"
                       }`}
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2, duration: 0.3 }}
                     >
                       {item.priority}
-                    </span>
+                    </motion.span>
                   </div>
                   <p className="text-gray-11 dark:text-dark-gray-11 text-sm">{item.tips}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Format Comparison */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Choose Your Resume Format
-            </h2>
-            <div className="grid gap-6 md:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-6 md:grid-cols-3"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={containerVariants}
+            >
               {formatComparison.map((format, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6"
+                  variants={cardVariants}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 >
                   <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-xl font-semibold">
                     {format.format}
@@ -412,13 +554,17 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
                     <h4 className="text-success-text mb-2 text-sm font-semibold">Pros:</h4>
                     <ul className="space-y-1">
                       {format.pros.map((pro, pIndex) => (
-                        <li
+                        <motion.li
                           key={pIndex}
                           className="text-gray-11 dark:text-dark-gray-11 flex gap-2 text-sm"
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: pIndex * 0.1, duration: 0.3 }}
                         >
                           <CheckCircle2 className="text-success-text mt-0.5 size-4 flex-shrink-0" />
                           <span>{pro}</span>
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
                   </div>
@@ -426,87 +572,144 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
                     <h4 className="text-error mb-2 text-sm font-semibold">Cons:</h4>
                     <ul className="space-y-1">
                       {format.cons.map((con, cIndex) => (
-                        <li
+                        <motion.li
                           key={cIndex}
                           className="text-gray-11 dark:text-dark-gray-11 flex gap-2 text-sm"
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: cIndex * 0.1, duration: 0.3 }}
                         >
                           <span className="text-error mt-0.5 flex-shrink-0">•</span>
                           <span>{con}</span>
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Writing Formulas */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Proven Writing Formulas
-            </h2>
-            <div className="space-y-4">
+            </motion.h2>
+            <motion.div
+              className="space-y-4"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={containerVariants}
+            >
               {writingFormulas.map((formula, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-lg border p-5"
+                  variants={cardVariants}
+                  whileHover={{ y: -2, transition: { duration: 0.2 } }}
                 >
                   <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <h3 className="text-gray-12 dark:text-dark-gray-12 text-lg font-semibold">
                       {formula.formula}
                     </h3>
-                    <span className="bg-blue-3 text-blue-11 dark:bg-dark-blue-3 dark:text-dark-blue-11 w-fit rounded-full px-3 py-1 font-mono text-xs font-semibold">
+                    <motion.span
+                      className="bg-blue-3 text-blue-11 dark:bg-dark-blue-3 dark:text-dark-blue-11 w-fit rounded-full px-3 py-1 font-mono text-xs font-semibold"
+                      initial={{ scale: 0.5 }}
+                      whileInView={{ scale: 1, rotate: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2, duration: 0.5 }}
+                    >
                       {formula.stands}
-                    </span>
+                    </motion.span>
                   </div>
                   <div className="bg-gray-3 dark:bg-dark-gray-3 rounded-lg p-4">
                     <p className="text-gray-11 dark:text-dark-gray-11 text-sm italic">
                       "{formula.example}"
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Action Verbs */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Powerful Action Verbs by Category
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={containerVariants}
+            >
               {actionVerbs.map((category, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-lg border p-5"
+                  variants={cardVariants}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 >
                   <h3 className="text-primary mb-3 font-semibold">{category.category}</h3>
                   <div className="flex flex-wrap gap-2">
                     {category.verbs.map((verb, vIndex) => (
-                      <span
+                      <motion.span
                         key={vIndex}
                         className="bg-gray-3 text-gray-11 dark:bg-dark-gray-3 dark:text-dark-gray-11 rounded-md px-3 py-1 text-sm"
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: vIndex * 0.05, duration: 0.2 }}
+                        whileHover={{ scale: 1.1, y: -2 }}
                       >
                         {verb}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Do's and Don'ts */}
           <section className="mb-12">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Resume Do's and Don'ts
-            </h2>
-            <div className="grid gap-6 md:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-6 md:grid-cols-3"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={containerVariants}
+            >
               {dosAndDonts.map((item, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6"
+                  variants={cardVariants}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
                 >
                   <h3 className="text-gray-12 dark:text-dark-gray-12 mb-4 text-lg font-semibold">
                     {item.category}
@@ -518,12 +721,16 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
                     </h4>
                     <ul className="space-y-2">
                       {item.dos.map((doItem, dIndex) => (
-                        <li
+                        <motion.li
                           key={dIndex}
                           className="text-gray-11 dark:text-dark-gray-11 pl-6 text-sm"
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: dIndex * 0.1, duration: 0.3 }}
                         >
                           • {doItem}
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
                   </div>
@@ -536,22 +743,32 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
                     </h4>
                     <ul className="space-y-2">
                       {item.donts.map((dontItem, dnIndex) => (
-                        <li
+                        <motion.li
                           key={dnIndex}
                           className="text-gray-11 dark:text-dark-gray-11 pl-6 text-sm"
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: dnIndex * 0.1, duration: 0.3 }}
                         >
                           • {dontItem}
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Final CTA */}
-          <div className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border p-8 text-center">
+          <motion.div
+            className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border p-8 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          >
             <h2 className="text-gray-12 dark:text-dark-gray-12 mb-3 text-2xl font-semibold">
               Put Your Knowledge Into Action
             </h2>
@@ -559,13 +776,16 @@ export default function ResumeGuidePage({ className = "" }: ResumeGuideProps) {
               Now that you know how to create an effective resume, use Tero to scan and optimize it
               for your target jobs.
             </p>
-            <a
+            <motion.a
               href="/"
               className="bg-primary hover:bg-primary-hover inline-block rounded-lg px-8 py-3 font-semibold text-white transition-colors"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2 }}
             >
               Scan Your Resume Now
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
         </div>
       </div>
     </>

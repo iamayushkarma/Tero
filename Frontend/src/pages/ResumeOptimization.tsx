@@ -1,8 +1,76 @@
 import { useLayoutEffect } from "react";
+import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { CheckCircle2, XCircle, AlertCircle, TrendingUp, FileText, Zap } from "lucide-react";
 
 type ResumeOptimizationProps = {
   className?: string;
+};
+
+// Animation variants
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const slideInRight: Variants = {
+  hidden: { opacity: 0, x: 30 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
+const cardHover = {
+  scale: 1.02,
+  boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.15)",
+  transition: { duration: 0.3 },
+};
+
+const iconFloat: Variants = {
+  initial: { y: 0 },
+  animate: {
+    y: [-5, 5, -5],
+    transition: {
+      duration: 3,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
 };
 
 export default function ResumeOptimizationPage({ className = "" }: ResumeOptimizationProps) {
@@ -152,18 +220,34 @@ export default function ResumeOptimizationPage({ className = "" }: ResumeOptimiz
 
   return (
     <>
-      <div className="relative mt-15 flex h-60 flex-col items-center justify-center p-10 md:h-75">
+      <motion.div
+        className="relative mt-15 flex h-60 flex-col items-center justify-center p-10 md:h-75"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
         <div className="from-blue-3/50 dark:from-dark-blue-3/50 pointer-events-none absolute inset-0 overflow-hidden bg-gradient-to-b to-transparent"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center text-center">
-          <h1 className="text-gray-12 dark:text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">
+        <motion.div
+          className="relative z-10 flex flex-col items-center justify-center text-center"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.h1
+            className="text-gray-12 dark:text-dark-gray-12 text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl"
+            variants={fadeInUp}
+          >
             Resume Optimization Guide
-          </h1>
-          <p className="text-gray-11 dark:text-dark-gray-11 mt-2 max-w-2xl text-center text-sm">
+          </motion.h1>
+          <motion.p
+            className="text-gray-11 dark:text-dark-gray-11 mt-2 max-w-2xl text-center text-sm"
+            variants={fadeInUp}
+          >
             Master the art of creating ATS-friendly resumes that get you past automated filters and
             into the hands of hiring managers
-          </p>
-        </div>
-      </div>
+          </motion.p>
+        </motion.div>
+      </motion.div>
 
       <div
         className={[
@@ -175,7 +259,13 @@ export default function ResumeOptimizationPage({ className = "" }: ResumeOptimiz
       >
         <div className="mx-auto w-full max-w-6xl">
           {/* CTA Box */}
-          <div className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-12 rounded-xl border p-6">
+          <motion.div
+            className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 mb-12 rounded-xl border p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ scale: 1.01 }}
+          >
             <div className="flex flex-col items-center gap-4 text-center md:flex-row md:text-left">
               <div className="flex-1">
                 <h2 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-xl font-semibold">
@@ -186,88 +276,173 @@ export default function ResumeOptimizationPage({ className = "" }: ResumeOptimiz
                   actionable recommendations.
                 </p>
               </div>
-              <a
+              <motion.a
                 href="/"
                 className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-3 font-medium whitespace-nowrap text-white transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Start Scanning Now
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Optimization Process Steps */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               5-Step Optimization Process
-            </h2>
-            <div className="grid gap-4 md:grid-cols-5">
+            </motion.h2>
+            <motion.div
+              className="grid gap-4 md:grid-cols-5"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {steps.map((step, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-5"
+                  variants={scaleIn}
+                  whileHover={cardHover}
                 >
-                  <div className="bg-primary mb-3 flex size-10 items-center justify-center rounded-full text-xl font-bold text-white">
+                  <motion.div
+                    className="bg-primary mb-3 flex size-10 items-center justify-center rounded-full text-xl font-bold text-white"
+                    initial={{ scale: 0, rotate: -180 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 0.5,
+                      delay: index * 0.1,
+                      type: "spring",
+                      stiffness: 200,
+                    }}
+                  >
                     {step.number}
-                  </div>
+                  </motion.div>
                   <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-base font-semibold">
                     {step.title}
                   </h3>
                   <p className="text-gray-11 dark:text-dark-gray-11 text-sm leading-relaxed">
                     {step.description}
                   </p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Optimization Strategies */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Key Optimization Strategies
-            </h2>
-            <div className="grid gap-6 md:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-6 md:grid-cols-3"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {optimizationStrategies.map((strategy, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6"
+                  variants={slideInLeft}
+                  whileHover={cardHover}
                 >
-                  <div className="text-primary mb-4">{strategy.icon}</div>
+                  <motion.div
+                    className="text-primary mb-4"
+                    variants={iconFloat}
+                    initial="initial"
+                    animate="animate"
+                  >
+                    {strategy.icon}
+                  </motion.div>
                   <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2 text-lg font-semibold">
                     {strategy.title}
                   </h3>
                   <p className="text-gray-11 dark:text-dark-gray-11 mb-4 text-sm">
                     {strategy.description}
                   </p>
-                  <ul className="space-y-2">
+                  <motion.ul
+                    className="space-y-2"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  >
                     {strategy.tips.map((tip, tipIndex) => (
-                      <li
+                      <motion.li
                         key={tipIndex}
                         className="text-gray-11 dark:text-dark-gray-11 flex gap-2 text-sm"
+                        variants={fadeInUp}
                       >
                         <CheckCircle2 className="text-success-text mt-0.5 size-4 flex-shrink-0" />
                         <span>{tip}</span>
-                      </li>
+                      </motion.li>
                     ))}
-                  </ul>
-                </div>
+                  </motion.ul>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Common Mistakes */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Common Mistakes to Avoid
-            </h2>
-            <div className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6">
-              <div className="grid gap-4 md:grid-cols-2">
+            </motion.h2>
+            <motion.div
+              className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-xl border p-6"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.div
+                className="grid gap-4 md:grid-cols-2"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+              >
                 {commonMistakes.map((item, index) => (
-                  <div
+                  <motion.div
                     key={index}
                     className="border-gray-6 dark:border-dark-gray-6 rounded-lg border p-4"
+                    variants={slideInRight}
+                    whileHover={{
+                      scale: 1.02,
+                      borderColor: "rgba(239, 68, 68, 0.3)",
+                      transition: { duration: 0.2 },
+                    }}
                   >
                     <div className="mb-3 flex items-start gap-3">
-                      {item.icon}
+                      <motion.div
+                        initial={{ rotate: 0 }}
+                        whileHover={{ rotate: 360 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        {item.icon}
+                      </motion.div>
                       <h3 className="text-gray-12 dark:text-dark-gray-12 font-semibold">
                         {item.mistake}
                       </h3>
@@ -278,100 +453,185 @@ export default function ResumeOptimizationPage({ className = "" }: ResumeOptimiz
                     <p className="text-success-text dark:text-dark-gray-11 text-sm">
                       <strong>Solution:</strong> {item.solution}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </section>
 
           {/* Best Practices */}
           <section className="mb-16">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold">
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-8 text-2xl font-semibold"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               Best Practices for Success
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            </motion.h2>
+            <motion.div
+              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {bestPractices.map((item, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-lg border p-5"
+                  variants={scaleIn}
+                  whileHover={{
+                    scale: 1.03,
+                    borderColor: "rgba(34, 197, 94, 0.3)",
+                    transition: { duration: 0.2 },
+                  }}
                 >
                   <div className="mb-3 flex items-start gap-3">
-                    {item.icon}
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 0.3,
+                        delay: index * 0.05,
+                        type: "spring",
+                        stiffness: 200,
+                      }}
+                    >
+                      {item.icon}
+                    </motion.div>
                     <h3 className="text-gray-12 dark:text-dark-gray-12 font-semibold">
                       {item.practice}
                     </h3>
                   </div>
                   <p className="text-gray-11 dark:text-dark-gray-11 text-sm">{item.description}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Pro Tips */}
-          <section className="mb-12">
-            <div className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 rounded-xl border p-6">
+          <motion.section
+            className="mb-12"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.div
+              className="border-blue-6 bg-blue-3 dark:border-dark-blue-6 dark:bg-dark-blue-3 rounded-xl border p-6"
+              whileHover={{ scale: 1.01 }}
+            >
               <div className="mb-4 flex items-center gap-3">
-                <AlertCircle className="text-primary size-6" />
+                <motion.div
+                  animate={{
+                    rotate: [0, 10, -10, 0],
+                    scale: [1, 1.1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <AlertCircle className="text-primary size-6" />
+                </motion.div>
                 <h2 className="text-gray-12 dark:text-dark-gray-12 text-xl font-semibold">
                   Pro Tips from Tero
                 </h2>
               </div>
-              <ul className="text-gray-11 dark:text-dark-gray-11 space-y-3 text-sm">
-                <li className="flex gap-2">
+              <motion.ul
+                className="text-gray-11 dark:text-dark-gray-11 space-y-3 text-sm"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+              >
+                <motion.li className="flex gap-2" variants={fadeInUp}>
                   <span className="text-primary font-bold">•</span>
                   <span>
                     <strong>Target 70%+ keyword match:</strong> Aim for at least 70% match with job
                     description keywords for best results
                   </span>
-                </li>
-                <li className="flex gap-2">
+                </motion.li>
+                <motion.li className="flex gap-2" variants={fadeInUp}>
                   <span className="text-primary font-bold">•</span>
                   <span>
                     <strong>Use Tero before each application:</strong> Even small changes in job
                     descriptions matter - scan every time
                   </span>
-                </li>
-                <li className="flex gap-2">
+                </motion.li>
+                <motion.li className="flex gap-2" variants={fadeInUp}>
                   <span className="text-primary font-bold">•</span>
                   <span>
                     <strong>Keep multiple versions:</strong> Maintain 2-3 resume versions for
                     different job types, then customize further
                   </span>
-                </li>
-                <li className="flex gap-2">
+                </motion.li>
+                <motion.li className="flex gap-2" variants={fadeInUp}>
                   <span className="text-primary font-bold">•</span>
                   <span>
                     <strong>Check readability:</strong> Your resume should still read naturally to
                     humans - don't over-optimize
                   </span>
-                </li>
-                <li className="flex gap-2">
+                </motion.li>
+                <motion.li className="flex gap-2" variants={fadeInUp}>
                   <span className="text-primary font-bold">•</span>
                   <span>
                     <strong>Update regularly:</strong> Refresh your resume every 3-6 months with new
                     skills and achievements
                   </span>
-                </li>
-              </ul>
-            </div>
-          </section>
+                </motion.li>
+              </motion.ul>
+            </motion.div>
+          </motion.section>
 
           {/* Final CTA */}
-          <div className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border p-8 text-center">
-            <h2 className="text-gray-12 dark:text-dark-gray-12 mb-3 text-2xl font-semibold">
+          <motion.div
+            className="border-gray-6 bg-bg-gray-2 dark:border-dark-gray-6 dark:bg-dark-bg-gray-2 rounded-2xl border p-8 text-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            whileHover={{
+              boxShadow: "0 20px 40px -15px rgba(0, 0, 0, 0.2)",
+              transition: { duration: 0.3 },
+            }}
+          >
+            <motion.h2
+              className="text-gray-12 dark:text-dark-gray-12 mb-3 text-2xl font-semibold"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               Start Optimizing Your Resume Today
-            </h2>
-            <p className="text-gray-11 dark:text-dark-gray-11 mb-6 text-sm">
+            </motion.h2>
+            <motion.p
+              className="text-gray-11 dark:text-dark-gray-11 mb-6 text-sm"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
               Get instant feedback on your resume and discover exactly what you need to improve to
               pass ATS filters.
-            </p>
-            <a
+            </motion.p>
+            <motion.a
               href="/"
               className="bg-primary hover:bg-primary-hover inline-block rounded-lg px-8 py-3 font-semibold text-white transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
             >
               Scan Your Resume Now
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
         </div>
       </div>
     </>
