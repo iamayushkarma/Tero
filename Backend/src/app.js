@@ -19,7 +19,7 @@ const tokenLimiter = rateLimit({
 
 // Rate limiter for resume analysis
 const resumeAnalysisLimiter = rateLimit({
-  windowMs: 15 * 6 * 1, // 15 minutes
+  windowMs: 10 * 60 * 1000, // 15 minutes
   max: 3, // Allow 3 requests per windowMs
   message: {
     success: false,
