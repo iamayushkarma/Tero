@@ -12,7 +12,6 @@ import ResumeOptimizationPage from "./pages/ResumeOptimization";
 import ResumeTipsPage from "./pages/ResumeTips";
 import ResumeGuidePage from "./pages/Guide";
 import AboutPage from "./pages/About";
-import ScrollToTop from "./components/ui/ScrollToTop";
 import NotFound from "./pages/NotFound";
 
 helix.register();
@@ -38,7 +37,6 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <ScrollToTop />
       <ThemeProvider>
         <ResumeAnalysisProvider>
           <RouterProvider router={router} />
