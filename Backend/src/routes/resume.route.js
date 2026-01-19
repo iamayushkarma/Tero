@@ -1,7 +1,7 @@
 import { Router } from "express";
 import upload from "../middlewares/multer.middleware.js";
 import { uploadResumeText, uploadResumeFile } from "../controllers/resume.controller.js";
-import { validateToken } from "../middlewares/tokenValidation.middleware.js"; // Add this
+import { validateToken } from "../middlewares/tokenValidation.middleware.js";
 
 const router = Router();
 

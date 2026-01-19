@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { CheckCircle, XCircle, AlertCircle, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
@@ -84,6 +84,10 @@ const tabContentVariants: Variants = {
 };
 
 const ResumeAnalysisDisplay = ({ data }: ResumeAnalysisDisplayProps) => {
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
+
   const [activeTab, setActiveTab] = useState<"strengths" | "weaknesses" | "improvements">(
     "strengths",
   );

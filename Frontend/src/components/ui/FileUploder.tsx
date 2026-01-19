@@ -161,7 +161,6 @@ function FileUploader() {
 
   // Handle file upload with token
   const handleUpload = async (uploadFile: File) => {
-    console.log("Uploading:", uploadFile.name);
     setError(null);
     setIsUploading(true);
 
@@ -193,7 +192,6 @@ function FileUploader() {
 
         const analysisData = uploadResponse.data.data;
         setResult(analysisData, jobRole, file);
-        console.log("Backend response:", uploadResponse.data);
       } else if (
         uploadFile.type ===
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -206,8 +204,6 @@ function FileUploader() {
         const uploadResponse = await axios.post(`${serverUrl}resume/upload-file`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-
-        console.log("Backend response:", uploadResponse.data);
         const analysisData = uploadResponse.data.data;
         setResult(analysisData, jobRole, file);
       }

@@ -50,8 +50,6 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
   const prompt = buildStructuredPrompt(compactATS, jobRole);
 
   try {
-    console.log(`🔄 Calling Groq API for job role: ${jobRole || "unspecified"}`);
-
     const response = await fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
@@ -121,8 +119,6 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
     // Parse response
     const data = await response.json();
     const responseTime = Date.now() - startTime;
-    console.log(`✅ Groq API responded in ${responseTime}ms`);
-
     // Extract the generated text
     const rawResponse = data.choices?.[0]?.message?.content?.trim();
 
@@ -135,13 +131,6 @@ export async function generateAIVerdict({ atsResult, jobRole, resumeText, apiKey
         hurting: [],
         fixPlan: [],
       };
-    }
-
-    // Log token usage
-    if (data.usage) {
-      console.log(
-        `📊 Tokens used: ${data.usage.total_tokens} (prompt: ${data.usage.prompt_tokens}, completion: ${data.usage.completion_tokens})`,
-      );
     }
 
     // Parse and validate the JSON response
@@ -340,8 +329,6 @@ function parseStructuredResponse(rawResponse) {
         throw new Error(`Invalid fixPlan item at index ${idx}`);
       }
     });
-
-    console.log("✅ Successfully parsed and validated structured response");
     return parsed;
   } catch (error) {
     console.error("❌ Failed to parse AI response as JSON:", error.message);
