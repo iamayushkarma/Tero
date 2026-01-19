@@ -151,7 +151,7 @@ function FAQSection() {
 
 export default FAQSection;
 
-const AccordionItem = ({ question, answer, isOpen, onToggle, index }: AccordionItemProp) => {
+const AccordionItem = ({ question, answer, isOpen, onToggle }: AccordionItemProp) => {
   return (
     <motion.div
       onClick={onToggle}

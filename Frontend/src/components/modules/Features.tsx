@@ -188,14 +188,7 @@ function Features() {
 
 export default Features;
 
-const FeatureCard = ({
-  icon: Icon,
-  iconColor,
-  bgClass,
-  heading,
-  info,
-  index,
-}: FeatureCardProps) => {
+const FeatureCard = ({ icon: Icon, iconColor, bgClass, heading, info }: FeatureCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   // Mouse position tracking for subtle tilt effect

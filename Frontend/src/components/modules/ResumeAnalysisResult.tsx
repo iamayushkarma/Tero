@@ -126,6 +126,17 @@ function ResumeAnalysisResult() {
           <div className="bg-bg-gray-1 dark:bg-gray-12/5 border-gray-5 dark:border-gray-11/40 flex flex-col items-center justify-center rounded-xl border py-2 md:w-[95%]">
             {/* actual score */}
             <div className="border-b-gray-4 dark:border-b-gray-11/50 box-border w-11/12 border-b p-5 text-center md:p-8">
+              {jobRole && (
+                <motion.div
+                  className="mb-3 text-sm text-gray-600 dark:text-gray-400"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1, duration: 0.4 }}
+                >
+                  Analyzed for:{" "}
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">{jobRole}</span>
+                </motion.div>
+              )}
               <motion.h3
                 className="text-gray-12 dark:text-gray-3 text-[1.3rem] font-medium md:text-[1.5rem]"
                 initial={{ opacity: 0, y: -10 }}

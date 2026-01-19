@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check } from "lucide-react";
 
 import { Ring } from "ldrs/react";
 import "ldrs/react/Ring.css";
@@ -33,7 +33,7 @@ const ResumeLoading: React.FC = () => {
       })),
     );
 
-    steps.forEach((step, index) => {
+    steps.forEach((_step, index) => {
       setTimeout(() => {
         setVisibleSteps((prev) =>
           prev.map((s) => (s.index === index ? { ...s, started: true } : s)),

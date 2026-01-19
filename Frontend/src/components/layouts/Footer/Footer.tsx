@@ -325,7 +325,7 @@ function Footer() {
         {/* right section */}
         <motion.div className="flex lg:justify-end" variants={itemVariants}>
           <div className="grid grid-cols-1 gap-10 text-sm sm:grid-cols-3 md:gap-16">
-            {footerLinks.map((section, sectionIndex) => (
+            {footerLinks.map((section) => (
               <motion.div key={section.title} variants={itemVariants}>
                 <h4 className="text-gray-12 dark:text-bg-gray-2 mb-3 text-[.95rem] font-bold md:text-[1rem]">
                   {section.title}

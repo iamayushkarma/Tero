@@ -28,15 +28,6 @@ const staggerContainer: Variants = {
   },
 };
 
-const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.4, ease: "easeOut" },
-  },
-};
-
 const accordionVariants: Variants = {
   collapsed: {
     height: 0,
@@ -271,7 +262,7 @@ export default function SupportPage({ className = "" }: SupportPageProps) {
               initial="hidden"
               animate="visible"
             >
-              {contactMethods.map((method, index) => (
+              {contactMethods.map((method) => (
                 <motion.a
                   key={method.title}
                   href={method.action}
