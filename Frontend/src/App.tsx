@@ -12,7 +12,11 @@ import ResumeOptimizationPage from "./pages/ResumeOptimization";
 import ResumeTipsPage from "./pages/ResumeTips";
 import ResumeGuidePage from "./pages/Guide";
 import AboutPage from "./pages/About";
+import ScrollToTop from "./components/ui/ScrollToTop";
+import NotFound from "./pages/NotFound";
+
 helix.register();
+
 const router = createBrowserRouter([
   {
     element: <MainLayout />,
@@ -26,16 +30,22 @@ const router = createBrowserRouter([
       { path: "/tips", element: <ResumeTipsPage /> },
       { path: "/guides", element: <ResumeGuidePage /> },
       { path: "/about", element: <AboutPage /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);
+
 function App() {
   return (
-    <ThemeProvider>
-      <ResumeAnalysisProvider>
-        <RouterProvider router={router} />
-      </ResumeAnalysisProvider>
-    </ThemeProvider>
+    <>
+      <ScrollToTop />
+      <ThemeProvider>
+        <ResumeAnalysisProvider>
+          <RouterProvider router={router} />
+        </ResumeAnalysisProvider>
+      </ThemeProvider>
+    </>
   );
 }
+
 export default App;
