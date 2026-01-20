@@ -4,6 +4,8 @@
 
 Tero is an intelligent resume scoring system that helps job seekers understand how their resumes perform against Applicant Tracking Systems (ATS). By comparing your resume with specific job descriptions, Tero provides detailed insights, actionable recommendations, and a clear path to improvement.
 
+🔗 **Live Demo:** [https://trytero.vercel.app/](https://trytero.vercel.app/)
+
 ## 🎯 What is Tero?
 
 Tero is an AI-powered ATS resume scoring system that goes beyond simple score calculations. Instead of just giving you a number, Tero provides:
@@ -92,7 +94,7 @@ Tero is an AI-powered ATS resume scoring system that goes beyond simple score ca
 
 ```bash
 git clone https://github.com/iamayushkarma/Tero
-cd tero
+cd Tero
 ```
 
 2. **Install dependencies**
@@ -135,7 +137,6 @@ VITE_BACKEND_API_PORT=5000
 npm run dev
 
 # Or run separately:
-
 # Terminal 1 - Backend
 cd Backend
 npm run dev
@@ -188,6 +189,7 @@ Tero/
 │   │   ├── app.js              # Express app setup
 │   │   └── index.js            # Entry point
 │   ├── .env
+│   ├── Dockerfile
 │   ├── package-lock.json
 │   └── package.json
 │
@@ -236,6 +238,7 @@ Tero/
 │   │   │       ├── ProgressBar.tsx
 │   │   │       ├── ResumeAnalysisDisplay.tsx
 │   │   │       ├── ResumeLoading.tsx
+│   │   │       ├── ScrollToTop.tsx
 │   │   │       ├── SearchBox.tsx
 │   │   │       └── common.css
 │   │   ├── context/            # React Context
@@ -251,6 +254,7 @@ Tero/
 │   │   │   │   └── Home.tsx
 │   │   │   ├── About.tsx
 │   │   │   ├── Guide.tsx
+│   │   │   ├── NotFound.tsx
 │   │   │   ├── PrivacyPolicyPage.tsx
 │   │   │   ├── ResumeOptimization.tsx
 │   │   │   ├── ResumeTips.tsx
@@ -274,11 +278,14 @@ Tero/
 │   ├── tsconfig.app.json
 │   ├── tsconfig.json
 │   ├── tsconfig.node.json
+│   ├── vercel.json
 │   └── vite.config.ts
 │
 ├── .gitignore
 ├── .prettierignore
 ├── .prettierrc
+├── LICENSE
+├── README.md
 ├── generate-tree.js
 ├── package-lock.json
 └── package.json
@@ -354,7 +361,6 @@ Tero/
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run preview      # Preview production build
-npm run lint         # Run ESLint
 ```
 
 **Backend (Backend/):**
@@ -373,13 +379,15 @@ npm run start        # Start production server
 
 ## 🚢 Deployment
 
-### Frontend (Vercel/Netlify)
+### Frontend (Vercel)
 
 ```bash
 cd Frontend
 npm run build
-# Deploy dist/ folder
+# Deploy dist/ folder to Vercel
 ```
+
+**Live:** [https://trytero.vercel.app/](https://trytero.vercel.app/)
 
 ### Backend (Render/Railway/Heroku)
 
@@ -425,16 +433,6 @@ If you have any questions or need help, please:
 
 - Open an issue on GitHub
 - Contact via email: ayushkarma.dev@gmail.com
-
-## 🗺️ Roadmap
-
-- [ ] Resume templates library
-- [ ] Cover letter analysis
-- [ ] LinkedIn profile optimization
-- [ ] Job description library
-- [ ] Resume version history
-- [ ] Team collaboration features
-- [ ] Mobile app (React Native)
 
 ---
 
