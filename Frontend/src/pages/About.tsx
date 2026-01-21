@@ -372,7 +372,7 @@ export default function AboutPage({ className = "" }: AboutPageProps) {
                     className="border-gray-6 dark:border-dark-gray-6 rounded-lg border bg-white/50 p-6 dark:bg-black/20"
                     variants={cardVariants}
                   >
-                    <h3 className="text-gray-12 dark:text-dark-gray-12 mb-3 font-semibold">
+                    <h3 className="text-gray-12 dark:text-dark-gray-12 mb-2.5 font-semibold">
                       {item.title}
                     </h3>
                     <p className="text-gray-11 dark:text-dark-gray-11 text-sm">
